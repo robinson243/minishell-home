@@ -1,0 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
+/*   Updated: 2025/09/28 20:10:48 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINI_H
+# define MINI_H
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+
+
+# define WORD 0
+# define PIPE 1
+# define REDIR_IN 2
+# define REDIR_OUT 3
+# define REDIR_APPEND 4
+# define HEREDOC 5
+
+typedef struct s_node
+{
+	int				type;
+	char			*content;
+	int				id;
+	struct s_node	*next;
+}					t_node;
+
+int		ft_len(char *str);
+char	*append_char(char *str, char c);
+int		verif(int c, char *str);
+int		ft_lstadd_back(t_node **lst, t_node *new);
+t_node	*ft_lstnew(char *str, int types);
+void	ft_lstclear(t_node **lst);
+void	print_list(t_node *lst);
+int		args_content(t_node **data, char *line);
+int		all_parsing(t_node **data, char *line);
+
+#endif
