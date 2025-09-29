@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 16:27:21 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/29 13:45:03 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:10:35 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	arg_type(char *str)
 	return (-1);
 }
 
-int	args_content(t_node **data, char *line)
+int	args_content(t_node **node, char *line)
 {
 	int		i;
 	char	*str;
@@ -59,8 +59,8 @@ int	args_content(t_node **data, char *line)
 			str = append_char(str, line[i++]);
 		if (line[i] == ' ')
 			i++;
-		if (!ft_lstadd_back(data, ft_lstnew(str, arg_type(str))))
-			return (ft_lstclear(data), 0);
+		if (!ft_lstadd_back(node, ft_lstnew(str, arg_type(str))))
+			return (ft_lstclear(node), 1);
 		free(str);
 		str = NULL;
 	}
@@ -69,10 +69,9 @@ int	args_content(t_node **data, char *line)
 
 int	main(int ac, char **av)
 {
-	char	*line;
-	t_node	*data;
+	char		*line;
+	t_globale *data = malloc(sizeof(t_globale));
 
-	data = NULL;
 	(void)ac;
 	(void)av;
 	while (1)
@@ -85,11 +84,10 @@ int	main(int ac, char **av)
 		}
 		if (*line)
 			add_history(line);
-		printf("Vous avez tape : %s\n", line);
 		all_parsing(&data, line);
 		free(line);
 	}
-	print_list(data);
-	ft_lstclear(&data);
+	print_list(data->node);
+	ft_lstclear(&data->node);
 	return (0);
 }
