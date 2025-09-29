@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 16:27:21 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/28 20:11:31 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/29 13:45:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	main(int ac, char **av)
 		}
 		if (*line)
 			add_history(line);
-		printf("Vous avez tapÃ© : %s\n", line);
+		printf("Vous avez tape : %s\n", line);
 		all_parsing(&data, line);
 		free(line);
 	}
