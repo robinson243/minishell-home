@@ -6,11 +6,11 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 18:11:39 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/28 20:11:24 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:25:31 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 int	quote(char *line)
 {

@@ -5,56 +5,91 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 12:50:40 by romukena          #+#    #+#             */
-/*   Updated: 2025/09/30 14:14:26 by romukena         ###   ########.fr       */
+/*   Created: 2025/09/24 16:27:21 by ydembele          #+#    #+#             */
+/*   Updated: 2025/09/30 14:25:56 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_all(char **av, int ac)
+int	arg_type(char *str)
 {
-	int 	i;
+	if (verif(str[0], ">|<"))
+		return (0);
+	if (str[0] && str[1] && str[0] == '>' && str[1] == '>')
+		return (4);
+	if (str[0] && str[1] && str[0] == '<' && str[1] == '<')
+		return (5);
+	if (verif(str[0], ">") == 0)
+		return (3);
+	if (verif(str[0], "<") == 0)
+		return (2);
+	if (verif(str[0], "|") == 0)
+		return (1);
+	return (-1);
+}
+
+int	args_content(t_node **data, char *line)
+{
+	int		i;
+	char	*str;
+
+	str = NULL;
 	i = 0;
-	while (i < ac)
+	while (line[i])
 	{
-		free(av[i++]);
-	}
-	free(av);
-}
-
-char **make_line(int ac, char **av)
-{
-	int	i;
-	int	j;
-	char	**tab;
-	j = 0;
-	tab = malloc(sizeof(char *) * (ac));
-	if (!tab)
-		return (NULL);
-	i = 1;
-	while (i < ac)
-	{
-		tab[j] = ft_strdup(av[i]);
-		if (!tab[j])
+		if (line[i] == '"')
 		{
-			free_all(tab, j);
-			return (NULL);
+			i++;
+			while (line[i] && line[i] != '"')
+				str = append_char(str, line[i++]);
 		}
-		j++;
-		i++;
+		else if (verif(line[i], ">|< "))
+		{
+			while (line[i] != 0 && verif(line[i], ">|< ") == 1)
+				str = append_char(str, line[i++]);
+		}
+		else if ((line[i] == '>' && line[i + 1] == '>')
+			|| (line[i] == '<' && line[i + 1] == '<'))
+		{
+			str = append_char(str, line[i++]);
+			str = append_char(str, line[i++]);
+		}
+		else if (verif(line[i], ">|<") == 0)
+			str = append_char(str, line[i++]);
+		if (line[i] == ' ')
+			i++;
+		if (!ft_lstadd_back(data, ft_lstnew(str, arg_type(str))))
+			return (ft_lstclear(data), 0);
+		free(str);
+		str = NULL;
 	}
-	tab[j] = NULL;
-	return (tab);
+	return (0);
 }
 
-
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
-	char **tab = make_line(ac, av);
-	for (int i = 0; i < ac; i++)
+	char	*line;
+	t_node	*data;
+
+	data = NULL;
+	(void)ac;
+	(void)av;
+	while (1)
 	{
-		ft_putstr_fd(tab[i], 1);
+		line = readline("minishell> ");
+		if (!line || line[0] == '9')
+		{
+			printf("exit\n");
+			break ;
+		}
+		if (*line)
+			add_history(line);
+		printf("Vous avez tapÃ© : %s\n", line);
+		all_parsing(&data, line);
+		free(line);
 	}
-	
+	print_list(data);
+	ft_lstclear(&data);
+	return (0);
 }

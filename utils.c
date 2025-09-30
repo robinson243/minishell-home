@@ -6,11 +6,11 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/28 20:10:14 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:25:42 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini.h"
+#include "minishell.h"
 
 int	ft_len(char *str)
 {
