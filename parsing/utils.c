@@ -6,29 +6,11 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:52:54 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:53:24 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-char	*ft_strdup(char	*s)
-{
-	char	*str;
-	int		i;
-
-	str = malloc(sizeof(char) + ft_len(s));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (s[i])
-	{
-		str[i] = s[i];
-		i++;
-	}
-	str[i] = 0;
-	return (str);
-}
 
 char	*append_char(char *str, char c)
 {
