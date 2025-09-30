@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 18:11:39 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/29 18:46:56 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:20:27 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,24 +107,21 @@ void	pars_file(t_globale **data)
 	(*data)->node = head;
 }
 
-int	parse_commande(t_globale *data)
-{
-	int		i;
-	int		n_cmd;
-	int		n_inf;
-	int		n_out;
-	int		j;
+// int	parse_commande(t_globale *data)
+// {
+// 	int		i;
+// 	int		j;
 
-	pars_file(data);
-	j = nb_type(data->node, PIPE, -1);
-	i = 0;
-	data->cmd = NULL;
-	while (i < j)
-	{
-		ft_add_cmd(data->cmd, ft_lstnew_cmd(nb_type(data->node, WORD, PIPE),nb_type(data->node, INFILE, PIPE), nb_type(data->node, OUTFILE, PIPE)));
+// 	pars_file(&data);
+// 	j = nb_type(data->node, PIPE, -1);
+// 	i = 0;
+// 	data->cmd = NULL;
+// 	while (i < j)
+// 	{
+// 		ft_add_cmd(data->cmd, ft_lstnew_cmd(nb_type(data->node, WORD, PIPE),nb_type(data->node, INFILE, PIPE), nb_type(data->node, OUTFILE, PIPE)));
 		
-	}
-}
+// 	}
+// }
 
 int	all_parsing(t_globale **data, char *line)
 {
