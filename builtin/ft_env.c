@@ -1,34 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 14:56:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:40:53 by ydembele         ###   ########.fr       */
+/*   Created: 2025/09/30 15:45:55 by ydembele          #+#    #+#             */
+/*   Updated: 2025/09/30 15:56:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
 
-int	ft_pwd(void)
+int	env(char **env)
 {
-	char	path[1024];
+	int	i;
 
-	if (getcwd(path, 1024))
-	{
-		printf("%s\n", path);
-		return (0);
-	}
-	else
+	i = 0;
+	if (!env)
 		return (1);
+	while (env[i])
+		printf("%s\n", env[i++]);
+	return (0);
 }
 
-// int	main()
+// int	main(int ac, char **av, char **envp)
 // {
-// 	ft_pwd();
+// 	env(envp);
 // }

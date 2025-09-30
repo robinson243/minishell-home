@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:07:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:29:41 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include "./libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
-
+# include "limits.h"
 
 
 # define WORD 0
