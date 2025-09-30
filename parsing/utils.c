@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:53:24 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:54:44 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*append_char(char *str, char c)
 	int		i;
 
 	i = 0;
-	new_str = malloc(sizeof(char) * (ft_len(str) + 2));
+	new_str = malloc(sizeof(char) * (ft_strlen(str) + 2));
 	if (!new_str)
 		return (NULL);
 	while (str && str[i])
