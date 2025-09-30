@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:45:55 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:56:33 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:25:20 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,4 @@ int	env(char **env)
 	return (0);
 }
 
-// int	main(int ac, char **av, char **envp)
-// {
-// 	env(envp);
-// }
+

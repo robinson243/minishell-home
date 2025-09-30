@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 16:03:05 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:18:06 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,6 @@ void	print_list(t_node *lst);
 int		args_content(t_node **data, char *line);
 int		all_parsing(t_globale **data, char *line);
 t_cmd	*ft_lstnew_cmd(int nb_inf, int nb_out, int nb_cmd);
+int		ft_pwd(void);
 
 #endif
