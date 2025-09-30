@@ -6,12 +6,11 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 12:50:40 by romukena          #+#    #+#             */
-/*   Updated: 2025/09/30 13:55:28 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:14:26 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 void	free_all(char **av, int ac)
 {
@@ -30,21 +29,22 @@ char **make_line(int ac, char **av)
 	int	j;
 	char	**tab;
 	j = 0;
-	tab = malloc(sizeof(char *) * (ac + 1));
+	tab = malloc(sizeof(char *) * (ac));
 	if (!tab)
 		return (NULL);
 	i = 1;
 	while (i < ac)
 	{
 		tab[j] = ft_strdup(av[i]);
-		if (!av[i])
+		if (!tab[j])
 		{
-			free_all(tab, ac);
+			free_all(tab, j);
 			return (NULL);
 		}
 		j++;
 		i++;
 	}
+	tab[j] = NULL;
 	return (tab);
 }
 
