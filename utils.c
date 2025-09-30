@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/28 20:10:14 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:28:56 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	ft_len(char *str)
 		i++;
 	return (i);
 }
+
 char	*ft_strdup(char	*s)
 {
 	char	*str;
@@ -92,6 +93,26 @@ int	ft_lstadd_back(t_node **lst, t_node *new)
 	return (1);
 }
 
+int	ft_add_cmd(t_cmd **lst, t_cmd *new)
+{
+	t_cmd	*current;
+
+	if (!lst || !new)
+		return (0);
+	if (*lst == NULL)
+	{
+		*lst = new;
+		(*lst)->next = NULL;
+		return (1);
+	}
+	current = *lst;
+	while (current->next != NULL)
+		current = current->next;
+	current->next = new;
+	return (1);
+}
+
+
 void	ft_lstclear(t_node **lst)
 {
 	t_node	*current;
@@ -118,6 +139,22 @@ t_node	*ft_lstnew(char *str, int types)
 		return (NULL);
 	s->content = ft_strdup(str);
 	s->type = types;
+	s->next = NULL;
+	return (s);
+}
+
+t_cmd	*ft_lstnew_cmd(int nb_inf, int nb_out, int nb_cmd)
+{
+	t_cmd	*s;
+
+	s = malloc(sizeof(t_cmd));
+	if (s == NULL)
+		return (NULL);
+	s->infiles = malloc(sizeof(int) * nb_inf);
+	s->outfiles = malloc(sizeof(int) * nb_out);
+	s->command = malloc(sizeof(char *) * (nb_cmd + 1));
+	if (!s->infiles || !s->outfiles || !s->command)
+		return (NULL);
 	s->next = NULL;
 	return (s);
 }
