@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 16:27:21 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 14:41:21 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:06:37 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ int	args_content(t_node **node, char *line)
 			str = append_char(str, line[i++]);
 		if (line[i] == ' ')
 			i++;
-		if (!ft_lstadd_back(node, ft_lstnew(str, arg_type(str))))
-			return (ft_lstclear(node), 1);
+		if (!ft_lstaddback(node, ftlstnew(str, arg_type(str))))
+			return (ftlstclear(node), 1);
 		free(str);
 		str = NULL;
 	}
@@ -88,6 +88,6 @@ int	main(int ac, char **av)
 		free(line);
 	}
 	print_list(data->node);
-	ft_lstclear(&data->node);
+	ftlstclear(&data->node);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 18:11:39 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 14:44:33 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:08:07 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ int	quote(char *line)
 
 int	pars(char *line)
 {
-	if (line[0] == '|' || line[ft_len(line) - 1] == '|'
-		|| line[ft_len(line) - 1] == '>' || line[ft_len(line) - 1] == '<')
+	if (line[0] == '|' || line[ft_strlen(line) - 1] == '|'
+		|| line[ft_strlen(line) - 1] == '>' || line[ft_strlen(line) - 1] == '<')
 	{
 		printf("minishell: syntaxe error near unexpected token: `|'\n");
 		return (1);

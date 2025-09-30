@@ -3,42 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 14:38:59 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:09:21 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	ft_len(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str && str[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strdup(char	*s)
-{
-	char	*str;
-	int		i;
-
-	str = malloc(sizeof(char) + ft_len(s));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (s[i])
-	{
-		str[i] = s[i];
-		i++;
-	}
-	str[i] = 0;
-	return (str);
-}
 
 char	*append_char(char *str, char c)
 {
@@ -46,7 +18,7 @@ char	*append_char(char *str, char c)
 	int		i;
 
 	i = 0;
-	new_str = malloc(sizeof(char) * (ft_len(str) + 2));
+	new_str = malloc(sizeof(char) * (ft_strlen(str) + 2));
 	if (!new_str)
 		return (NULL);
 	while (str && str[i])
@@ -74,7 +46,7 @@ int	verif(int c, char *str)
 	return (1);
 }
 
-int	ft_lstadd_back(t_node **lst, t_node *new)
+int	ft_lstaddback(t_node **lst, t_node *new)
 {
 	t_node	*current;
 
@@ -113,7 +85,7 @@ int	ft_add_cmd(t_cmd **lst, t_cmd *new)
 }
 
 
-void	ft_lstclear(t_node **lst)
+void	ftlstclear(t_node **lst)
 {
 	t_node	*current;
 
@@ -130,7 +102,7 @@ void	ft_lstclear(t_node **lst)
 	*lst = NULL;
 }
 
-t_node	*ft_lstnew(char *str, int types)
+t_node	*ftlstnew(char *str, int types)
 {
 	t_node	*s;
 

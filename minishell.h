@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 14:41:33 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:07:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,11 @@ typedef struct s_globale
 	struct s_node	*node;
 }					t_globale;
 
-int		ft_len(char *str);
 char	*append_char(char *str, char c);
 int		verif(int c, char *str);
-int		ft_lstadd_back(t_node **lst, t_node *new);
-t_node	*ft_lstnew(char *str, int types);
-void	ft_lstclear(t_node **lst);
+int		ft_lstaddback(t_node **lst, t_node *new);
+t_node	*ftlstnew(char *str, int types);
+void	ftlstclear(t_node **lst);
 void	print_list(t_node *lst);
 int		args_content(t_node **data, char *line);
 int		all_parsing(t_globale **data, char *line);
