@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 16:27:21 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:06:54 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:45:49 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ int	args_content(t_node **data, char *line)
 			str = append_char(str, line[i++]);
 		if (line[i] == ' ')
 			i++;
-		if (!ft_lstadd_back(data, ft_lstnew(str, arg_type(str))))
-			return (ft_lstclear(data), 0);
+		if (!ft_lstaddback(data, ftlstnew(str, arg_type(str))))
+			return (ftlstclear(data), 0);
 		free(str);
 		str = NULL;
 	}
@@ -90,6 +90,6 @@ int	main(int ac, char **av)
 		free(line);
 	}
 	print_list(data);
-	ft_lstclear(&data);
+	ftlstclear(&data);
 	return (0);
 }

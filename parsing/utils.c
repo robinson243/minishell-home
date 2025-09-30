@@ -6,21 +6,12 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:06:42 by romukena         ###   ########.fr       */
+/*   Updated: 2025/09/30 15:52:54 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_len(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str && str[i])
-		i++;
-	return (i);
-}
 char	*ft_strdup(char	*s)
 {
 	char	*str;
@@ -73,7 +64,7 @@ int	verif(int c, char *str)
 	return (1);
 }
 
-int	ft_lstadd_back(t_node **lst, t_node *new)
+int	ft_lstaddback(t_node **lst, t_node *new)
 {
 	t_node	*current;
 
