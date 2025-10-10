@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/10 14:33:27 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/10 15:41:08 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	add_node(t_node **head, t_node *new)
 	current->next = new;
 }
 
-void	free_node(t_node **head)
+void	clear_nodes(t_node **head)
 {
 	t_node	*current;
 	t_node *tmp;
@@ -106,6 +106,28 @@ int	ft_isspace(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n'
 		|| c == '\v' || c == '\f' || c == '\r');
+}
+
+
+void	print_list(t_node **head)
+{
+	t_node	*tmp;
+
+	if (!head || !*head)
+	{
+		printf("(liste vide)\n");
+		return ;
+	}
+	tmp = *head;
+	while (tmp)
+	{
+		printf("[%d] ", tmp->index);
+		if (tmp->content)
+			printf("%s\n", tmp->content);
+		else
+			printf("(null)\n");
+		tmp = tmp->next;
+	}
 }
 
 
@@ -135,7 +157,6 @@ int	main(void)
 	int		j;
 	int		k;
 	char	*str;
-	char *tmp;
 	t_node	*head = NULL;
 	
 	i = 0;
@@ -144,23 +165,26 @@ int	main(void)
 	str = "echo \"salut les gens\" ";
 	while (str[i])
 	{
+		if (str[i] == '"' && single_double_quotes(str))
+		{
+			k = i;
+			k++;
+			while (str[k] != '"')
+				k++;
+			add_node(&head, create_node(ft_substr(str, i, k - i + 1)));
+			k++;
+		}
+		i = k;
 		while (str[i] && ft_isspace(str[i]))
 			i++;
 		j = i;
 		while (str[i] && !ft_isspace(str[i]))
 			i++;
-		if (j >= i)
-			continue ;
-		head->content = ft_substr(i, j, j - i);
-		if (!head->content)
-		{
-			
-		}
-		
-		
-		
-		
+		if (i > j)
+			add_node(&head, create_node(ft_substr(str, j, i - j)));
 		i++;
 	}
+	print_list(&head);
+	clear_nodes(&head);
 	return (0);
 }
