@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/10 14:24:03 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/10 14:33:27 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,18 @@ void	add_node(t_node **head, t_node *new)
 
 void	free_node(t_node **head)
 {
-	
+	t_node	*current;
+	t_node *tmp;
+	if (*head == NULL)
+		return ;
+	current = *head;
+	while (current)
+	{
+		tmp = current->next;
+		free(current->content);
+		free(current);
+		current = tmp;
+	}
 }
 
 int	ft_isspace(char c)
@@ -141,7 +152,11 @@ int	main(void)
 		if (j >= i)
 			continue ;
 		head->content = ft_substr(i, j, j - i);
+		if (!head->content)
+		{
 			
+		}
+		
 		
 		
 		
