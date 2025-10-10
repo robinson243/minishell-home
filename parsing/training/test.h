@@ -11,19 +11,26 @@
 # include <string.h>
 # include <unistd.h>
 
+# define WORD 0
+# define PIPE 1
+# define REDIR_IN 2
+# define REDIR_OUT 3
+# define REDIR_APPEND 4
+# define HEREDOC 5
+
 typedef struct s_files
 {
 	int	fd;
 	struct s_files *next;
 }	t_files;
 
-typedef struct s_cmd
+typedef struct s_node
 {
-	char *word;
-	bool mode_in_quote;
-	char quote;
-	struct s_cmd *next;
-}	t_cmd;
+	int type;
+	char *content;
+	int index;
+	struct s_node *next;
+}	t_node;
 
 
 

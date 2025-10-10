@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/09 20:21:43 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/10 14:24:03 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,73 +59,93 @@ void	free_all(char **tab)
 } */
 
 
-void	print_list(t_cmd **head)
+t_node	*create_node(char *content)
 {
-	t_cmd *tmp;
-	if (!head || !*head)
-	{
-		printf("(liste vide)\n");
-		return ;
-	}
-	tmp = *head;
-	while (tmp)
-	{
-		if (tmp->word)
-			printf("%s -> ", tmp->word);
-		else
-			printf("(null) -> ");
-		tmp = tmp->next;
-	}
-	printf("NULL\n");
-}
+	t_node	*node;
 
-t_cmd	*create_node(char *str, bool mode)
-{
-	t_cmd	*new;
-
-	new = malloc(sizeof(t_cmd));
-	if (!new)
+	node = malloc(sizeof(t_node));
+	if (!node)
 		return (NULL);
-	new->word = str;
-	new->mode_in_quote = mode;
-	new->next = NULL;
-	return (new);
+	node->content = content;
+	node->next = NULL;
+	return (node);
 }
 
-void	append_node(t_cmd **head, char *str, bool mode)
+void	add_node(t_node **head, t_node *new)
 {
-	t_cmd	*new;
-	t_cmd	*temp;
+	t_node	*current;
 
-	new = create_node(str, mode);
-	if (!*head)
+	if (*head == NULL)
 	{
 		*head = new;
 		return ;
 	}
-	temp = *head;
-	while (temp->next)
-		temp = temp->next;
-	temp->next = new;
+	current = *head;
+	while (current->next != NULL)
+		current = current->next;
+	current->next = new;
+}
+
+void	free_node(t_node **head)
+{
+	
+}
+
+int	ft_isspace(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\r');
+}
+
+
+int	single_double_quotes(char *str)
+{
+	int	i;
+	int single_quote;
+	int double_quotes;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '"')
+			double_quotes++;
+		if (str[i] == '\'')
+			single_quote++;
+		i++;
+	}
+	if ((single_quote + double_quotes) % 2 == 0 )
+		return (1);
+	return (-1);
 }
 
 int	main(void)
 {
-	t_cmd	*head = NULL;
-	int		i;
-	bool	mode;
-	char	*str;
 
+	int		i;
+	int		j;
+	int		k;
+	char	*str;
+	char *tmp;
+	t_node	*head = NULL;
+	
 	i = 0;
+	j = 0;
+	k = 0;
 	str = "echo \"salut les gens\" ";
-	mode = false;
 	while (str[i])
 	{
-		if (str[i] == '"')
-			mode = !mode;
-		append_node(&head, NULL, mode);
+		while (str[i] && ft_isspace(str[i]))
+			i++;
+		j = i;
+		while (str[i] && !ft_isspace(str[i]))
+			i++;
+		if (j >= i)
+			continue ;
+		head->content = ft_substr(i, j, j - i);
+			
+		
+		
+		
 		i++;
 	}
-	print_list(&head);
 	return (0);
 }
