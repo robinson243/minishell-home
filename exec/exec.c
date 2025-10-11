@@ -4,7 +4,12 @@ void	skip_file(t_globale *data, t_cmd *cmd)
 {
 	int	i;
 
-	i = 1;
+	i = 0;
+	while (cmd->skipfile[i])
+	{
+		my_open(cmd->skipfile[i]);
+		close(cmd->skipfile[i]);
+	}
 }
 
 void	next(t_cmd *cmd)
@@ -106,6 +111,7 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 	signal = fork();
 	if (signal)
 	{
+		skip_file(data, cmd);
 		redir_in_out(cmd);
 		do_cmd(cmd, data);
 		exit(127);
