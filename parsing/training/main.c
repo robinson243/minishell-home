@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/10 15:41:08 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/12 01:03:13 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,13 @@ void	free_all(char **tab)
 	return (0);
 } */
 
+
+int	is_space(char c)
+{
+	if ((c >= 9 && c <= 13) || c == 32)
+		return (1);
+	return (0);
+}
 
 t_node	*create_node(char *content)
 {
@@ -130,60 +137,36 @@ void	print_list(t_node **head)
 	}
 }
 
-
-int	single_double_quotes(char *str)
+t_node *lexer(char *input, t_node **head)
 {
-	int	i;
-	int single_quote;
-	int double_quotes;
+	int		i;
+	int		j;
+	char *word;
 	i = 0;
-	while (str[i])
+	while (input[i])
 	{
-		if (str[i] == '"')
-			double_quotes++;
-		if (str[i] == '\'')
-			single_quote++;
-		i++;
+		while (is_space(input[i]))
+			i++;
+		if (!is_space(input[i]))
+			j = i;
+		while (input[i] && !is_space(input[i]))
+			i++;
+		if (j < i)
+			add_node(head, create_node(ft_substr(input, j, (i - j))));
 	}
-	if ((single_quote + double_quotes) % 2 == 0 )
-		return (1);
-	return (-1);
+	return (*head);
 }
 
 int	main(void)
 {
-
-	int		i;
-	int		j;
-	int		k;
 	char	*str;
-	t_node	*head = NULL;
+	t_node	*head;
+
+	head = NULL;
 	
-	i = 0;
-	j = 0;
-	k = 0;
-	str = "echo \"salut les gens\" ";
-	while (str[i])
-	{
-		if (str[i] == '"' && single_double_quotes(str))
-		{
-			k = i;
-			k++;
-			while (str[k] != '"')
-				k++;
-			add_node(&head, create_node(ft_substr(str, i, k - i + 1)));
-			k++;
-		}
-		i = k;
-		while (str[i] && ft_isspace(str[i]))
-			i++;
-		j = i;
-		while (str[i] && !ft_isspace(str[i]))
-			i++;
-		if (i > j)
-			add_node(&head, create_node(ft_substr(str, j, i - j)));
-		i++;
-	}
+	str = "echo salut les gens test yo ";
+
+	lexer(str,&head );
 	print_list(&head);
 	clear_nodes(&head);
 	return (0);
