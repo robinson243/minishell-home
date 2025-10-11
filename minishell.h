@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/07 16:12:04 by dems             ###   ########.fr       */
+/*   Updated: 2025/10/11 20:50:42 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "limits.h"
+# include "stdbool.h"
 
 
 # define WORD 0
@@ -53,10 +54,10 @@
 
 typedef struct s_file
 {
-	char						*path;
-	int							fd;
-	int							way_open;
-	struct s_file		*next;
+	char			*path;
+	int				fd;
+	int				way_open;
+	struct s_file	*next;
 }					t_file;
 
 typedef struct s_node
@@ -71,16 +72,23 @@ typedef struct s_cmd
 {
 	char			**command;
 	char			*path;
-	t_file			*skipfile;
-	int				inf;
-	int				*outfiles;
-	int				out;
+	char			**skipfile;
+	int				nb_infile;
+	int				nb_outfile;
+	char			*lim;
+	bool			here_doc;
+	char			*inf;
+	char			*out;
+	int				prev_nb;
 	int				p_nb[2];
+	bool			first;
+	char			**env;
 	struct s_cmd	*next;
 }					t_cmd;
 
 typedef struct s_globale
 {
+	char			**env;
 	struct s_cmd	*cmd;
 	struct s_node	*node;
 }					t_globale;
@@ -95,5 +103,6 @@ int		args_content(t_node **data, char *line);
 int		all_parsing(t_globale **data, char *line);
 t_cmd	*ft_lstnew_cmd(int nb_inf, int nb_out, int nb_cmd);
 int		ft_pwd(void);
+void	my_close(int fd1, int fd2, int fd3, int fd4);
 
 #endif
