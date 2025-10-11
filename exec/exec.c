@@ -51,8 +51,8 @@ char	*get_path(char **env, char *cmd)
 
 void	do_cmd(t_cmd *cmd, t_globale *data)
 {
-	if (is_builtin(cmd->command[0]))
-		return (do_builtin(cmd));
+	// if (is_builtin(cmd->command[0]))
+	// 	return (do_builtin(cmd));
 	if (access(cmd->command[0], F_OK | X_OK) == 0)
 	{
 		cmd->path = ft_strdup(cmd->command[0]);

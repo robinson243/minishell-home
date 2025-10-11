@@ -6,20 +6,20 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:09:44 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/11 19:43:05 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/11 21:16:58 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	nb_type(t_node *node, int type, int stop)
+int	nb_type(t_node *node, int type)
 {
 	t_node	*temp;
 	int		i;
 
 	i = 0;
 	temp = node;
-	while (temp != NULL && temp->type != stop)
+	while (temp != NULL)
 	{
 		if (temp->type == type)
 			i++;
@@ -36,7 +36,7 @@ char	**remp_command(t_node *data)
 
 	i = 0;
 	temp = data;
-	str = malloc(sizeof(char *) * (nb_type(data, WORD, NULL) + 1));
+	str = malloc(sizeof(char *) * (nb_type(data, WORD) + 1));
 	if (!str)
 		return (NULL);
 	while (temp != NULL)
@@ -69,14 +69,14 @@ char	**remp_skipfile(t_node *data, int nb_out, int nb_in)
 		return (NULL);
 	while (temp != NULL)
 	{
-		if (temp->content == OUTFILE && i < nb_out - 1)
+		if (temp->type == OUTFILE && i < nb_out - 1)
 		{
 			str[i + j] = ft_strdup(temp->content);
 			if (!str[i + j])
 				return (NULL);
 			i++;
 		}
-		if (temp->content == INFILE && j < nb_in - 1)
+		if (temp->type == INFILE && j < nb_in - 1)
 		{
 			str[i + j] = ft_strdup(temp->content);
 			if (!str[i + j])
@@ -93,17 +93,17 @@ void	do_struct(t_node *data)
 {
 	t_cmd	*commande;
 
-	commande->nb_infile = nb_type(data, INFILE, NULL);
-	commande->nb_outfile = nb_type(data, OUTFILE, NULL);
+	commande->nb_infile = nb_type(data, INFILE);
+	commande->nb_outfile = nb_type(data, OUTFILE);
 	commande->command = remp_command(data);
 	if (commande->nb_outfile >= 2 || commande->nb_infile >= 2)
 		commande->skipfile = remp_skipfile(data, commande->nb_infile, commande->nb_outfile);
 	if (commande->nb_infile)
-		commande->inf = get_inf();
+		commande->inf = get_file(data, INFILE, commande->nb_infile);
 	else
 		commande->inf = NULL;
 	if (commande->nb_outfile)
-		commande->out = get_out();
+		commande->out = get_file(data, OUTFILE, commande->nb_outfile);
 	else
 		commande->out = NULL;
 }
