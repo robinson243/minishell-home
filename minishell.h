@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 18:18:06 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:12:04 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,15 @@
 // 	OUTFILE,
 // };
 
+
+typedef struct s_file
+{
+	char						*path;
+	int							fd;
+	int							way_open;
+	struct s_file		*next;
+}					t_file;
+
 typedef struct s_node
 {
 	int				type;
@@ -62,7 +71,7 @@ typedef struct s_cmd
 {
 	char			**command;
 	char			*path;
-	int				*infiles;
+	t_file			*skipfile;
 	int				inf;
 	int				*outfiles;
 	int				out;
