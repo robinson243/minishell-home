@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/12 11:19:49 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/12 19:32:10 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ void	free_all(char **tab)
 	clear_history();
 	return (0);
 } */
-
-
 int	is_space(char c)
 {
 	if ((c >= 9 && c <= 13) || c == 32)
@@ -96,7 +94,8 @@ void	add_node(t_node **head, t_node *new)
 void	clear_nodes(t_node **head)
 {
 	t_node	*current;
-	t_node *tmp;
+	t_node	*tmp;
+
 	if (*head == NULL)
 		return ;
 	current = *head;
@@ -111,10 +110,9 @@ void	clear_nodes(t_node **head)
 
 int	ft_isspace(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n'
-		|| c == '\v' || c == '\f' || c == '\r');
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
+		|| c == '\r');
 }
-
 
 void	print_list(t_node **head)
 {
@@ -137,25 +135,23 @@ void	print_list(t_node **head)
 	}
 }
 
-int	bettween_quotes(char *str, char quotes)
+char	*inquote(char *str, int pos)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while (str[i] != quotes)
+	while (str[i] && str[i] != '"')
 		i++;
-	if (str[i] == quotes)
-		return (i);
-	return (-1);
+	if (str[i] == '"')
+		return (ft_substr(str, pos, i - pos));
+	return (NULL);
 }
 
-t_node *lexer(char *input, t_node **head)
+t_node	*lexer(char *input, t_node **head)
 {
-	int		i;
-	int		j;
-	bool mode;
+	int	i;
+	int	j;
 
-	mode = false;
 	i = 0;
 	while (input[i])
 	{
@@ -164,33 +160,31 @@ t_node *lexer(char *input, t_node **head)
 		if (!is_space(input[i]))
 			j = i;
 		while (input[i] && !is_space(input[i]))
+		{
+			if (input[i] == '"')
+			{
+				j = i + 1;
+				i++;
+				while (input[i] && input[i] != '"')
+					i++;
+			}
 			i++;
+		}
 		if (j < i)
 			add_node(head, create_node(ft_substr(input, j, (i - j))));
 	}
 	return (*head);
 }
 
-// int	main(void)
-// {
-// 	char	*str;
-// 	t_node	*head;
-
-// 	head = NULL;
-	
-// 	str = "echo salut les gens test yo ";
-
-// 	lexer(str,&head );
-// 	print_list(&head);
-// 	clear_nodes(&head);
-// 	return (0);
-// }
-
-
-int main(void)
+int	main(void)
 {
-	char *str = {"echo salut \"les gens test yo "};
-	int *tab;
-	tab = bettween_quotes(str, '"');
-	printf("tab[0] est %d et tab[1] est %d \n %s", tab[0], tab[1], str);
+	char	*str;
+	t_node	*head;
+
+	head = NULL;
+	str = "echo \"bonjour le monde\"";
+	lexer(str, &head);
+	print_list(&head);
+	clear_nodes(&head);
+	return (0);
 }

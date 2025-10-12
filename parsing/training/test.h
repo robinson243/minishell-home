@@ -33,6 +33,4 @@ typedef struct s_node
 }	t_node;
 
 
-
-
 #endif
