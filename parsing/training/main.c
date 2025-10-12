@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/12 01:03:13 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/12 11:19:49 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,11 +137,25 @@ void	print_list(t_node **head)
 	}
 }
 
+int	bettween_quotes(char *str, char quotes)
+{
+	int i;
+
+	i = 0;
+	while (str[i] != quotes)
+		i++;
+	if (str[i] == quotes)
+		return (i);
+	return (-1);
+}
+
 t_node *lexer(char *input, t_node **head)
 {
 	int		i;
 	int		j;
-	char *word;
+	bool mode;
+
+	mode = false;
 	i = 0;
 	while (input[i])
 	{
@@ -157,17 +171,26 @@ t_node *lexer(char *input, t_node **head)
 	return (*head);
 }
 
-int	main(void)
-{
-	char	*str;
-	t_node	*head;
+// int	main(void)
+// {
+// 	char	*str;
+// 	t_node	*head;
 
-	head = NULL;
+// 	head = NULL;
 	
-	str = "echo salut les gens test yo ";
+// 	str = "echo salut les gens test yo ";
 
-	lexer(str,&head );
-	print_list(&head);
-	clear_nodes(&head);
-	return (0);
+// 	lexer(str,&head );
+// 	print_list(&head);
+// 	clear_nodes(&head);
+// 	return (0);
+// }
+
+
+int main(void)
+{
+	char *str = {"echo salut \"les gens test yo "};
+	int *tab;
+	tab = bettween_quotes(str, '"');
+	printf("tab[0] est %d et tab[1] est %d \n %s", tab[0], tab[1], str);
 }
