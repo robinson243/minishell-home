@@ -6,24 +6,11 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/12 19:32:10 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/13 02:29:15 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
-
-void	free_all(char **tab)
-{
-	int	i;
-
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-}
 
 /* int	main(int ac, char **av)
 {
@@ -147,6 +134,39 @@ char	*inquote(char *str, int pos)
 	return (NULL);
 }
 
+char	*extract_quoted(char *str, int *i)
+{
+	int		j;
+	char	*res;
+
+	j = i + 1;
+	(*i)++;
+	while (str[*i] && str[*i] != '"')
+	{
+		(*i)++;
+	}
+	if (str[*i] == '\0')
+		return (NULL);
+	res = ft_substr(str, j, (*i - j));
+	(*i)++;
+	return (res);
+}
+
+char	*extract_word(char *str, int *i)
+{
+	int		j;
+	char	*res;
+
+	while (is_space(str[*i]))
+		(*i)++;
+	if (!is_space(str[*i]))
+		j = *i;
+	while (str[*i] && !is_space(str[*i]))
+		(*i)++;
+	res = ft_substr(str, j, (*i - j));
+	return (res);
+}
+
 t_node	*lexer(char *input, t_node **head)
 {
 	int	i;
@@ -170,6 +190,8 @@ t_node	*lexer(char *input, t_node **head)
 			}
 			i++;
 		}
+		if (input[i] == '"' && j < i)
+			add_node(head, create_node(ft_substr(input, j, ((i - 1) - j))));
 		if (j < i)
 			add_node(head, create_node(ft_substr(input, j, (i - j))));
 	}
