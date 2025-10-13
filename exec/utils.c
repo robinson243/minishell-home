@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/11 21:15:13 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:52:55 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*ft_strslashjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-char	*get_file(t_node *data, int type, int nb_file)
+t_file	*get_file(t_node *data, int type, int nb_file)
 {
 	int		i;
 	t_node	*tmp;

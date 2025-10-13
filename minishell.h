@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/11 20:50:42 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/13 19:45:07 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # define LIM 6
 # define INFILE 7
 # define OUTFILE 8
+# define OUT_APPEND 9
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
 
@@ -57,6 +58,7 @@ typedef struct s_file
 	char			*path;
 	int				fd;
 	int				way_open;
+	int				ordre;
 	struct s_file	*next;
 }					t_file;
 
@@ -68,23 +70,34 @@ typedef struct s_node
 	struct s_node	*next;
 }					t_node;
 
+
+typedef struct s_list
+{
+	int				way_open;
+	char			*path;
+	struct s_list 	*next;
+}				t_list;
+
 typedef struct s_cmd
 {
+	int				type;
 	char			**command;
-	char			*path;
-	char			**skipfile;
-	int				nb_infile;
-	int				nb_outfile;
-	char			*lim;
-	bool			here_doc;
-	char			*inf;
-	char			*out;
-	int				prev_nb;
 	int				p_nb[2];
+	int				prev_nb;
 	bool			first;
-	char			**env;
+	bool			skip_cmd;
+	t_list			*list;
 	struct s_cmd	*next;
 }					t_cmd;
+
+// typedef struct s_cmd
+// {
+// 	char			**command;
+// 	int				prev_nb;
+// 	bool			first;
+// 	bool			skip_cmd;
+// 	struct s_cmd	*next;
+// }					t_cmd;
 
 typedef struct s_globale
 {
@@ -104,5 +117,8 @@ int		all_parsing(t_globale **data, char *line);
 t_cmd	*ft_lstnew_cmd(int nb_inf, int nb_out, int nb_cmd);
 int		ft_pwd(void);
 void	my_close(int fd1, int fd2, int fd3, int fd4);
+void	free_all(char **str);
+char	*ft_strslashjoin(char const *s1, char const *s2);
+char	*get_file(t_node *data, int type, int nb_file);
 
 #endif
