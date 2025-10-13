@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/13 02:29:15 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/13 03:30:52 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,24 +122,12 @@ void	print_list(t_node **head)
 	}
 }
 
-char	*inquote(char *str, int pos)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i] != '"')
-		i++;
-	if (str[i] == '"')
-		return (ft_substr(str, pos, i - pos));
-	return (NULL);
-}
-
 char	*extract_quoted(char *str, int *i)
 {
 	int		j;
 	char	*res;
 
-	j = i + 1;
+	j = *i + 1;
 	(*i)++;
 	while (str[*i] && str[*i] != '"')
 	{
@@ -170,30 +158,18 @@ char	*extract_word(char *str, int *i)
 t_node	*lexer(char *input, t_node **head)
 {
 	int	i;
-	int	j;
+	char	*word;
 
 	i = 0;
 	while (input[i])
 	{
 		while (is_space(input[i]))
 			i++;
-		if (!is_space(input[i]))
-			j = i;
-		while (input[i] && !is_space(input[i]))
-		{
-			if (input[i] == '"')
-			{
-				j = i + 1;
-				i++;
-				while (input[i] && input[i] != '"')
-					i++;
-			}
-			i++;
-		}
-		if (input[i] == '"' && j < i)
-			add_node(head, create_node(ft_substr(input, j, ((i - 1) - j))));
-		if (j < i)
-			add_node(head, create_node(ft_substr(input, j, (i - j))));
+		if (input[i] == '"')
+			word = extract_quoted(input, &i);
+		else
+			word = extract_word(input, &i);
+		add_node(head, create_node(word));
 	}
 	return (*head);
 }
@@ -204,7 +180,7 @@ int	main(void)
 	t_node	*head;
 
 	head = NULL;
-	str = "echo \"bonjour le monde\"";
+	str = "echo \"bonjour le monde\" apres c'est quoi ";
 	lexer(str, &head);
 	print_list(&head);
 	clear_nodes(&head);
