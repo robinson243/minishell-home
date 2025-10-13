@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/13 18:45:18 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 01:31:09 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@
 	clear_history();
 	return (0);
 } */
-
 int	recognize_token(char *str, int *i)
 {
 	if (str[*i] == '|')
@@ -162,7 +161,17 @@ char	*extract_word(char *str, int *i)
 		return (NULL);
 	j = *i;
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
-	{	
+	{
+		if (recognize_token(str, i) != WORD)
+		{
+			if (recognize_token(str, i) == HEREDOC || recognize_token(str,
+					i) == REDIR_APPEND)
+			printf("test");
+				// return (ft_substr(str, j, 2));
+			else
+				// return (ft_substr(str, j, 1));
+				printf("test1");
+		}
 		(*i)++;
 	}
 	res = ft_substr(str, j, (*i - j));
