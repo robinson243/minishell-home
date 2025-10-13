@@ -32,5 +32,11 @@ typedef struct s_node
 	struct s_node *next;
 }	t_node;
 
+typedef struct s_cmd
+{
+	char	*cmd;
+	char	**args; 
+}	t_cmd;
+
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/13 03:30:52 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/13 18:45:18 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,23 @@
 	clear_history();
 	return (0);
 } */
+
+int	recognize_token(char *str, int *i)
+{
+	if (str[*i] == '|')
+		return (PIPE);
+	if (str[*i] == '<' && str[*i + 1] && str[*i + 1] != '<')
+		return (REDIR_IN);
+	if (str[*i] == '<' && str[*i + 1] && str[*i + 1] == '<')
+		return (HEREDOC);
+	if (str[*i] == '>' && str[*i + 1] && str[*i + 1] != '>')
+		return (REDIR_OUT);
+	if (str[*i] == '>' && str[*i + 1] && str[*i + 1] == '>')
+		return (REDIR_APPEND);
+	else
+		return (WORD);
+}
+
 int	is_space(char c)
 {
 	if ((c >= 9 && c <= 13) || c == 32)
@@ -95,12 +112,6 @@ void	clear_nodes(t_node **head)
 	}
 }
 
-int	ft_isspace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
-		|| c == '\r');
-}
-
 void	print_list(t_node **head)
 {
 	t_node	*tmp;
@@ -147,17 +158,20 @@ char	*extract_word(char *str, int *i)
 
 	while (is_space(str[*i]))
 		(*i)++;
-	if (!is_space(str[*i]))
-		j = *i;
-	while (str[*i] && !is_space(str[*i]))
+	if (!str[*i])
+		return (NULL);
+	j = *i;
+	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
+	{	
 		(*i)++;
+	}
 	res = ft_substr(str, j, (*i - j));
 	return (res);
 }
 
 t_node	*lexer(char *input, t_node **head)
 {
-	int	i;
+	int		i;
 	char	*word;
 
 	i = 0;
@@ -180,7 +194,7 @@ int	main(void)
 	t_node	*head;
 
 	head = NULL;
-	str = "echo \"bonjour le monde\" apres c'est quoi ";
+	str = "mot>guillemets";
 	lexer(str, &head);
 	print_list(&head);
 	clear_nodes(&head);
