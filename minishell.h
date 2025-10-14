@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/13 19:45:07 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/14 15:41:43 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ typedef struct s_file
 {
 	char			*path;
 	int				fd;
-	int				way_open;
+	int				type;
 	int				ordre;
 	struct s_file	*next;
 }					t_file;
@@ -73,17 +73,19 @@ typedef struct s_node
 
 typedef struct s_list
 {
-	int				way_open;
+	int				type;
+	int				fd;
 	char			*path;
 	struct s_list 	*next;
-}				t_list;
+}					t_list;
 
 typedef struct s_cmd
 {
-	int				type;
 	char			**command;
 	int				p_nb[2];
 	int				prev_nb;
+	int				infile;
+	int				outfile;
 	bool			first;
 	bool			skip_cmd;
 	t_list			*list;
