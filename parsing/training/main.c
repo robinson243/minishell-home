@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 01:31:09 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 11:51:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,25 @@ char	*extract_quoted(char *str, int *i)
 	return (res);
 }
 
+char	*extract_operator(char *str, int *i)
+{
+	int	j;
+	char	*res;
+	j = *i;
+	if (recognize_token(str, i) != WORD)
+	{
+		if (recognize_token(str, i) == REDIR_APPEND || recognize_token(str, i) == HEREDOC)
+		{
+			res = ft_substr(str, j, 2);
+			(*i)++;
+		}
+		else
+			res = ft_substr(str, j, 1);
+	}
+	(*i)++;
+	return (res);
+}
+
 char	*extract_word(char *str, int *i)
 {
 	int		j;
@@ -160,18 +179,12 @@ char	*extract_word(char *str, int *i)
 	if (!str[*i])
 		return (NULL);
 	j = *i;
+	if (recognize_token(str, i) != WORD)
+		return (extract_operator(str, i));
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
 	{
-		if (recognize_token(str, i) != WORD)
-		{
-			if (recognize_token(str, i) == HEREDOC || recognize_token(str,
-					i) == REDIR_APPEND)
-			printf("test");
-				// return (ft_substr(str, j, 2));
-			else
-				// return (ft_substr(str, j, 1));
-				printf("test1");
-		}
+		if (recognize_token(str, i) != WORD)	
+			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
 	}
 	res = ft_substr(str, j, (*i - j));
@@ -203,7 +216,7 @@ int	main(void)
 	t_node	*head;
 
 	head = NULL;
-	str = "mot>guillemets";
+	str = "mot>>guillemets";
 	lexer(str, &head);
 	print_list(&head);
 	clear_nodes(&head);
