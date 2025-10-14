@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 12:25:23 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:27:40 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,13 @@ int	recognize_token(char *str, int *i)
 {
 	if (str[*i] == '|')
 		return (PIPE);
-	if (str[*i] == '<' && str[*i + 1] && str[*i + 1] != '<')
+	if (str[*i] == '<' && str[*i + 1] != '<')
 		return (REDIR_IN);
-	if (str[*i] == '<' && str[*i + 1] && str[*i + 1] == '<')
+	if (str[*i] == '<' && str[*i + 1] == '<')
 		return (HEREDOC);
-	if (str[*i] == '>' && str[*i + 1] && str[*i + 1] != '>')
+	if (str[*i] == '>' && str[*i + 1] != '>')
 		return (REDIR_OUT);
-	if (str[*i] == '>' && str[*i + 1] && str[*i + 1] == '>')
+	if (str[*i] == '>' && str[*i + 1] == '>')
 		return (REDIR_APPEND);
 	else
 		return (WORD);
