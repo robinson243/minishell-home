@@ -13,7 +13,12 @@ int	here_doc(t_list *file)
 	pid_t	pid;
 	int		p[2];
 	char	*line;
+	int		infile;
 
+	infile = open(".tmp", O_RDONLY);
+	if (infile == -1)
+		return (-1);
+	unlink(".tmp");
 	line = NULL;
 	if (pipe(p) == -1)
 		exit(1);
@@ -38,8 +43,8 @@ int	here_doc(t_list *file)
 		close(p[1]);
 		exit(0);
 	}
-	else
-		wait_doc(pid);
+	wait_doc(pid);
+	return (infile);
 }
 
 void	next(t_cmd *cmd)
