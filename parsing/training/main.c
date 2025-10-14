@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 12:21:29 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:25:23 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ char	*extract_single_quoted(char *str, int *i)
 	}
 	if (str[*i] == '\0')
 	{
-		ft_putstr_fd("minishell: unexpected EOF while looking for matching '\"'\n",
+		ft_putstr_fd("minishell: unexpected EOF while looking for matching '\''\n",
 			2);
 		return (NULL);
 	}
@@ -180,12 +180,13 @@ char	*extract_operator(char *str, int *i)
 {
 	int		j;
 	char	*res;
+	int filter_operator;
 
+	filter_operator = recognize_token(str, i);
 	j = *i;
-	if (recognize_token(str, i) != WORD)
+	if (filter_operator!= WORD)
 	{
-		if (recognize_token(str, i) == REDIR_APPEND || recognize_token(str,
-				i) == HEREDOC)
+		if (filter_operator == REDIR_APPEND || filter_operator == HEREDOC)
 		{
 			res = ft_substr(str, j, 2);
 			(*i)++;
@@ -235,7 +236,8 @@ t_node	*lexer(char *input, t_node **head)
 			word = extract_single_quoted(input, &i);
 		else
 			word = extract_word(input, &i);
-		add_node(head, create_node(word));
+		if (word)
+			add_node(head, create_node(word));
 	}
 	return (*head);
 }
