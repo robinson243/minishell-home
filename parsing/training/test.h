@@ -35,7 +35,8 @@ typedef struct s_node
 typedef struct s_cmd
 {
 	char	*cmd;
-	char	**args; 
+	char	**args;
+	t_node *tab_cmd;
 }	t_cmd;
 
 

@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 14:30:15 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 15:17:39 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,6 +201,8 @@ char	*extract_word(char *str, int *i)
 {
 	int		j;
 	char	*res;
+	char	*tmp;
+	char	*quoted_word;
 
 	while (is_space(str[*i]))
 		(*i)++;
@@ -215,7 +217,12 @@ char	*extract_word(char *str, int *i)
 			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
 	}
-	res = ft_substr(str, j, (*i - j));
+	tmp = ft_substr(str, j, (*i - j));
+	if (str[*i] == '\'')
+		quoted_word = extract_single_quoted(str, i);
+	if (str[*i] == '"')
+		quoted_word = extract_quoted(str, i);
+	res = ft_strjoin(tmp, quoted_word);
 	return (res);
 }
 
@@ -250,7 +257,7 @@ int	main(void)
 
 	head = NULL;
 	// Test avec espaces multiples et quotes vides
-	tests = "echo>file";
+	tests = "echo he\"llo\"";
 	lexer(tests, &head);
 	print_list(&head);
 	clear_nodes(&head);
