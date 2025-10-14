@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 15:17:39 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:25:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,11 +218,20 @@ char	*extract_word(char *str, int *i)
 		(*i)++;
 	}
 	tmp = ft_substr(str, j, (*i - j));
-	if (str[*i] == '\'')
-		quoted_word = extract_single_quoted(str, i);
-	if (str[*i] == '"')
-		quoted_word = extract_quoted(str, i);
-	res = ft_strjoin(tmp, quoted_word);
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
+	{
+		if (str[*i] == '\'')
+		{
+			quoted_word = extract_single_quoted(str, i);
+			res = ft_strjoin(res, quoted_word);
+		}
+		else if (str[*i] == '"')
+		{
+			quoted_word = extract_quoted(str, i);
+			res = ft_strjoin(res, quoted_word);
+		}
+	}
+	// res = ft_strjoin(tmp, quoted_word);
 	return (res);
 }
 
