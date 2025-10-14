@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 12:27:40 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:54:56 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,40 +184,40 @@ char	*extract_operator(char *str, int *i)
 
 	filter_operator = recognize_token(str, i);
 	j = *i;
-	if (filter_operator!= WORD)
-	{
-		if (filter_operator == REDIR_APPEND || filter_operator == HEREDOC)
-		{
-			res = ft_substr(str, j, 2);
-			(*i)++;
-		}
-		else
-			res = ft_substr(str, j, 1);
-	}
-	(*i)++;
-	return (res);
+    if (filter_operator == REDIR_APPEND || filter_operator == HEREDOC)
+    {
+        res = ft_substr(str, j, 2);
+        *i += 2;
+    }
+    else if (filter_operator != WORD)
+    {
+        res = ft_substr(str, j, 1);
+        (*i)++;
+    }
+    else
+        return NULL;
+
+    return res;
 }
 
-char	*extract_word(char *str, int *i)
+char *extract_word(char *str, int *i)
 {
-	int		j;
-	char	*res;
+    int j;
+    char *res;
 
-	while (is_space(str[*i]))
-		(*i)++;
-	if (!str[*i])
-		return (NULL);
-	j = *i;
-	if (recognize_token(str, i) != WORD)
-		return (extract_operator(str, i));
-	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
-	{
-		if (recognize_token(str, i) != WORD)
-			return (ft_substr(str, j, (*i - j)));
-		(*i)++;
-	}
-	res = ft_substr(str, j, (*i - j));
-	return (res);
+    while (is_space(str[*i]))
+        (*i)++;
+    if (!str[*i])
+        return (NULL);
+    j = *i;
+
+    if (recognize_token(str, i) != WORD)
+        return extract_operator(str, i);
+    while (str[*i] && !is_space(str[*i]) && str[*i] != '"' && str[*i] != '\'')
+        (*i)++;
+
+    res = ft_substr(str, j, (*i - j));
+    return res;
 }
 
 t_node	*lexer(char *input, t_node **head)
@@ -244,13 +244,18 @@ t_node	*lexer(char *input, t_node **head)
 
 int	main(void)
 {
-	char	*str;
-	t_node	*head;
+	t_node	*head = NULL;
 
-	head = NULL;
-	str = "mot>>guillemets";
-	lexer(str, &head);
-	print_list(&head);
-	clear_nodes(&head);
+	// Test avec espaces multiples et quotes vides
+	char	*tests = {
+		"ls   -l   >   fichier.txt              "
+	};
+
+		lexer(tests, &head);
+		print_list(&head);
+		clear_nodes(&head);
+		printf("\n");
+
 	return (0);
 }
+
