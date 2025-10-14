@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 12:12:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:21:29 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,11 @@ char	*extract_quoted(char *str, int *i)
 		(*i)++;
 	}
 	if (str[*i] == '\0')
+	{
+		ft_putstr_fd("minishell: unexpected EOF while looking for matching '\"'\n",
+			2);
 		return (NULL);
+	}
 	res = ft_substr(str, j, (*i - j));
 	(*i)++;
 	return (res);
@@ -162,21 +166,26 @@ char	*extract_single_quoted(char *str, int *i)
 		(*i)++;
 	}
 	if (str[*i] == '\0')
+	{
+		ft_putstr_fd("minishell: unexpected EOF while looking for matching '\"'\n",
+			2);
 		return (NULL);
+	}
 	res = ft_substr(str, j, (*i - j));
 	(*i)++;
 	return (res);
 }
 
-
 char	*extract_operator(char *str, int *i)
 {
-	int	j;
+	int		j;
 	char	*res;
+
 	j = *i;
 	if (recognize_token(str, i) != WORD)
 	{
-		if (recognize_token(str, i) == REDIR_APPEND || recognize_token(str, i) == HEREDOC)
+		if (recognize_token(str, i) == REDIR_APPEND || recognize_token(str,
+				i) == HEREDOC)
 		{
 			res = ft_substr(str, j, 2);
 			(*i)++;
@@ -202,7 +211,7 @@ char	*extract_word(char *str, int *i)
 		return (extract_operator(str, i));
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
 	{
-		if (recognize_token(str, i) != WORD)	
+		if (recognize_token(str, i) != WORD)
 			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
 	}
