@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/14 11:51:50 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/14 12:12:25 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,25 @@ char	*extract_quoted(char *str, int *i)
 	return (res);
 }
 
+char	*extract_single_quoted(char *str, int *i)
+{
+	int		j;
+	char	*res;
+
+	j = *i + 1;
+	(*i)++;
+	while (str[*i] && str[*i] != '\'')
+	{
+		(*i)++;
+	}
+	if (str[*i] == '\0')
+		return (NULL);
+	res = ft_substr(str, j, (*i - j));
+	(*i)++;
+	return (res);
+}
+
+
 char	*extract_operator(char *str, int *i)
 {
 	int	j;
@@ -203,6 +222,8 @@ t_node	*lexer(char *input, t_node **head)
 			i++;
 		if (input[i] == '"')
 			word = extract_quoted(input, &i);
+		else if (input[i] == '\'')
+			word = extract_single_quoted(input, &i);
 		else
 			word = extract_word(input, &i);
 		add_node(head, create_node(word));
