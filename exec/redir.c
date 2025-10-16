@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/16 18:50:59 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:11:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 void	redir_in(t_cmd *cmd)
 {

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/16 20:01:19 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:15:37 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,30 +60,6 @@ char	*ft_strslashjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-t_file	*get_file(t_node *data, int type, int nb_file)
-{
-	int		i;
-	t_node	*tmp;
-	char	*file;
-
-	file = NULL;
-	i = 0;
-	tmp = data;
-	while (tmp)
-	{
-		if (i == nb_file - 1 && tmp->type == type)
-		{
-			file = ft_strdup(tmp->content);
-			if (!file)
-				exit(1);
-		}
-		else if (tmp->type == type)
-			i++;
-		tmp = tmp->next;
-	}
-	return (file);
-}
-
 int	is_builtin(t_globale *data, t_cmd *cmd)
 {
 	char	**commande;
@@ -112,7 +88,7 @@ int	do_builtin(t_globale *data, t_cmd *cmd)
 
 	commande = cmd->command;
 	if (!ft_strncmp(commande[0], "unset", INT_MAX))
-		data->env = ft_unset(cmd, data->env);
+		data->env = ft_unset(commande, data->env);
 	if (!ft_strncmp(commande[0], "exit", INT_MAX))
 		ft_exit(data, cmd);
 	if (!ft_strncmp(commande[0], "pwd", INT_MAX))

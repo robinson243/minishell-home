@@ -110,7 +110,7 @@ void	do_cmd(t_cmd *cmd, t_globale *data)
 void	exec_cmd(t_cmd *cmd, t_globale *data)
 {
 	int		signal;
-	t_list	*list;
+	t_file	*list;
 
 	list = cmd->list;
 	cmd->infile = -1;
