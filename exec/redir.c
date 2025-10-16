@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/14 16:14:00 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/16 18:50:59 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	redir_in_out(t_cmd *cmd)
 	redir_out(cmd);
 }
 
-int	my_open(t_list *list, t_cmd *cmd)
+int	my_open(t_file *list, t_cmd *cmd)
 {
 	if (!list || !list->path)
 		return (-1);

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/14 15:41:43 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:00:52 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ typedef struct s_file
 	char			*path;
 	int				fd;
 	int				type;
-	int				ordre;
 	struct s_file	*next;
 }					t_file;
 
@@ -71,13 +70,13 @@ typedef struct s_node
 }					t_node;
 
 
-typedef struct s_list
-{
-	int				type;
-	int				fd;
-	char			*path;
-	struct s_list 	*next;
-}					t_list;
+// typedef struct s_list
+// {
+// 	int				type;
+// 	int				fd;
+// 	char			*path;
+// 	struct s_list 	*next;
+// }					t_list;
 
 typedef struct s_cmd
 {
@@ -88,7 +87,8 @@ typedef struct s_cmd
 	int				outfile;
 	bool			first;
 	bool			skip_cmd;
-	t_list			*list;
+	int				exit_code;
+	t_file			*list;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -122,5 +122,12 @@ void	my_close(int fd1, int fd2, int fd3, int fd4);
 void	free_all(char **str);
 char	*ft_strslashjoin(char const *s1, char const *s2);
 char	*get_file(t_node *data, int type, int nb_file);
-
+void	free_all(char **str);
+int		my_open(t_file *list, t_cmd *cmd);
+int		is_builtin(t_globale *data, t_cmd *cmd);
+char	**ft_unset(char **cmd, char	**env);
+void	ft_exit(t_globale *data, t_cmd *cmd);
+int		ft_pwd(void);
+int		env(char **env);
+int		ft_cd(char	**cmd, char **env);
 #endif

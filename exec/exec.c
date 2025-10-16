@@ -8,7 +8,7 @@
 // 	waitpid(pid, NULL, 0);
 // }
 
-int	here_doc(t_list *file)
+int	here_doc(t_file *file)
 {
 	pid_t	pid;
 	int		p[2];
@@ -124,7 +124,7 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 			else
 				my_close(cmd->outfile, -1, -1, -1);
 			if (!my_open(cmd->list, cmd))
-				return (0);
+				return ;
 			cmd->list = cmd->list->next;
 		}
 	}
@@ -145,6 +145,23 @@ void	exec(t_globale *data)
 	t_cmd	*cmd;
 
 	cmd = data->cmd;
+	if ((cmd && cmd->next == NULL) && is_builtin(data, cmd))
+	{
+		if (cmd->list)
+		{
+			while (cmd->list)
+			{
+				if (cmd->list->type == INFILE || cmd->list->type == HEREDOC)
+					my_close(cmd->infile, -1, -1, -1);
+				else
+					my_close(cmd->outfile, -1, -1, -1);
+				if (!my_open(cmd->list, cmd))
+					return ;
+				cmd->list = cmd->list->next;
+			}
+			do_builtin(data, cmd);
+		}
+	}
 	while (cmd)
 	{
 		if (pipe(cmd->p_nb) == -1)

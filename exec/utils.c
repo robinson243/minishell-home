@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/13 18:52:55 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:01:19 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,46 @@ t_file	*get_file(t_node *data, int type, int nb_file)
 		tmp = tmp->next;
 	}
 	return (file);
+}
+
+int	is_builtin(t_globale *data, t_cmd *cmd)
+{
+	char	**commande;
+
+	if (!cmd || !cmd->command || !cmd->command[0])
+		return (0);
+	commande = cmd->command;
+	if (!ft_strncmp(commande[0], "unset", INT_MAX))
+		return (1);
+	if (!ft_strncmp(commande[0], "exit", INT_MAX))
+		return (1);
+	if (!ft_strncmp(commande[0], "pwd", INT_MAX))
+		return (1);
+	if (!ft_strncmp(commande[0], "env", INT_MAX))
+		return (1);
+	if (!ft_strncmp(commande[0], "export", INT_MAX))
+		return (1);
+	if (!ft_strncmp(commande[0], "cd", INT_MAX))
+		return (1);
+	return (0);
+}
+
+int	do_builtin(t_globale *data, t_cmd *cmd)
+{
+	char	**commande;
+
+	commande = cmd->command;
+	if (!ft_strncmp(commande[0], "unset", INT_MAX))
+		data->env = ft_unset(cmd, data->env);
+	if (!ft_strncmp(commande[0], "exit", INT_MAX))
+		ft_exit(data, cmd);
+	if (!ft_strncmp(commande[0], "pwd", INT_MAX))
+		cmd->exit_code = ft_pwd();
+	if (!ft_strncmp(commande[0], "env", INT_MAX))
+		cmd->exit_code = env(data->env);
+	if (!ft_strncmp(commande[0], "export", INT_MAX))
+		return (1);
+	if (!ft_strncmp(commande[0], "cd", INT_MAX))
+		cmd->exit_code = ft_cd(commande, data->env);
+	return (0);
 }
