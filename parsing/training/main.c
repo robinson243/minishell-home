@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/16 12:10:49 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:31:37 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,14 +197,13 @@ char	*extract_operator(char *str, int *i)
 	(*i)++;
 	return (res);
 }
+
 char	*extract_word(char *str, int *i)
 {
 	int		j;
-	char	*res;
 	char	*tmp;
-	char	*quoted_word;
+	char	*res;
 
-	res = "";
 	while (is_space(str[*i]))
 		(*i)++;
 	if (!str[*i])
@@ -219,7 +218,17 @@ char	*extract_word(char *str, int *i)
 		(*i)++;
 	}
 	tmp = ft_substr(str, j, (*i - j));
-	if (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
+	res = handle_quote_management(tmp, str, i);
+	return (res);
+}
+
+char	*handle_quote_management(char *tmp, char *str, int *i)
+{
+	char	*quoted_word;
+	char	*res;
+
+	res = "";
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
 	{
 		if (str[*i] == '\'')
 		{
@@ -234,19 +243,6 @@ char	*extract_word(char *str, int *i)
 		else
 			res = ft_strjoin(res, extract_word(str, i));
 	}
-	// while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
-	// {
-	// 	if (str[*i] == '\'')
-	// 	{
-	// 		quoted_word = extract_single_quoted(str, i);
-	// 		res = ft_strjoin(res, quoted_word);
-	// 	}
-	// 	else if (str[*i] == '"')
-	// 	{
-	// 		quoted_word = extract_quoted(str, i);
-	// 		res = ft_strjoin(res, quoted_word);
-	// 	}
-	// }
 	res = ft_strjoin(tmp, res);
 	return (res);
 }
@@ -281,7 +277,7 @@ int	main(void)
 	char	*tests;
 
 	head = NULL;
-	tests = "echo he\"llo\"yap";
+	tests = "echo he\"llo\"yap\" youpi\"";
 	lexer(tests, &head);
 	print_list(&head);
 	clear_nodes(&head);
