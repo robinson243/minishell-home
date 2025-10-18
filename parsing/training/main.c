@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/18 16:09:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/18 17:25:48 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,6 @@ char	*extract_word(char *str, int *i)
 	{
 		if (str[*i] == '$')
 			return (handle_dollar_management(str, i));
-			// printf("test");
 		if (recognize_token(str, i) != WORD)
 			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
@@ -225,26 +224,37 @@ char	*extract_word(char *str, int *i)
 	return (res);
 }
 
+char	*go_to_next_dollard(char *str, int *i)
+{
+	int	j;
+	char	*dest;
+	(*i)++;
+	j = *i;
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]) && str[*i] != '$')
+	{
+		(*i)++;
+	}
+	dest = ft_substr(str, j, (*i - j));
+	return (dest);
+}
+
 char	*handle_dollar_management(char *str, int *i)
 {
 	int	j;
 	char	*tmp;
 	char	*res;
+	char	*dest;
 	(*i)++;
 	j = *i;
-	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
+	dest = "";
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]) && str[*i] != '$')
 	{
-		if (str[*i] == '$')
-		{
-			tmp = ft_substr(str, j, (*i - j));
-			res = ft_strdup(getenv(tmp));
-			return (res);
-		}
 		(*i)++;
 	}
 	tmp = ft_substr(str, j, (*i - j));
 	res = ft_strdup(getenv(tmp));
-	return (res);
+	dest = ft_strjoin(dest, res);
+	return (dest);
 }
 
 char	*handle_quote_management(char *tmp, char *str, int *i)
@@ -357,4 +367,12 @@ int	main(void)
 	lexer(str, &head);
 	print_list(&head);
 	clear_nodes(&head);
+
+	// printf("%s\n", getenv("HOME"));
+	// printf("%s\n", getenv("USER"));
+	// printf("%s\n", getenv("PWD"));
+
+	// "/home/romukena,
+	// romukena,
+	// /home/romukena/Documents/minishell-home/parsing/training"
 }
