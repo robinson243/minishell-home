@@ -41,6 +41,7 @@ typedef struct s_cmd
 
 
 char    *handle_quote_management(char *tmp, char *str, int *i);
+char	*handle_dollar_management(char *str, int *i);
 char	*extract_word(char *str, int *i);
 
 #endif

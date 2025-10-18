@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/16 14:54:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/18 16:09:04 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,12 +213,37 @@ char	*extract_word(char *str, int *i)
 		return (extract_operator(str, i));
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
 	{
+		if (str[*i] == '$')
+			return (handle_dollar_management(str, i));
+			// printf("test");
 		if (recognize_token(str, i) != WORD)
 			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
 	}
 	tmp = ft_substr(str, j, (*i - j));
 	res = handle_quote_management(tmp, str, i);
+	return (res);
+}
+
+char	*handle_dollar_management(char *str, int *i)
+{
+	int	j;
+	char	*tmp;
+	char	*res;
+	(*i)++;
+	j = *i;
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
+	{
+		if (str[*i] == '$')
+		{
+			tmp = ft_substr(str, j, (*i - j));
+			res = ft_strdup(getenv(tmp));
+			return (res);
+		}
+		(*i)++;
+	}
+	tmp = ft_substr(str, j, (*i - j));
+	res = ft_strdup(getenv(tmp));
 	return (res);
 }
 
@@ -275,56 +300,61 @@ int	main(void)
 {
 
 	t_node	*head;
-	char	*tests[] = {
-		"echo salut",
-		"ls",
-		"pwd",
-		"exit",
-		"echo      salut      les    gens",
-		"ls        -l",
-		"echo \"salut les gens\"",
-		"echo 'salut les gens'",
-		"echo \"bonjour 'tout' le monde\"",
-		"echo 'bonjour \"tout\" le monde'",
-		"echo \"a'b'c\"",
-		"echo 'a\"b\"c'",
-		"echo salut > out.txt",
-		"cat < in.txt",
-		"cat < in.txt > out.txt",
-		"echo salut >> out.txt",
-		"echo salut > out.txt > out2.txt",
-		"ls | wc -l",
-		"ls -l | grep minishell",
-		"cat in.txt | grep salut | wc -l",
-		"echo \"salut | les gens\"",
-		"echo salut | echo bonjour",
-		"echo \"salut\" > out.txt | cat -e",
-		"cat << EOF",
-		"echo \"salut\" 'les' \"gens\" > file.txt | cat file.txt",
-		"|",
-		"||",
-		">",
-		">>",
-		"<",
-		"<<",
-		"| echo salut",
-		"echo salut |",
-		"echo \"salut",
-		"echo 'salut",
-		NULL
-	};
-	int	i = 0;
+	// char	*tests[] = {
+	// 	"echo salut",
+	// 	"ls",
+	// 	"pwd",
+	// 	"exit",
+	// 	"echo      salut      les    gens",
+	// 	"ls        -l",
+	// 	"echo \"salut les gens\"",
+	// 	"echo 'salut les gens'",
+	// 	"echo \"bonjour 'tout' le monde\"",
+	// 	"echo 'bonjour \"tout\" le monde'",
+	// 	"echo \"a'b'c\"",
+	// 	"echo 'a\"b\"c'",
+	// 	"echo salut > out.txt",
+	// 	"cat < in.txt",
+	// 	"cat < in.txt > out.txt",
+	// 	"echo salut >> out.txt",
+	// 	"echo salut > out.txt > out2.txt",
+	// 	"ls | wc -l",
+	// 	"ls -l | grep minishell",
+	// 	"cat in.txt | grep salut | wc -l",
+	// 	"echo \"salut | les gens\"",
+	// 	"echo salut | echo bonjour",
+	// 	"echo \"salut\" > out.txt | cat -e",
+	// 	"cat << EOF",
+	// 	"echo \"salut\" 'les' \"gens\" > file.txt | cat file.txt",
+	// 	"|",
+	// 	"||",
+	// 	">",
+	// 	">>",
+	// 	"<",
+	// 	"<<",
+	// 	"| echo salut",
+	// 	"echo salut |",
+	// 	"echo \"salut",
+	// 	"echo 'salut",
+	// 	NULL
+	// };
+	// int	i = 0;
 
-	while (tests[i])
-	{
-		head = NULL;
-		printf("=== TEST %d ===\n", i + 1);
-		printf("Input: [%s]\n", tests[i]);
-		lexer(tests[i], &head);
-		print_list(&head);
-		clear_nodes(&head);
-		printf("\n");
-		i++;
-	}
-	return (0);
+	// while (tests[i])
+	// {
+	// 	head = NULL;
+	// 	printf("=== TEST %d ===\n", i + 1);
+	// 	printf("Input: [%s]\n", tests[i]);
+	// 	lexer(tests[i], &head);
+	// 	print_list(&head);
+	// 	clear_nodes(&head);
+	// 	printf("\n");
+	// 	i++;
+	// }
+	// return (0);
+	head = NULL;
+	char *str = "echo $HOME$USER$PWD $USER mam miiu";
+	lexer(str, &head);
+	print_list(&head);
+	clear_nodes(&head);
 }
