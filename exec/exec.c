@@ -10,40 +10,30 @@
 
 int	here_doc(t_file *file)
 {
-	pid_t	pid;
-	int		p[2];
 	char	*line;
 	int		infile;
 
-	infile = open(".tmp", O_RDONLY);
+	infile = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (infile == -1)
 		return (-1);
-	unlink(".tmp");
 	line = NULL;
-	if (pipe(p) == -1)
-		exit(1);
-	pid = fork();
-	if (pid == 0)
+	while (1)
 	{
-		close(p[0]);
-		while (1)
+		free(line);
+		line = readline("> ");
+		if (!line)
+			break ;
+		if (ft_strncmp(line, file->path, INT_MAX) == 0)
 		{
 			free(line);
-			line = readline("> ");
-			if (!line)
-				break ;
-			if (ft_strncmp(line, file->path, ft_strlen(file->path)) == 0
-				&& line[ft_strlen(line)] == '\n')
-			{
-				free(line);
-				exit(0);
-			}
-			write(p[1], line, ft_strlen(line));
+			break ;
 		}
-		close(p[1]);
-		exit(0);
+		write(infile, line, ft_strlen(line));
 	}
-	wait_doc(pid);
+	close(infile);
+	infile = open(".tmp", O_RDONLY);
+	if (infile != -1)
+		unlink(".tmp");
 	return (infile);
 }
 
@@ -51,10 +41,14 @@ void	next(t_cmd *cmd)
 {
 	int	tmp_fd;
 
-	tmp_fd = cmd->p_nb[0];
+	tmp_fd = -1;
+	if (cmd->next)
+		tmp_fd = cmd->p_nb[0];
 	my_close(cmd->prev_nb, -1, cmd->p_nb[1], -1);
 	if (cmd->next)
 		cmd->next->prev_nb = tmp_fd;
+	else
+		close(cmd->p_nb[0]);
 	//	x->n_pid++; // compteur de fork
 }
 
@@ -92,10 +86,13 @@ char	*get_path(char **env, char *cmd)
 
 void	do_cmd(t_cmd *cmd, t_globale *data)
 {
-	// if (is_builtin(cmd->command[0]))
-	// 	return (do_builtin(cmd));
 	char	*path;
 
+	if (is_builtin(cmd->command[0]))
+	{
+		do_builtin(data, cmd);
+		return ;
+	}
 	path = NULL;
 	if (access(cmd->command[0], F_OK | X_OK) == 0)
 		path = ft_strdup(cmd->command[0]);
@@ -107,31 +104,54 @@ void	do_cmd(t_cmd *cmd, t_globale *data)
 	exit(127);
 }
 
+int	open_file(t_cmd *cmd)
+{
+	t_file	*tmp;
+	t_cmd	*command;
+
+	command = cmd;
+	while (command)
+	{
+		tmp = command->list;
+		command->infile = -1;
+		command->outfile = -1;
+		if (!command->list)
+		{
+			command = command->next;
+			continue ;
+		}
+		while (tmp)
+		{
+			if (tmp->type == INFILE || tmp->type == HEREDOC)
+				my_close(command->infile, -1, -1, -1);
+			else
+				my_close(command->outfile, -1, -1, -1);
+			if (!my_open(tmp, command))
+			{
+				command->skip_cmd = true;
+				break ;
+			}
+			tmp = tmp->next;
+		}
+		command = command->next;
+	}
+	return (0);
+}
+
 void	exec_cmd(t_cmd *cmd, t_globale *data)
 {
-	int		signal;
 	t_file	*list;
 
-	list = cmd->list;
-	cmd->infile = -1;
-	cmd->outfile = -1;
-	if (cmd->list)
+	if (cmd->skip_cmd)
 	{
-		while (cmd->list)
-		{
-			if (cmd->list->type == INFILE || cmd->list->type == HEREDOC)
-				my_close(cmd->infile, -1, -1, -1);
-			else
-				my_close(cmd->outfile, -1, -1, -1);
-			if (!my_open(cmd->list, cmd))
-				return ;
-			cmd->list = cmd->list->next;
-		}
+		next(cmd);
+		cmd->exit_code = 1;
+		return ;
 	}
-	signal = fork();
-	if (signal == -1)
+	data->signal = fork();
+	if (data->signal == -1)
 		exit(1);
-	if (signal == 0)
+	if (data->signal == 0)
 	{
 		redir_in_out(cmd);
 		do_cmd(cmd, data);
@@ -145,26 +165,16 @@ void	exec(t_globale *data)
 	t_cmd	*cmd;
 
 	cmd = data->cmd;
-	if ((cmd && cmd->next == NULL) && is_builtin(data, cmd))
+	if ((cmd && cmd->next == NULL) && is_builtin(cmd->command[0]))
 	{
 		if (cmd->list)
-		{
-			while (cmd->list)
-			{
-				if (cmd->list->type == INFILE || cmd->list->type == HEREDOC)
-					my_close(cmd->infile, -1, -1, -1);
-				else
-					my_close(cmd->outfile, -1, -1, -1);
-				if (!my_open(cmd->list, cmd))
-					return ;
-				cmd->list = cmd->list->next;
-			}
-			do_builtin(data, cmd);
-		}
+			open_file(cmd);
+		do_builtin(data, cmd);
 	}
+	open_file(cmd);
 	while (cmd)
 	{
-		if (pipe(cmd->p_nb) == -1)
+		if (cmd->next && pipe(cmd->p_nb) == -1)
 			exit(1);
 		exec_cmd(cmd, data);
 		cmd = cmd->next;

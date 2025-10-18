@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/16 20:15:08 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/18 18:36:09 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,6 @@
 # define OUT_APPEND 9
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
-
-// enum e_token
-// {
-// 	WORD,
-// 	PIPE,
-// 	REDIR_IN,
-// 	REDIR_OUT,
-// 	REDIR_APPEND,
-// 	HEREDOC,
-// 	LIM,
-// 	INFILE,
-// 	OUTFILE,
-// };
-
 
 typedef struct s_file
 {
@@ -106,6 +92,8 @@ typedef struct s_globale
 	char			**env;
 	struct s_cmd	*cmd;
 	struct s_node	*node;
+	pid_t			signal;
+	int				exit_code;
 }					t_globale;
 
 char	*append_char(char *str, char c);
@@ -119,16 +107,18 @@ int		all_parsing(t_globale **data, char *line);
 t_cmd	*ft_lstnew_cmd(int nb_inf, int nb_out, int nb_cmd);
 int		ft_pwd(void);
 void	my_close(int fd1, int fd2, int fd3, int fd4);
-void	free_all(char **str);
 char	*ft_strslashjoin(char const *s1, char const *s2);
 void	free_all(char **str);
 int		my_open(t_file *list, t_cmd *cmd);
-int		is_builtin(t_globale *data, t_cmd *cmd);
+int		is_builtin(char	*command);
 char	**ft_unset(char **cmd, char	**env);
 void	ft_exit(t_globale *data, t_cmd *cmd);
 int		ft_pwd(void);
 int		env(char **env);
 int		ft_cd(char	**cmd, char **env);
 void	redir_in_out(t_cmd *cmd);
+int		do_builtin(t_globale *data, t_cmd *cmd);
+int		here_doc(t_file *file);
+void	redir_out(t_cmd *cmd);
 
 #endif
