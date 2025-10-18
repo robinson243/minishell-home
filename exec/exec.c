@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
+/*   Updated: 2025/10/18 18:45:07 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 // int	wait_doc(int p[2], pid_t pid)
@@ -49,7 +61,6 @@ void	next(t_cmd *cmd)
 		cmd->next->prev_nb = tmp_fd;
 	else
 		close(cmd->p_nb[0]);
-	//	x->n_pid++; // compteur de fork
 }
 
 char	*get_path(char **env, char *cmd)

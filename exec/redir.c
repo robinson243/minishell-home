@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/18 18:35:26 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/18 18:45:31 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	redir_out(t_cmd *cmd)
 	if (cmd->outfile != -1)
 		close(cmd->outfile);
 }
-	
+
 void	redir_in_out(t_cmd *cmd)
 {
 	redir_in(cmd);
