@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 15:18:05 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:56:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,6 @@
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
 
-typedef struct s_file
-{
-	char			*path;
-	int				fd;
-	int				type;
-	struct s_file	*next;
-}					t_file;
-
 typedef struct s_node
 {
 	int				type;
@@ -55,6 +47,14 @@ typedef struct s_node
 	struct s_node	*next;
 }					t_node;
 
+typedef struct s_file
+{
+	char			*path;
+	int				fd;
+	int				type;
+	struct s_file	*next;
+}					t_file;
+
 typedef struct s_cmd
 {
 	char			**command;
@@ -62,13 +62,12 @@ typedef struct s_cmd
 	int				prev_nb;
 	int				infile;
 	int				outfile;
-	bool			first;
 	bool			skip_cmd;
 	int				exit_code;
+	bool			first;
 	t_file			*list;
 	struct s_cmd	*next;
 }					t_cmd;
-
 
 typedef struct s_globale
 {
@@ -105,5 +104,8 @@ int		here_doc(t_file *file);
 void	redir_out(t_cmd *cmd);
 void	free_exit(t_globale *data, char *str, int code);
 int		ft_echo(char **args);
+int		exist(char *cmd, char **path, t_globale *data);
+char	*get_path(char **env, char *cmd, t_globale *data);
+int		open_file(t_cmd *cmd);
 
 #endif

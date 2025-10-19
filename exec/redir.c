@@ -6,11 +6,45 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/18 18:45:31 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:55:51 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	open_file(t_cmd *cmd)
+{
+	t_file	*tmp;
+	t_cmd	*command;
+
+	command = cmd;
+	while (command)
+	{
+		tmp = command->list;
+		command->infile = -1;
+		command->outfile = -1;
+		if (!command->list)
+		{
+			command = command->next;
+			continue ;
+		}
+		while (tmp)
+		{
+			if (tmp->type == INFILE || tmp->type == HEREDOC)
+				my_close(command->infile, -1, -1, -1);
+			else
+				my_close(command->outfile, -1, -1, -1);
+			if (!my_open(tmp, command))
+			{
+				command->skip_cmd = true;
+				break ;
+			}
+			tmp = tmp->next;
+		}
+		command = command->next;
+	}
+	return (0);
+}
 
 void	redir_in(t_cmd *cmd)
 {
