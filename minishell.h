@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/18 18:36:09 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:18:05 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <readline/history.h>
 # include "limits.h"
 # include "stdbool.h"
-
+# include <sys/stat.h>
 
 # define WORD 0
 # define PIPE 1
@@ -55,15 +55,6 @@ typedef struct s_node
 	struct s_node	*next;
 }					t_node;
 
-
-// typedef struct s_list
-// {
-// 	int				type;
-// 	int				fd;
-// 	char			*path;
-// 	struct s_list 	*next;
-// }					t_list;
-
 typedef struct s_cmd
 {
 	char			**command;
@@ -78,14 +69,6 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }					t_cmd;
 
-// typedef struct s_cmd
-// {
-// 	char			**command;
-// 	int				prev_nb;
-// 	bool			first;
-// 	bool			skip_cmd;
-// 	struct s_cmd	*next;
-// }					t_cmd;
 
 typedef struct s_globale
 {
@@ -120,5 +103,7 @@ void	redir_in_out(t_cmd *cmd);
 int		do_builtin(t_globale *data, t_cmd *cmd);
 int		here_doc(t_file *file);
 void	redir_out(t_cmd *cmd);
+void	free_exit(t_globale *data, char *str, int code);
+int		ft_echo(char **args);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:47:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/16 20:07:09 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:17:15 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	s_cmp(char *s1, char *s2)
 	return (s1[i] - s2[i]);
 }
 
-int	exist(char *str, char **env)
+int	existe(char *str, char **env)
 {
 	int	i;
 
@@ -103,10 +103,10 @@ char	**ft_unset(char **cmd, char	**env)
 		return (0);
 	while (cmd[i])
 	{
-		if (exist(cmd[i], env) != -1)
+		if (existe(cmd[i], env) != -1)
 		{
 			free_all(new_env);
-			new_env = unset(exist(cmd[i], env), env);
+			new_env = unset(existe(cmd[i], env), env);
 			if (!new_env)
 			{
 				perror("malloc :");

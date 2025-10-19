@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/18 18:45:07 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 15:04:27 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,14 @@ void	next(t_cmd *cmd)
 	tmp_fd = -1;
 	if (cmd->next)
 		tmp_fd = cmd->p_nb[0];
-	my_close(cmd->prev_nb, -1, cmd->p_nb[1], -1);
+	my_close(cmd->prev_nb, cmd->infile, cmd->p_nb[1], cmd->outfile);
 	if (cmd->next)
 		cmd->next->prev_nb = tmp_fd;
 	else
 		close(cmd->p_nb[0]);
 }
 
-char	*get_path(char **env, char *cmd)
+char	*get_path(char **env, char *cmd, t_globale *data)
 {
 	int		i;
 	char	**local;
@@ -76,7 +76,7 @@ char	*get_path(char **env, char *cmd)
 		{
 			local = ft_split(env[i] + 5, ':');
 			if (!local)
-				return (0);
+				data->exit_code = 1;
 		}
 		i++;
 	}
@@ -87,32 +87,69 @@ char	*get_path(char **env, char *cmd)
 	{
 		path = ft_strslashjoin(local[i++], cmd);
 		if (!path)
+		{
+			data->exit_code = 1;
 			return (free_all(local), NULL);
-		if (access(path, F_OK | X_OK) == 0)
+		}
+		if (access(path, F_OK) == 0)
 			return (free_all(local), path);
 		free(path);
 	}
 	return (free_all(local), NULL);
 }
 
+int	check_dir(char **path, char *cmd, t_globale *data)
+{
+	struct stat	path_stat;
+
+	stat(*path, &path_stat);
+	if (!S_ISREG(path_stat.st_mode))
+	{
+		write(2, cmd, ft_strlen(cmd));
+		write(2, " : Is a directory\n", 19);
+		data->exit_code = 126;
+		return (0);
+	}
+	return (1);
+}
+
+int	exist(char *cmd, char **path, t_globale *data)
+{
+	if (access(cmd, F_OK) == 0)
+	{
+		*path = ft_strdup(cmd);
+		if (!(*path))
+			data->exit_code = 1;
+	}
+	else
+		*path = get_path(data->env, cmd, data);
+	if (!(*path) && data->exit_code == 1)
+		free_exit(data, "Malloc", 1);
+	if (!(*path))
+	{
+		data->exit_code = 127;
+		return (0);
+	}
+	if (access((*path), X_OK))
+	{
+		data->exit_code = 126;
+		return (perror(*path), free((*path)), 0);
+	}
+	if (!check_dir(path, cmd, data))
+		return (0);
+	return (1);
+}
+
 void	do_cmd(t_cmd *cmd, t_globale *data)
 {
 	char	*path;
 
-	if (is_builtin(cmd->command[0]))
-	{
-		do_builtin(data, cmd);
-		return ;
-	}
 	path = NULL;
-	if (access(cmd->command[0], F_OK | X_OK) == 0)
-		path = ft_strdup(cmd->command[0]);
-	else
-		path = get_path(data->env, cmd->command[0]);
-	if (!path)
-		exit(1);
-	execve(path, cmd->command, data->env);
-	exit(127);
+	if (is_builtin(cmd->command[0]))
+		do_builtin(data, cmd);
+	else if (exist(cmd->command[0], &path, data))
+		execve(path, cmd->command, data->env);
+	free_exit(data, NULL, data->exit_code);
 }
 
 int	open_file(t_cmd *cmd)
