@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 15:55:44 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 17:42:06 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,26 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 		next(cmd);
 }
 
-void	exec(t_globale *data)
+void	wait_all(t_globale *data)
+{
+	int		signal;
+	int		status;
+	t_cmd	*tmp;
+
+	tmp = data->cmd;
+	while (tmp)
+	{
+		signal = waitpid(0, &status, 0);
+		if (signal == data->signal)
+		{
+			if (WIFEXITED(status))
+				data->exit_code = WEXITSTATUS(status);
+		}
+		tmp = tmp->next;
+	}
+}
+
+int	exec(t_globale *data)
 {
 	t_cmd	*cmd;
 
@@ -112,8 +131,10 @@ void	exec(t_globale *data)
 	while (cmd)
 	{
 		if (cmd->next && pipe(cmd->p_nb) == -1)
-			exit(1);
+			return (1);
 		exec_cmd(cmd, data);
 		cmd = cmd->next;
 	}
+	wait_all(data);
+	return (0);
 }

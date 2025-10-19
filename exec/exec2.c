@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 15:55:09 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 17:43:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int	exist(char *cmd, char **path, t_globale *data)
 {
