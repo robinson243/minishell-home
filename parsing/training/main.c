@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/18 17:25:48 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/20 07:55:56 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,12 +198,31 @@ char	*extract_operator(char *str, int *i)
 	return (res);
 }
 
+
+char	*go_to_next_dollar(char *str, int *i)
+{
+	int	j;
+	char	*tmp;
+	char	*res;
+	char	*dest;
+
+	j = *i;
+	dest = "";
+	while ()
+	{
+		/* code */
+	}
+	
+}
+
 char	*extract_word(char *str, int *i)
 {
 	int		j;
 	char	*tmp;
 	char	*res;
+	char	*dollar_string;
 
+	dollar_string = "";
 	while (is_space(str[*i]))
 		(*i)++;
 	if (!str[*i])
@@ -214,7 +233,10 @@ char	*extract_word(char *str, int *i)
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
 	{
 		if (str[*i] == '$')
-			return (handle_dollar_management(str, i));
+		{
+			tmp = handle_dollar_management(str, i);
+			dollar_string = ft_strjoin(dollar_string, tmp);
+		}
 		if (recognize_token(str, i) != WORD)
 			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
@@ -222,20 +244,6 @@ char	*extract_word(char *str, int *i)
 	tmp = ft_substr(str, j, (*i - j));
 	res = handle_quote_management(tmp, str, i);
 	return (res);
-}
-
-char	*go_to_next_dollard(char *str, int *i)
-{
-	int	j;
-	char	*dest;
-	(*i)++;
-	j = *i;
-	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]) && str[*i] != '$')
-	{
-		(*i)++;
-	}
-	dest = ft_substr(str, j, (*i - j));
-	return (dest);
 }
 
 char	*handle_dollar_management(char *str, int *i)
@@ -254,6 +262,7 @@ char	*handle_dollar_management(char *str, int *i)
 	tmp = ft_substr(str, j, (*i - j));
 	res = ft_strdup(getenv(tmp));
 	dest = ft_strjoin(dest, res);
+	printf("%c", str[*i]);
 	return (dest);
 }
 
