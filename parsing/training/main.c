@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/20 07:55:56 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/21 02:28:53 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,23 +198,6 @@ char	*extract_operator(char *str, int *i)
 	return (res);
 }
 
-
-char	*go_to_next_dollar(char *str, int *i)
-{
-	int	j;
-	char	*tmp;
-	char	*res;
-	char	*dest;
-
-	j = *i;
-	dest = "";
-	while ()
-	{
-		/* code */
-	}
-	
-}
-
 char	*extract_word(char *str, int *i)
 {
 	int		j;
@@ -232,11 +215,6 @@ char	*extract_word(char *str, int *i)
 		return (extract_operator(str, i));
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
 	{
-		if (str[*i] == '$')
-		{
-			tmp = handle_dollar_management(str, i);
-			dollar_string = ft_strjoin(dollar_string, tmp);
-		}
 		if (recognize_token(str, i) != WORD)
 			return (ft_substr(str, j, (*i - j)));
 		(*i)++;
@@ -244,26 +222,6 @@ char	*extract_word(char *str, int *i)
 	tmp = ft_substr(str, j, (*i - j));
 	res = handle_quote_management(tmp, str, i);
 	return (res);
-}
-
-char	*handle_dollar_management(char *str, int *i)
-{
-	int	j;
-	char	*tmp;
-	char	*res;
-	char	*dest;
-	(*i)++;
-	j = *i;
-	dest = "";
-	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]) && str[*i] != '$')
-	{
-		(*i)++;
-	}
-	tmp = ft_substr(str, j, (*i - j));
-	res = ft_strdup(getenv(tmp));
-	dest = ft_strjoin(dest, res);
-	printf("%c", str[*i]);
-	return (dest);
 }
 
 char	*handle_quote_management(char *tmp, char *str, int *i)
@@ -315,10 +273,54 @@ t_node	*lexer(char *input, t_node **head)
 	return (*head);
 }
 
+char	*change_sentence(char *str)
+{
+	char	**tab;
+	int		i;
+	char	*res;
+	char	*dest;
+
+	i = 0;
+	dest = "";
+	tab = ft_split(str, '$');
+	while (tab[i])
+	{
+		res = getenv(tab[i]);
+		dest = ft_strjoin(dest, res);
+		i++;
+	}
+	return (dest);
+}
+
+void	change_dollar(t_node **head)
+{
+	t_node	*tmp;
+	int		i;
+	char	*var;
+	char	*res;
+
+	tmp = *head;
+	i = 0;
+	if (!head || !*head)
+		return ;
+	while (tmp)
+	{
+		var = tmp->content;
+		if (var[0] == '$')
+		{
+			res = change_sentence(var);
+			free(tmp->content);
+			tmp->content = res;
+		}
+		tmp = tmp->next;
+	}
+}
+
 int	main(void)
 {
-
 	t_node	*head;
+	char	*str;
+
 	// char	*tests[] = {
 	// 	"echo salut",
 	// 	"ls",
@@ -358,7 +360,6 @@ int	main(void)
 	// 	NULL
 	// };
 	// int	i = 0;
-
 	// while (tests[i])
 	// {
 	// 	head = NULL;
@@ -372,15 +373,14 @@ int	main(void)
 	// }
 	// return (0);
 	head = NULL;
-	char *str = "echo $HOME$USER$PWD $USER mam miiu";
+	str = "echo $HOME$USER$PWD $USER mam miiu";
 	lexer(str, &head);
+	change_dollar(&head);
 	print_list(&head);
 	clear_nodes(&head);
-
 	// printf("%s\n", getenv("HOME"));
 	// printf("%s\n", getenv("USER"));
 	// printf("%s\n", getenv("PWD"));
-
 	// "/home/romukena,
 	// romukena,
 	// /home/romukena/Documents/minishell-home/parsing/training"
