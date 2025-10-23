@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/23 03:56:17 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:49:25 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ void	print_list(t_node **head)
 	tmp = *head;
 	while (tmp)
 	{
-		printf("[%d] ", tmp->index);
 		if (tmp->content)
 			printf("%s\n", tmp->content);
 		else
@@ -126,6 +125,29 @@ char	*expand_variables(char *str)
 	return (res);
 }
 
+char	*ft_strjoin_char(const char *s, char c)
+{
+	size_t	len;
+	char	*res;
+
+	if (!s)
+	{
+		res = malloc(2);
+		if (!res)
+			return (NULL);
+		res[0] = c;
+		res[1] = '\0';
+		return (res);
+	}
+	len = strlen(s);
+	res = malloc(len + 2);
+	if (!res)
+		return (NULL);
+	memcpy(res, s, len);
+	res[len] = c;
+	res[len + 1] = '\0';
+	return (res);
+}
 
 char	*extract_quoted(char *str, int *i)
 {

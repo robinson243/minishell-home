@@ -20,29 +20,30 @@
 
 typedef struct s_files
 {
-	int	fd;
-	struct s_files *next;
-}	t_files;
+	int				fd;
+	struct s_files	*next;
+}					t_files;
 
 typedef struct s_node
 {
-	int type;
-	char *content;
-	int index;
-	struct s_node *next;
-}	t_node;
+	int				type;
+	char			*content;
+	int				quoted;
+	struct s_node	*next;
+}					t_node;
 
 typedef struct s_cmd
 {
-	char	*cmd;
-	char	**args;
-	t_node *tab_cmd;
-}	t_cmd;
+	char			*cmd;
+	char			**args;
+	t_node			*tab_cmd;
+}					t_cmd;
 
-
-char    *handle_quote_management(char *tmp, char *str, int *i);
-char	*handle_dollar_management(char *str, int *i);
-char	*extract_word(char *str, int *i);
-char	*change_sentence(char *str);
+char				*handle_quote_management(char *tmp, char *str, int *i);
+char				*handle_dollar_management(char *str, int *i);
+char				*extract_word(char *str, int *i);
+char				*extract_dollar(char *str, int *i);
+char				*ft_strjoin_char(const char *s, char c);
+char				*change_sentence(char *str);
 
 #endif
