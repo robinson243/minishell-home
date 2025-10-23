@@ -6,44 +6,12 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/21 02:28:53 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/22 12:07:21 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-/* int	main(int ac, char **av)
-{
-	char	*line;
-	char	*mysentence;
-	char	**split_cmd;
-	char	*str;
-	int		val;
-	char	*str;
-	char	*str;
-	t_cmd	*tmp;
-
-	(void)ac;
-	(void)av;
-	using_history();
-	while ((line = readline("minishell > ")) != NULL)
-	{
-		mysentence = ft_strdup(line);
-		if (!mysentence)
-			return (free(line), (0));
-		split_cmd = ft_split(mysentence, ' ');
-		if (!split_cmd)
-			free_all(split_cmd);
-		for (int i = 0; split_cmd[i]; i++)
-		{
-			printf("word %s\n", split_cmd[i]);
-		}
-		add_history(line);
-		free(line);
-	}
-	clear_history();
-	return (0);
-} */
 int	recognize_token(char *str, int *i)
 {
 	if (str[*i] == '|')
@@ -198,6 +166,27 @@ char	*extract_operator(char *str, int *i)
 	return (res);
 }
 
+char	*extract_dollar(char *str, int *i)
+{
+	int		j;
+	char	*res;
+
+	(*i)++;
+	j = *i;
+	if (str[*i] == '?')
+	{
+		res = ft_strdup("?");
+		(*i)++;
+		return (res);
+	}
+	if (!ft_isalpha(str[*i]) && str[*i] != '_')
+		return (ft_strdup("$"));
+	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+		(*i)++;
+	res = ft_substr(str, j, (*i - j));
+	return (res);
+}
+
 char	*extract_word(char *str, int *i)
 {
 	int		j;
@@ -273,115 +262,66 @@ t_node	*lexer(char *input, t_node **head)
 	return (*head);
 }
 
-char	*change_sentence(char *str)
-{
-	char	**tab;
-	int		i;
-	char	*res;
-	char	*dest;
-
-	i = 0;
-	dest = "";
-	tab = ft_split(str, '$');
-	while (tab[i])
-	{
-		res = getenv(tab[i]);
-		dest = ft_strjoin(dest, res);
-		i++;
-	}
-	return (dest);
-}
-
-void	change_dollar(t_node **head)
-{
-	t_node	*tmp;
-	int		i;
-	char	*var;
-	char	*res;
-
-	tmp = *head;
-	i = 0;
-	if (!head || !*head)
-		return ;
-	while (tmp)
-	{
-		var = tmp->content;
-		if (var[0] == '$')
-		{
-			res = change_sentence(var);
-			free(tmp->content);
-			tmp->content = res;
-		}
-		tmp = tmp->next;
-	}
-}
-
 int	main(void)
 {
-	t_node	*head;
-	char	*str;
+	t_node *head;
+	char *str;
 
-	// char	*tests[] = {
-	// 	"echo salut",
-	// 	"ls",
-	// 	"pwd",
-	// 	"exit",
-	// 	"echo      salut      les    gens",
-	// 	"ls        -l",
-	// 	"echo \"salut les gens\"",
-	// 	"echo 'salut les gens'",
-	// 	"echo \"bonjour 'tout' le monde\"",
-	// 	"echo 'bonjour \"tout\" le monde'",
-	// 	"echo \"a'b'c\"",
-	// 	"echo 'a\"b\"c'",
-	// 	"echo salut > out.txt",
-	// 	"cat < in.txt",
-	// 	"cat < in.txt > out.txt",
-	// 	"echo salut >> out.txt",
-	// 	"echo salut > out.txt > out2.txt",
-	// 	"ls | wc -l",
-	// 	"ls -l | grep minishell",
-	// 	"cat in.txt | grep salut | wc -l",
-	// 	"echo \"salut | les gens\"",
-	// 	"echo salut | echo bonjour",
-	// 	"echo \"salut\" > out.txt | cat -e",
-	// 	"cat << EOF",
-	// 	"echo \"salut\" 'les' \"gens\" > file.txt | cat file.txt",
-	// 	"|",
-	// 	"||",
-	// 	">",
-	// 	">>",
-	// 	"<",
-	// 	"<<",
-	// 	"| echo salut",
-	// 	"echo salut |",
-	// 	"echo \"salut",
-	// 	"echo 'salut",
-	// 	NULL
-	// };
-	// int	i = 0;
-	// while (tests[i])
-	// {
-	// 	head = NULL;
-	// 	printf("=== TEST %d ===\n", i + 1);
-	// 	printf("Input: [%s]\n", tests[i]);
-	// 	lexer(tests[i], &head);
-	// 	print_list(&head);
-	// 	clear_nodes(&head);
-	// 	printf("\n");
-	// 	i++;
-	// }
-	// return (0);
+	char *tests[] = {
+		// Variables seules
+		"$USER",
+		"$HOME",
+		"$PWD",
+		"$PATH",
+		"$NONEXIST",
+
+		// Variables entre quotes
+		"'$USER'",
+		"\"$USER\"",
+		"'$HOME/$USER'",
+		"\"$HOME/$USER\"",
+
+		// Variables mélangées avec du texte
+		"salut$USER<<$PWD",
+		"$USER_machin",
+		"$USER123",
+		"$HOME/Documents",
+
+		// Variables avec espaces et quotes combinées
+		"echo $USER $HOME",
+		"echo \"$USER\" '$HOME'",
+		"echo start$USERend",
+
+		// Variables dans des commandes
+		"ls $HOME",
+		"cat \"$PWD/file.txt\"",
+		"echo 'Path is $PATH'",
+		"echo Mix$USER\"Test\"'$HOME'",
+
+		// Cas spéciaux
+		"$?",             // si tu implémentes exit status
+		"$0",             // nom du shell
+		"$$",             // PID du shell
+		"$USER$HOME$PWD", // concaténation directe
+
+		NULL // toujours terminer par NULL
+	};
+	int i = 0;
+	while (tests[i])
+	{
+		head = NULL;
+		printf("=== TEST %d ===\n", i + 1);
+		printf("Input: [%s]\n", tests[i]);
+		lexer(tests[i], &head);
+		print_list(&head);
+		clear_nodes(&head);
+		printf("\n");
+		i++;
+	}
+	return (0);
 	head = NULL;
 	str = "echo $HOME$USER$PWD $USER mam miiu";
 	lexer(str, &head);
-	change_dollar(&head);
 	print_list(&head);
 	clear_nodes(&head);
-	// printf("%s\n", getenv("HOME"));
-	// printf("%s\n", getenv("USER"));
-	// printf("%s\n", getenv("PWD"));
-	// "/home/romukena,
-	// romukena,
-	// /home/romukena/Documents/minishell-home/parsing/training"
 }
