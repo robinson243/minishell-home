@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/22 12:07:21 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/23 03:56:17 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,33 @@ void	print_list(t_node **head)
 		tmp = tmp->next;
 	}
 }
+
+
+char	*expand_variables(char *str)
+{
+	int		i;
+	char	*res;
+	char	*var_name;
+	char	*tmp;
+
+	i = 0;
+	res = ft_strdup("");
+	while (str[i])
+	{
+		if (str[i] == '$')
+		{
+			var_name = extract_dollar(str, &i);
+			tmp = ft_strjoin(res, getenv(var_name) ? getenv(var_name) : "");
+			free(var_name);
+		}
+		else
+			tmp = ft_strjoin_char(res, str[i++]);
+		free(res);
+		res = tmp;
+	}
+	return (res);
+}
+
 
 char	*extract_quoted(char *str, int *i)
 {
