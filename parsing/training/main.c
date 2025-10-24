@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 03:19:46 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/24 13:02:17 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,58 +172,7 @@ char	*expand_variables_basic(char *s)
 	return (res);
 }
 
-char	*test(char *str)
-{
-	int	i;
-	int	j;
-	char	*res;
-	char	*tmp;
-	res = "";
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '$')
-		{
-			j = i + 1;
-			while (ft_isalnum(s[]))
-			{
-				/* code */
-			}
-			
-		}
-		
-		ft_strjoin_char(res, str[i]);
-		i++;
-	}
-	
-}
 
-
-
-
-char	*ft_strjoin_char(const char *s, char c)
-{
-	size_t	len;
-	char	*res;
-
-	if (!s)
-	{
-		res = malloc(2);
-		if (!res)
-			return (NULL);
-		res[0] = c;
-		res[1] = '\0';
-		return (res);
-	}
-	len = strlen(s);
-	res = malloc(len + 2);
-	if (!res)
-		return (NULL);
-	memcpy(res, s, len);
-	res[len] = c;
-	res[len + 1] = '\0';
-	return (res);
-}
 
 char	*extract_quoted(char *str, int *i)
 {
@@ -234,6 +183,9 @@ char	*extract_quoted(char *str, int *i)
 	(*i)++;
 	while (str[*i] && str[*i] != '"')
 	{
+		if (str[*i] == '$')
+			
+		
 		(*i)++;
 	}
 	if (str[*i] == '\0')
@@ -294,23 +246,30 @@ char	*extract_operator(char *str, int *i)
 char	*extract_dollar(char *str, int *i)
 {
 	int		j;
+	char	*key;
 	char	*res;
 
 	(*i)++;
-	j = *i;
 	if (str[*i] == '?')
 	{
-		res = ft_strdup("?");
 		(*i)++;
-		return (res);
+		return (ft_strdup("?"));
 	}
 	if (!ft_isalpha(str[*i]) && str[*i] != '_')
 		return (ft_strdup("$"));
+	j = *i;
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
-	res = ft_substr(str, j, (*i - j));
+	key = ft_substr(str, j, (*i - j));
+	res = getenv(key);
+	if (!res)
+		res = ft_strdup("");
+	else
+		res = ft_strdup(res);
+	free(key);
 	return (res);
 }
+
 
 char	*extract_word(char *str, int *i)
 {
@@ -362,6 +321,7 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	res = ft_strjoin(tmp, res);
 	return (res);
 }
+
 t_node	*lexer(char *input, t_node **head)
 {
 	int		i;
@@ -379,6 +339,8 @@ t_node	*lexer(char *input, t_node **head)
 			(word = extract_quoted(input, &i), quoted = 1);
 		else if (input[i] == '\'')
 			(word = extract_single_quoted(input, &i), quoted = 2);
+		else if (input[i] == '$')
+			word = extract_dollar(input, &i);
 		else
 			(word = extract_word(input, &i), quoted = 0);
 		if (word && word[0] != '\0')
@@ -417,58 +379,60 @@ int	main(void)
 	char	*str;
 	int		i;
 
-	// char *tests[] = {
-	// 	// Variables seules
-	// 	"$USER",
-	// 	"$HOME",
-	// 	"$PWD",
-	// 	"$PATH",
-	// 	"$NONEXIST",
-	// 	// Variables entre quotes
-	// 	"'$USER'",
-	// 	"\"$USER\"",
-	// 	"'$HOME/$USER'",
-	// 	"\"$HOME/$USER\"",
-	// 	// Variables mélangées avec du texte
-	// 	"salut$USER<<$PWD",
-	// 	"$USER_machin",
-	// 	"$USER123",
-	// 	"$HOME/Documents",
-	// 	// Variables avec espaces et quotes combinées
-	// 	"echo $USER $HOME",
-	// 	"echo \"$USER\" '$HOME'",
-	// 	"echo start$USERend",
-	// 	// Variables dans des commandes
-	// 	"ls $HOME",
-	// 	"cat \"$PWD/file.txt\"",
-	// 	"echo 'Path is $PATH'",
-	// 	"echo Mix$USER\"Test\"'$HOME'",
-	// 	// Cas spéciaux
-	// 	"$?",             // si tu implémentes exit status
-	// 	"$0",             // nom du shell
-	// 	"$$",             // PID du shell
-	// 	"$USER$HOME$PWD", // concaténation directe
-	// 	NULL // toujours terminer par NULL
-	// };
-	// i = 0;
-	// while (tests[i])
-	// {
-	// 	head = NULL;
-	// 	printf("=== TEST %d ===\n", i + 1);
-	// 	printf("Input: [%s]\n", tests[i]);
-	// 	lexer(tests[i], &head);
-	// 	// handle_expands(&head);
-	// 	print_list(&head);
-	// 	clear_nodes(&head);
-	// 	printf("\n");
-	// 	i++;
-	// }
+	char *tests[] = {
+		// Variables seules
+		"$USER",
+		"$HOME",
+		"$PWD",
+		"$PATH",
+		"$NONEXIST",
+		// Variables entre quotes
+		"'$USER'",
+		"\"$USER\"",
+		"'$HOME/$USER'",
+		"\"$HOME/$USER\"",
+		// Variables mélangées avec du texte
+		"salut$USER<<$PWD",
+		"$USER_machin",
+		"$USER123",
+		"$HOME/Documents",
+		// Variables avec espaces et quotes combinées
+		"echo $USER $HOME",
+		"echo \"$USER\" '$HOME'",
+		"echo start$USERend",
+		// Variables dans des commandes
+		"ls $HOME",
+		"cat \"$PWD/file.txt\"",
+		"echo 'Path is $PATH'",
+		"echo Mix$USER\"Test\"'$HOME'",
+		// Cas spéciaux
+		"$?",             // si tu implémentes exit status
+		"$0",             // nom du shell
+		"$$",             // PID du shell
+		"$USER$HOME$PWD", // concaténation directe
+		NULL // toujours terminer par NULL
+	};
+	i = 0;
+	while (tests[i])
+	{
+		head = NULL;
+		printf("=== TEST %d ===\n", i + 1);
+		printf("Input: [%s]\n", tests[i]);
+		lexer(tests[i], &head);
+		// handle_expands(&head);
+		print_list(&head);
+		clear_nodes(&head);
+		printf("\n");
+		i++;
+	}
 	head = NULL;
-	str = "start$USERend";
-	char *expanded = expand_env(str);
-	printf("%s", expanded);
-	// lexer(str, &head);
-	// print_list(&head);
-	// clear_nodes(&head);
+	// int k;
+	// k = 0;
+	// str = "start$USERend";
+	// char *expanded = expanded_char(str);
+	// printf("%s", expanded);
+	// // lexer(str, &head);
+	// // print_list(&head);
+	// // clear_nodes(&head);
 	return (0);
 }
