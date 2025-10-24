@@ -39,11 +39,10 @@ typedef struct s_cmd
 	t_node			*tab_cmd;
 }					t_cmd;
 
-char				*handle_quote_management(char *tmp, char *str, int *i);
-char				*handle_dollar_management(char *str, int *i);
-char				*extract_word(char *str, int *i);
 char				*extract_dollar(char *str, int *i);
 char				*ft_strjoin_char(const char *s, char c);
 char				*change_sentence(char *str);
+char	*handle_quote_management(char *tmp, char *str, int *i);
+char	*extract_word(char *str, int *i);
 
 #endif

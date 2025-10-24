@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 14:25:33 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/24 16:28:46 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	print_list(t_node **head)
 	tmp = *head;
 	while (tmp)
 	{
-		printf("le type quoted %d\n", tmp->quoted);
+		// printf("le type quoted %d\n", tmp->quoted);
 		if (tmp->content)
 			printf("%s\n", tmp->content);
 		else
@@ -109,76 +109,76 @@ void	print_list(t_node **head)
 	}
 }
 
-// char	*ft_strjoin_free(char *s1, char *s2)
-// {
-// 	char	*res;
-// 	size_t	len1;
-// 	size_t	len2;
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*res;
+	size_t	len1;
+	size_t	len2;
 
-// 	if (!s1 && !s2)
-// 		return (NULL);
-// 	if (!s1)
-// 		return (ft_strdup(s2));
-// 	if (!s2)
-// 		return (ft_strdup(s1));
-// 	len1 = ft_strlen(s1);
-// 	len2 = ft_strlen(s2);
-// 	res = malloc(len1 + len2 + 1);
-// 	if (!res)
-// 		return (NULL);
-// 	ft_memcpy(res, s1, len1);
-// 	ft_memcpy(res + len1, s2, len2);
-// 	res[len1 + len2] = '\0';
-// 	free(s1);
-// 	free(s2);
-// 	return (res);
-// }
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	res = malloc(len1 + len2 + 1);
+	if (!res)
+		return (NULL);
+	ft_memcpy(res, s1, len1);
+	ft_memcpy(res + len1, s2, len2);
+	res[len1 + len2] = '\0';
+	free(s1);
+	free(s2);
+	return (res);
+}
 
-// char	*expand_dollar_basic(char *s, int *i)
-// {
-// 	int			start;
-// 	char		*name;
-// 	const char	*val;
+char	*expand_dollar_basic(char *s, int *i)
+{
+	int			start;
+	char		*name;
+	const char	*val;
 
-// 	(*i)++;
-// 	if (!ft_isalpha(s[*i]) && s[*i] != '_')
-// 		return (ft_strdup("$"));
-// 	start = *i;
-// 	while (s[*i] && (ft_isalnum(s[*i]) || s[*i] == '_'))
-// 		(*i)++;
-// 	name = ft_substr(s, start, *i - start);
-// 	val = getenv(name);
-// 	free(name);
-// 	return (ft_strdup(val ? val : ""));
-// }
+	(*i)++;
+	if (!ft_isalpha(s[*i]) && s[*i] != '_')
+		return (ft_strdup("$"));
+	start = *i;
+	while (s[*i] && (ft_isalnum(s[*i]) || s[*i] == '_'))
+		(*i)++;
+	name = ft_substr(s, start, *i - start);
+	val = getenv(name);
+	free(name);
+	return (ft_strdup(val ? val : ""));
+}
 
-// char	*expand_variables_basic(char *s)
-// {
-// 	int		i;
-// 	char	*res;
-// 	char	*tmp;
-// 	int		start;
+char	*expand_variables_basic(char *s)
+{
+	int		i;
+	char	*res;
+	char	*tmp;
+	int		start;
 
-// 	i = 0;
-// 	res = ft_strdup("");
-// 	while (s[i])
-// 	{
-// 		if (s[i] != '$')
-// 		{
-// 			start = i;
-// 			while (s[i] && s[i] != '$')
-// 				i++;
-// 			tmp = ft_substr(s, start, i - start);
-// 			res = ft_strjoin_free(res, tmp);
-// 		}
-// 		else
-// 		{
-// 			tmp = expand_dollar_basic(s, &i);
-// 			res = ft_strjoin_free(res, tmp);
-// 		}
-// 	}
-// 	return (res);
-// }
+	i = 0;
+	res = ft_strdup("");
+	while (s[i])
+	{
+		if (s[i] != '$')
+		{
+			start = i;
+			while (s[i] && s[i] != '$')
+				i++;
+			tmp = ft_substr(s, start, i - start);
+			res = ft_strjoin_free(res, tmp);
+		}
+		else
+		{
+			tmp = expand_dollar_basic(s, &i);
+			res = ft_strjoin_free(res, tmp);
+		}
+	}
+	return (res);
+}
 
 
 char	*extract_quoted(char *str, int *i)
@@ -246,38 +246,38 @@ char	*extract_operator(char *str, int *i)
 	return (res);
 }
 
-char	*extract_dollar(char *str, int *i)
-{
-	int		j;
-	char	*key;
-	char	*res;
+// char	*extract_dollar(char *str, int *i)
+// {
+// 	int		j;
+// 	char	*key;
+// 	char	*res;
 
-	(*i)++;
-	if (str[*i] == '?')
-	{
-		(*i)++;
-		return (ft_strdup("?"));
-	}
-	if (str[*i] == '$' || str[*i] == '0')
-	{
-		res = ft_substr(str, *i, 1);
-		(*i)++;
-		return (res);
-	}
-	if (!ft_isalpha(str[*i]) && str[*i] != '_')
-		return (ft_strdup("$"));
-	j = *i;
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-		(*i)++;
-	key = ft_substr(str, j, (*i - j));
-	res = getenv(key);
-	if (!res)
-		res = ft_strdup("");
-	else
-		res = ft_strdup(res);
-	free(key);
-	return (res);
-}
+// 	(*i)++;
+// 	if (str[*i] == '?')
+// 	{
+// 		(*i)++;
+// 		return (ft_strdup("?"));
+// 	}
+// 	if (str[*i] == '$' || str[*i] == '0')
+// 	{
+// 		res = ft_substr(str, *i, 1);
+// 		(*i)++;
+// 		return (res);
+// 	}
+// 	if (!ft_isalpha(str[*i]) && str[*i] != '_')
+// 		return (ft_strdup("$"));
+// 	j = *i;
+// 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+// 		(*i)++;
+// 	key = ft_substr(str, j, (*i - j));
+// 	res = getenv(key);
+// 	if (!res)
+// 		res = ft_strdup("");
+// 	else
+// 		res = ft_strdup(res);
+// 	free(key);
+// 	return (res);
+// }
 
 
 
@@ -371,7 +371,7 @@ t_node	*handle_expands(t_node **head)
 	{
 		if (tmp->quoted == 0 || tmp->quoted == 1)
 		{
-			// expanded = expand_variables_basic(tmp->content);
+			expanded = expand_variables_basic(tmp->content);
 			free(tmp->content);
 			tmp->content = expanded;
 		}
@@ -380,82 +380,53 @@ t_node	*handle_expands(t_node **head)
 	return (*head);
 }
 
-static const char *tokname(int t){
-    if (t==PIPE) return "PIPE";
-    if (t==REDIR_IN) return "REDIR_IN";
-    if (t==HEREDOC) return "HEREDOC";
-    if (t==REDIR_OUT) return "REDIR_OUT";
-    if (t==REDIR_APPEND) return "REDIR_APPEND";
-    return "WORD";
-}
-
-void test_recognize_token(void)
-{
-    const char *samples[] = { "|", "<", "<<", ">", ">>", "a", "<a", ">>x", "<< ", "b|c", NULL };
-    for (int k=0; samples[k]; k++){
-        const char *s = samples[k];
-        int i = 0;
-        int before = i;
-        int type = recognize_token(s, i);
-        int after = i; // doit rester égal à before
-        printf("input=\"%s\" i_before=%d type=%s i_after=%d\n", s, before, tokname(type), after);
-    }
-}
-
-
 int	main(void)
 {
 	t_node	*head;
 	char	*str;
 	int		i;
 
-	// char *tests[] = {
-	// 	// Variables seules
-	// 	"$USER",
-	// 	"$HOME",
-	// 	"$PWD",
-	// 	"$PATH",
-	// 	"$NONEXIST",
-	// 	// Variables entre quotes
-	// 	"'$USER'",
-	// 	"\"$USER\"",
-	// 	"'$HOME/$USER'",
-	// 	"\"$HOME/$USER\"",
-	// 	// Variables mélangées avec du texte
-	// 	"salut$USER<<$PWD",
-	// 	"$USER_machin",
-	// 	"$USER123",
-	// 	"$HOME/Documents",
-	// 	// Variables avec espaces et quotes combinées
-	// 	"echo $USER $HOME",
-	// 	"echo \"$USER\" '$HOME'",
-	// 	"echo start$USERend",
-	// 	// Variables dans des commandes
-	// 	"ls $HOME",
-	// 	"cat \"$PWD/file.txt\"",
-	// 	"echo 'Path is $PATH'",
-	// 	"echo Mix$USER\"Test\"'$HOME'",
-	// 	// Cas spéciaux
-	// 	"$?",             // si tu implémentes exit status
-	// 	"$0",             // nom du shell
-	// 	"$$",             // PID du shell
-	// 	"$USER$HOME$PWD", // concaténation directe
-	// 	NULL // toujours terminer par NULL
-	// };
-	// i = 0;
-	// while (tests[i])
-	// {
-	// 	head = NULL;
-	// 	printf("=== TEST %d ===\n", i + 1);
-	// 	printf("Input: [%s]\n", tests[i]);
-	// 	lexer(tests[i], &head);
-	// 	// handle_expands(&head);
-	// 	print_list(&head);
-	// 	clear_nodes(&head);
-	// 	printf("\n");
-	// 	i++;
-	// }
-	// head = NULL;
+char *tests[] = {
+    "echo Bonjour",                          // Commande simple
+    "echo \"42 Paris\" 'Piscine C'",        // Double + simple quotes fermées
+    "ls -l /tmp | grep txt > out.txt",      // Pipe et redirection
+    "echo $USER $HOME $PWD",                 // Variables à expanser (quoted=0)
+    "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes, simple quotes littérales
+    "echo 'Test $HOME'",                     // Simple quotes, pas d’expansion
+    "echo \"Test $HOME\"",                   // Double quotes, expansion
+    "echo 'unclosed",                        // Simple quote non fermée
+    "echo \"unclosed",                       // Double quote non fermée
+    "cat < file.txt > output.txt",           // Redirections
+    "echo salut$USER<<$PWD",                 // Variable + heredoc operator
+    "echo 'adjacent''quotes'",               // Quotes simples adjacentes
+    "echo \"adjacent\"\"double\"",           // Quotes doubles adjacentes
+    "echo Mixed$USER\"Test\"'$HOME'",        // Mix quotes et variables
+    "ls | grep \"foo\"",                     // Pipe + quote
+    "echo \"  spaced text \"",               // Espaces dans quotes doubles
+    "echo ''",                              // Empty simple quotes
+    "echo \"\"",                            // Empty double quotes
+    "echo $USER$HOME$PWD",                  // Variables concaténées
+    "export VAR=test; echo $VAR",            // Point important: pas de ; validé, test to see ignoring
+    "echo escaped\\$USER",                   // échappement backslash ($ non expansé)
+    "echo \"Nested 'quotes' inside\"",       // Quotes imbriquées dans doubles quotes
+    "echo 'Nested \"quotes\" inside'",       // Quotes imbriquées dans simples quotes
+    "cat file.txt | grep 'pattern'",         // Pipe + quotes
+    NULL
+};
+	i = 0;
+	while (tests[i])
+	{
+		head = NULL;
+		printf("=== TEST %d ===\n", i + 1);
+		printf("Input: [%s]\n", tests[i]);
+		lexer(tests[i], &head);
+		handle_expands(&head);
+		print_list(&head);
+		clear_nodes(&head);
+		printf("\n");
+		i++;
+	}
+	head = NULL;
 	// // int k;
 	// // k = 0;
 	// // str = "start$USERend";
@@ -464,8 +435,6 @@ int	main(void)
 	// // // lexer(str, &head);
 	// // // print_list(&head);
 	// // // clear_nodes(&head);
-
-	test_recognize_token();
 	
 	return (0);
 }
