@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 17:47:12 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/24 18:02:08 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,12 +359,34 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 // 	return (*head);
 // }
 
+char	*build_word(char *input, int *i, int *quoted)
+{
+	char	*word;
+	char	*tmp;
+
+	word = ft_strdup("");
+	*quoted = 0;
+	while (input[*i] && !is_space(input[*i]))
+	{
+		if (input[*i] == '"')
+			tmp = extract_quoted(input, i), *quoted = 1;
+		else if (input[*i] == '\'')
+			tmp = extract_single_quoted(input, i), *quoted = 2;
+		else
+			tmp = extract_word(input, i);
+		word = ft_strjoin_free(word, tmp);
+		if (!input[*i] || is_space(input[*i]))
+			break ;
+	}
+	return (word);
+}
+
+
 t_node	*lexer(char *input, t_node **head)
 {
 	int		i;
 	int		quoted;
 	char	*word;
-	char	*tmp;
 
 	i = 0;
 	while (input[i])
@@ -373,29 +395,14 @@ t_node	*lexer(char *input, t_node **head)
 			i++;
 		if (!input[i])
 			break ;
-		word = ft_strdup("");
-		quoted = 0;
-		while (input[i] && !is_space(input[i]))
-		{
-			if (input[i] == '"')
-				(tmp = extract_quoted(input, &i),quoted = 1);
-			else if (input[i] == '\'')
-				(tmp = extract_single_quoted(input, &i), quoted = 2);
-			else
-				tmp = extract_word(input, &i);
-			word = ft_strjoin_free(word, tmp);
-			if (!input[i] || is_space(input[i]))
-				break ;
-		}
-		if (word && word[0] != '\0')
+		word = build_word(input, &i, &quoted);
+		if (word && word[0])
 			add_node(head, create_node(word, quoted));
 		else
 			free(word);
 	}
 	return (*head);
 }
-
-
 
 t_node	*handle_expands(t_node **head)
 {
