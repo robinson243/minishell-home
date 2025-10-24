@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 16:28:46 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/24 17:47:12 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,11 +332,39 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	return (res);
 }
 
+// t_node	*lexer(char *input, t_node **head)
+// {
+// 	int		i;
+// 	int		quoted;
+// 	char	*word;
+
+// 	i = 0;
+// 	while (input[i])
+// 	{
+// 		while (input[i] && is_space(input[i]))
+// 			i++;
+// 		if (!input[i])
+// 			break ;
+// 		if (input[i] == '"')
+// 			(word = extract_quoted(input, &i), quoted = 1);
+// 		else if (input[i] == '\'')
+// 			(word = extract_single_quoted(input, &i), quoted = 2);
+// 		else
+// 			(word = extract_word(input, &i), quoted = 0);
+// 		if (word && word[0] != '\0')
+// 			add_node(head, create_node(word, quoted));
+// 		else
+// 			free(word);
+// 	}
+// 	return (*head);
+// }
+
 t_node	*lexer(char *input, t_node **head)
 {
 	int		i;
 	int		quoted;
 	char	*word;
+	char	*tmp;
 
 	i = 0;
 	while (input[i])
@@ -345,12 +373,20 @@ t_node	*lexer(char *input, t_node **head)
 			i++;
 		if (!input[i])
 			break ;
-		if (input[i] == '"')
-			(word = extract_quoted(input, &i), quoted = 1);
-		else if (input[i] == '\'')
-			(word = extract_single_quoted(input, &i), quoted = 2);
-		else
-			(word = extract_word(input, &i), quoted = 0);
+		word = ft_strdup("");
+		quoted = 0;
+		while (input[i] && !is_space(input[i]))
+		{
+			if (input[i] == '"')
+				(tmp = extract_quoted(input, &i),quoted = 1);
+			else if (input[i] == '\'')
+				(tmp = extract_single_quoted(input, &i), quoted = 2);
+			else
+				tmp = extract_word(input, &i);
+			word = ft_strjoin_free(word, tmp);
+			if (!input[i] || is_space(input[i]))
+				break ;
+		}
 		if (word && word[0] != '\0')
 			add_node(head, create_node(word, quoted));
 		else
@@ -358,6 +394,8 @@ t_node	*lexer(char *input, t_node **head)
 	}
 	return (*head);
 }
+
+
 
 t_node	*handle_expands(t_node **head)
 {
