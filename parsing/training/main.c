@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/23 11:49:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/24 03:19:46 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	is_space(char c)
 	return (0);
 }
 
-t_node	*create_node(char *content)
+t_node	*create_node(char *content, int quoted)
 {
 	t_node	*node;
 
@@ -43,6 +43,7 @@ t_node	*create_node(char *content)
 	if (!node)
 		return (NULL);
 	node->content = content;
+	node->quoted = quoted;
 	node->next = NULL;
 	return (node);
 }
@@ -91,6 +92,7 @@ void	print_list(t_node **head)
 	tmp = *head;
 	while (tmp)
 	{
+		printf("le type quoted %d\n", tmp->quoted);
 		if (tmp->content)
 			printf("%s\n", tmp->content);
 		else
@@ -99,31 +101,105 @@ void	print_list(t_node **head)
 	}
 }
 
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*res;
+	size_t	len1;
+	size_t	len2;
 
-char	*expand_variables(char *str)
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	res = malloc(len1 + len2 + 1);
+	if (!res)
+		return (NULL);
+	ft_memcpy(res, s1, len1);
+	ft_memcpy(res + len1, s2, len2);
+	res[len1 + len2] = '\0';
+	free(s1);
+	free(s2);
+	return (res);
+}
+
+char	*expand_dollar_basic(char *s, int *i)
+{
+	int			start;
+	char		*name;
+	const char	*val;
+
+	(*i)++;
+	if (!ft_isalpha(s[*i]) && s[*i] != '_')
+		return (ft_strdup("$"));
+	start = *i;
+	while (s[*i] && (ft_isalnum(s[*i]) || s[*i] == '_'))
+		(*i)++;
+	name = ft_substr(s, start, *i - start);
+	val = getenv(name);
+	free(name);
+	return (ft_strdup(val ? val : ""));
+}
+
+char	*expand_variables_basic(char *s)
 {
 	int		i;
 	char	*res;
-	char	*var_name;
 	char	*tmp;
+	int		start;
 
 	i = 0;
 	res = ft_strdup("");
+	while (s[i])
+	{
+		if (s[i] != '$')
+		{
+			start = i;
+			while (s[i] && s[i] != '$')
+				i++;
+			tmp = ft_substr(s, start, i - start);
+			res = ft_strjoin_free(res, tmp);
+		}
+		else
+		{
+			tmp = expand_dollar_basic(s, &i);
+			res = ft_strjoin_free(res, tmp);
+		}
+	}
+	return (res);
+}
+
+char	*test(char *str)
+{
+	int	i;
+	int	j;
+	char	*res;
+	char	*tmp;
+	res = "";
+	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '$')
 		{
-			var_name = extract_dollar(str, &i);
-			tmp = ft_strjoin(res, getenv(var_name) ? getenv(var_name) : "");
-			free(var_name);
+			j = i + 1;
+			while (ft_isalnum(s[]))
+			{
+				/* code */
+			}
+			
 		}
-		else
-			tmp = ft_strjoin_char(res, str[i++]);
-		free(res);
-		res = tmp;
+		
+		ft_strjoin_char(res, str[i]);
+		i++;
 	}
-	return (res);
+	
 }
+
+
+
 
 char	*ft_strjoin_char(const char *s, char c)
 {
@@ -286,91 +362,113 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	res = ft_strjoin(tmp, res);
 	return (res);
 }
-
 t_node	*lexer(char *input, t_node **head)
 {
 	int		i;
+	int		quoted;
 	char	*word;
 
 	i = 0;
 	while (input[i])
 	{
-		while (is_space(input[i]))
+		while (input[i] && is_space(input[i]))
 			i++;
+		if (!input[i])
+			break ;
 		if (input[i] == '"')
-			word = extract_quoted(input, &i);
+			(word = extract_quoted(input, &i), quoted = 1);
 		else if (input[i] == '\'')
-			word = extract_single_quoted(input, &i);
+			(word = extract_single_quoted(input, &i), quoted = 2);
 		else
-			word = extract_word(input, &i);
+			(word = extract_word(input, &i), quoted = 0);
 		if (word && word[0] != '\0')
-			add_node(head, create_node(word));
+			add_node(head, create_node(word, quoted));
 		else
 			free(word);
 	}
 	return (*head);
 }
 
+t_node	*handle_expands(t_node **head)
+{
+	t_node	*tmp;
+	char	*expanded;
+
+	tmp = *head;
+	if (!*head || !head)
+		return (NULL);
+	while (tmp)
+	{
+		if (tmp->quoted == 0 || tmp->quoted == 1)
+		{
+			expanded = expand_variables_basic(tmp->content);
+			free(tmp->content);
+			tmp->content = expanded;
+		}
+		tmp = tmp->next;
+	}
+	return (*head);
+}
+
+
 int	main(void)
 {
-	t_node *head;
-	char *str;
+	t_node	*head;
+	char	*str;
+	int		i;
 
-	char *tests[] = {
-		// Variables seules
-		"$USER",
-		"$HOME",
-		"$PWD",
-		"$PATH",
-		"$NONEXIST",
-
-		// Variables entre quotes
-		"'$USER'",
-		"\"$USER\"",
-		"'$HOME/$USER'",
-		"\"$HOME/$USER\"",
-
-		// Variables mélangées avec du texte
-		"salut$USER<<$PWD",
-		"$USER_machin",
-		"$USER123",
-		"$HOME/Documents",
-
-		// Variables avec espaces et quotes combinées
-		"echo $USER $HOME",
-		"echo \"$USER\" '$HOME'",
-		"echo start$USERend",
-
-		// Variables dans des commandes
-		"ls $HOME",
-		"cat \"$PWD/file.txt\"",
-		"echo 'Path is $PATH'",
-		"echo Mix$USER\"Test\"'$HOME'",
-
-		// Cas spéciaux
-		"$?",             // si tu implémentes exit status
-		"$0",             // nom du shell
-		"$$",             // PID du shell
-		"$USER$HOME$PWD", // concaténation directe
-
-		NULL // toujours terminer par NULL
-	};
-	int i = 0;
-	while (tests[i])
-	{
-		head = NULL;
-		printf("=== TEST %d ===\n", i + 1);
-		printf("Input: [%s]\n", tests[i]);
-		lexer(tests[i], &head);
-		print_list(&head);
-		clear_nodes(&head);
-		printf("\n");
-		i++;
-	}
-	return (0);
+	// char *tests[] = {
+	// 	// Variables seules
+	// 	"$USER",
+	// 	"$HOME",
+	// 	"$PWD",
+	// 	"$PATH",
+	// 	"$NONEXIST",
+	// 	// Variables entre quotes
+	// 	"'$USER'",
+	// 	"\"$USER\"",
+	// 	"'$HOME/$USER'",
+	// 	"\"$HOME/$USER\"",
+	// 	// Variables mélangées avec du texte
+	// 	"salut$USER<<$PWD",
+	// 	"$USER_machin",
+	// 	"$USER123",
+	// 	"$HOME/Documents",
+	// 	// Variables avec espaces et quotes combinées
+	// 	"echo $USER $HOME",
+	// 	"echo \"$USER\" '$HOME'",
+	// 	"echo start$USERend",
+	// 	// Variables dans des commandes
+	// 	"ls $HOME",
+	// 	"cat \"$PWD/file.txt\"",
+	// 	"echo 'Path is $PATH'",
+	// 	"echo Mix$USER\"Test\"'$HOME'",
+	// 	// Cas spéciaux
+	// 	"$?",             // si tu implémentes exit status
+	// 	"$0",             // nom du shell
+	// 	"$$",             // PID du shell
+	// 	"$USER$HOME$PWD", // concaténation directe
+	// 	NULL // toujours terminer par NULL
+	// };
+	// i = 0;
+	// while (tests[i])
+	// {
+	// 	head = NULL;
+	// 	printf("=== TEST %d ===\n", i + 1);
+	// 	printf("Input: [%s]\n", tests[i]);
+	// 	lexer(tests[i], &head);
+	// 	// handle_expands(&head);
+	// 	print_list(&head);
+	// 	clear_nodes(&head);
+	// 	printf("\n");
+	// 	i++;
+	// }
 	head = NULL;
-	str = "echo $HOME$USER$PWD $USER mam miiu";
-	lexer(str, &head);
-	print_list(&head);
-	clear_nodes(&head);
+	str = "start$USERend";
+	char *expanded = expand_env(str);
+	printf("%s", expanded);
+	// lexer(str, &head);
+	// print_list(&head);
+	// clear_nodes(&head);
+	return (0);
 }
