@@ -6,29 +6,27 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 18:02:08 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/24 19:54:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-int recognize_token(const char *s, int i)
+int recognize_token(const char *s, int *i)
 {
-    if (!s || s[i] == '\0')
+    if (!s || s[*i] == '\0')
         return WORD;
-
-    if (s[i] == '|')
+    if (s[*i] == '|')
         return PIPE;
-
-    if (s[i] == '<')
+    if (s[*i] == '<')
     {
-        if (s[i + 1] == '<')
+        if (s[(*i) + 1] == '<')
             return HEREDOC;
         return REDIR_IN;
     }
-    if (s[i] == '>')
+    if (s[*i] == '>')
     {
-        if (s[i + 1] == '>')
+        if (s[(*i) + 1] == '>')
             return REDIR_APPEND;
         return REDIR_OUT;
     }
@@ -231,7 +229,7 @@ char	*extract_operator(char *str, int *i)
 	char	*res;
 	int		filter_operator;
 
-	filter_operator = recognize_token(str, *i);
+	filter_operator = recognize_token(str, i);
 	res = NULL;
     if (filter_operator == HEREDOC || filter_operator == REDIR_APPEND)
     {
@@ -294,12 +292,12 @@ char	*extract_word(char *str, int *i)
 	if (!str[*i])
 		return (NULL);
 	j = *i;
-	if (recognize_token(str, *i) != WORD)
-		return (extract_operator(str, i));
-	while (str[*i] && !is_space(str[*i]) && str[*i] != '"')
+	if (recognize_token(str, i) != WORD)
 	{
-		if (recognize_token(str, *i) != WORD)
-			return (ft_substr(str, j, (*i - j)));
+		return (extract_operator(str, i));
+	}
+	while (str[*i] && !is_space(str[*i]) && str[*i] != '"' && recognize_token(str, i) == WORD)
+	{
 		(*i)++;
 	}
 	tmp = ft_substr(str, j, (*i - j));
@@ -313,7 +311,7 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	char	*res;
 
 	res = "";
-	while (str[*i] && recognize_token(str, *i) == WORD && !is_space(str[*i]))
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
 	{
 		if (str[*i] == '\'')
 		{
@@ -366,6 +364,8 @@ char	*build_word(char *input, int *i, int *quoted)
 
 	word = ft_strdup("");
 	*quoted = 0;
+	if (recognize_token(input, i) != WORD)
+		return (free(word), extract_operator(input, i));
 	while (input[*i] && !is_space(input[*i]))
 	{
 		if (input[*i] == '"')
@@ -373,7 +373,11 @@ char	*build_word(char *input, int *i, int *quoted)
 		else if (input[*i] == '\'')
 			tmp = extract_single_quoted(input, i), *quoted = 2;
 		else
+		{
+			if (recognize_token(input, i) != WORD)
+				break ;
 			tmp = extract_word(input, i);
+		}
 		word = ft_strjoin_free(word, tmp);
 		if (!input[*i] || is_space(input[*i]))
 			break ;
@@ -432,30 +436,50 @@ int	main(void)
 	int		i;
 
 char *tests[] = {
-    "echo Bonjour",                          // Commande simple
-    "echo \"42 Paris\" 'Piscine C'",        // Double + simple quotes fermées
-    "ls -l /tmp | grep txt > out.txt",      // Pipe et redirection
-    "echo $USER $HOME $PWD",                 // Variables à expanser (quoted=0)
-    "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes, simple quotes littérales
-    "echo 'Test $HOME'",                     // Simple quotes, pas d’expansion
-    "echo \"Test $HOME\"",                   // Double quotes, expansion
-    "echo 'unclosed",                        // Simple quote non fermée
-    "echo \"unclosed",                       // Double quote non fermée
-    "cat < file.txt > output.txt",           // Redirections
+    // "echo Bonjour",                          // Commande simple
+    // "echo \"42 Paris\" 'Piscine C'",        // Double + simple quotes fermées
+    // "ls -l /tmp | grep txt > out.txt",      // Pipe et redirection
+    // "echo $USER $HOME $PWD",                 // Variables à expanser (quoted=0)
+    // "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes, simple quotes littérales
+    // "echo 'Test $HOME'",                     // Simple quotes, pas d’expansion
+    // "echo \"Test $HOME\"",                   // Double quotes, expansion
+    // "echo 'unclosed",                        // Simple quote non fermée
+    // "echo \"unclosed",                       // Double quote non fermée
+    // "cat < file.txt > output.txt",           // Redirections
     "echo salut$USER<<$PWD",                 // Variable + heredoc operator
-    "echo 'adjacent''quotes'",               // Quotes simples adjacentes
-    "echo \"adjacent\"\"double\"",           // Quotes doubles adjacentes
-    "echo Mixed$USER\"Test\"'$HOME'",        // Mix quotes et variables
-    "ls | grep \"foo\"",                     // Pipe + quote
-    "echo \"  spaced text \"",               // Espaces dans quotes doubles
-    "echo ''",                              // Empty simple quotes
-    "echo \"\"",                            // Empty double quotes
-    "echo $USER$HOME$PWD",                  // Variables concaténées
-    "export VAR=test; echo $VAR",            // Point important: pas de ; validé, test to see ignoring
-    "echo escaped\\$USER",                   // échappement backslash ($ non expansé)
-    "echo \"Nested 'quotes' inside\"",       // Quotes imbriquées dans doubles quotes
-    "echo 'Nested \"quotes\" inside'",       // Quotes imbriquées dans simples quotes
-    "cat file.txt | grep 'pattern'",         // Pipe + quotes
+    // "echo 'adjacent''quotes'",               // Quotes simples adjacentes
+    // "echo \"adjacent\"\"double\"",           // Quotes doubles adjacentes
+    // "echo Mixed$USER\"Test\"'$HOME'",        // Mix quotes et variables
+    // "ls | grep \"foo\"",                     // Pipe + quote
+    // "echo \"  spaced text \"",               // Espaces dans quotes doubles
+    // "echo ''",                              // Empty simple quotes
+    // "echo \"\"",                            // Empty double quotes
+    // "echo $USER$HOME$PWD",                  // Variables concaténées
+    // "export VAR=test; echo $VAR",            // Point important: pas de ; validé, test to see ignoring
+    // "echo escaped\\$USER",                   // échappement backslash ($ non expansé)
+    // "echo \"Nested 'quotes' inside\"",       // Quotes imbriquées dans doubles quotes
+    // "echo 'Nested \"quotes\" inside'",       // Quotes imbriquées dans simples quotes
+    // "cat file.txt | grep 'pattern'",         // Pipe + quotes
+	"cat<file",                              // Redirection collée → mot unique
+"cat < file",                             // Redirection séparée → token <
+"echo hello>>file",                       // Append collé → mot unique
+"echo hello >> file",                      // Append séparé → token >>
+// "echo hello|grep h",                      // Pipe collé → mot unique
+// "echo hello | grep h",                     // Pipe séparé → token |
+// "echo 'single''adjacent'",              // Simple quotes collées
+// "echo \"double\"\"adjacent\"",          // Double quotes collées
+// "echo 'mix\"quotes\"inside'",           // Quotes imbriquées simples + doubles
+// "echo \"mix'quotes'inside\"",           // Quotes imbriquées doubles + simples
+// "echo \"variable$USERinside\"",          // Variable dans double quotes
+// "echo 'variable$USERinside'",           // Variable dans simple quotes (pas expand)
+// "echo $USER$HOME",                       // Variables concaténées
+// "echo \"space $USER inside\"",           // Espaces dans double quotes + variable
+// "echo '' '' ''",                         // Plusieurs simples quotes vides
+// "echo \"\" \"\" \"\"",                   // Plusieurs doubles quotes vides
+// "echo \"nested 'single' and $HOME\"",    // Mix nested + variable
+// "echo 'nested \"double\" and $HOME'",    // Mix nested + variable non expand
+
+
     NULL
 };
 	i = 0;
