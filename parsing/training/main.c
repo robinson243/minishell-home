@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 23:11:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/25 18:37:20 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,17 +254,44 @@ char	*extract_word(char *str, int *i)
 	if (!str[*i])
 		return (NULL);
 	j = *i;
+	if (str[*i] == '$')
+		return (extract_dollar(str, i));
 	if (recognize_token(str, i) != WORD)
-	{
 		return (extract_operator(str, i));
-	}
 	while (str[*i] && !is_space(str[*i]) && str[*i] != '"'
-		&& recognize_token(str, i) == WORD)
-	{
+		&& recognize_token(str, i) == WORD && str[*i] != '$')
 		(*i)++;
-	}
 	tmp = ft_substr(str, j, (*i - j));
 	res = handle_quote_management(tmp, str, i);
+	return (res);
+}
+
+char	*extract_dollar(char *str, int *i)
+{
+	int		start;
+	int		j;
+	char	*key;
+	char	*res;
+
+	start = *i;
+	(*i)++;
+	if (str[*i] == '?' || str[*i] == '$' || str[*i] == '0')
+	{
+		(*i)++;
+		return (ft_substr(str, start, 2));
+	}
+	if (!ft_isalpha(str[*i]) && str[*i] != '_')
+		return (ft_strdup("$"));
+	j = *i;
+	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+		(*i)++;
+	key = ft_substr(str, j, (*i - j));
+	res = getenv(key);
+	if (!res)
+		res = ft_strdup("");
+	else
+		res = ft_strdup(res);
+	free(key);
 	return (res);
 }
 
@@ -272,8 +299,10 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 {
 	char	*quoted_word;
 	char	*res;
+	char	*var;
 
 	res = "";
+	var = "";
 	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
 	{
 		if (str[*i] == '\'')
@@ -305,9 +334,9 @@ char	*build_word(char *input, int *i, int *quoted)
 	while (input[*i] && !is_space(input[*i]))
 	{
 		if (input[*i] == '"')
-			tmp = (extract_quoted(input, i), *quoted = 1);
+			(tmp = extract_quoted(input, i), *quoted = 1);
 		else if (input[*i] == '\'')
-			tmp = (extract_single_quoted(input, i), *quoted = 2);
+			(tmp = extract_single_quoted(input, i), *quoted = 2);
 		else
 		{
 			if (recognize_token(input, i) != WORD)
@@ -315,8 +344,6 @@ char	*build_word(char *input, int *i, int *quoted)
 			tmp = extract_word(input, i);
 		}
 		word = ft_strjoin_free(word, tmp);
-		if (!input[*i] || is_space(input[*i]))
-			break ;
 	}
 	return (word);
 }
@@ -370,38 +397,33 @@ int	main(void)
 	char	*str;
 	int		i;
 
-char	*tests[] = {
-	// "echo Bonjour",                          // Commande simple
-	// "echo \"42 Paris\" 'Piscine C'",        // Double + simple quotes fermées
-	// "ls -l /tmp | grep txt > out.txt",      // Pipe et redirection
-	// "echo $USER $HOME $PWD",
-		// Variables à expanser (quoted=0)
-	// "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes,
-		simple quotes littérales
-	// "echo 'Test $HOME'",                     // Simple quotes,
-		pas d’expansion
-	// "echo \"Test $HOME\"",                   // Double quotes, expansion
-	// "echo 'unclosed",                        // Simple quote non fermée
-	// "echo \"unclosed",                       // Double quote non fermée
-	// "cat < file.txt > output.txt",           // Redirections
-	"echo salut$USER<<$PWD",                 // Variable + heredoc operator
-	// "echo 'adjacent''quotes'",               // Quotes simples adjacentes
-	// "echo \"adjacent\"\"double\"",           // Quotes doubles adjacentes
-	// "echo Mixed$USER\"Test\"'$HOME'",        // Mix quotes et variables
-	// "ls | grep \"foo\"",                     // Pipe + quote
-	// "echo \"  spaced text \"",               // Espaces dans quotes doubles
-	// "echo ''",                              // Empty simple quotes
-	// "echo \"\"",                            // Empty double quotes
-	// "echo $USER$HOME$PWD",                  // Variables concaténées
-	// "export VAR=test; echo $VAR",
-		// Point important: pas de ; validé, test to see ignoring
-	// "echo escaped\\$USER",
-		// échappement backslash ($ non expansé)
-	// "echo \"Nested 'quotes' inside\"",
-		// Quotes imbriquées dans doubles quotes
-	// "echo 'Nested \"quotes\" inside'",
-		// Quotes imbriquées dans simples quotes
-	// "cat file.txt | grep 'pattern'",         // Pipe + quotes
+char *tests[] = {
+    // "echo Bonjour",                          // Commande simple
+    // "echo \"42 Paris\" 'Piscine C'",        // Double + simple quotes fermées
+    // "ls -l /tmp | grep txt > out.txt",      // Pipe et redirection
+    // "echo $USER $HOME $PWD",                 // Variables à expanser (quoted=0)
+    "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes, simple quotes littérales
+    // "echo 'Test $HOME'",                     // Simple quotes, pas d’expansion
+    // "echo \"Test $HOME\"",                   // Double quotes, expansion
+    // "echo 'unclosed",                        // Simple quote non fermée
+    // "echo \"unclosed",                       // Double quote non fermée
+    // "cat < file.txt > output.txt",           // Redirections
+    "echo salut$USER<<$PWD",                 // Variable + heredoc operator
+	"echo mix $USER\"test\"'ouf'",
+	"cat 'miam'\"ouf\"",
+    // "echo 'adjacent''quotes'",               // Quotes simples adjacentes
+    // "echo \"adjacent\"\"double\"",           // Quotes doubles adjacentes
+    // "echo Mixed$USER\"Test\"'$HOME'",        // Mix quotes et variables
+    // "ls | grep \"foo\"",                     // Pipe + quote
+    // "echo \"  spaced text \"",               // Espaces dans quotes doubles
+    // "echo ''",                              // Empty simple quotes
+    // "echo \"\"",                            // Empty double quotes
+    // "echo $USER$HOME$PWD",                  // Variables concaténées
+    // "export VAR=test; echo $VAR",            // Point important: pas de ; validé, test to see ignoring
+    // "echo escaped\\$USER",                   // échappement backslash ($ non expansé)
+    // "echo \"Nested 'quotes' inside\"",       // Quotes imbriquées dans doubles quotes
+    // "echo 'Nested \"quotes\" inside'",       // Quotes imbriquées dans simples quotes
+    // "cat file.txt | grep 'pattern'",         // Pipe + quotes
 	"cat<file",                              // Redirection collée → mot unique
 "cat < file",                             // Redirection séparée → token <
 "echo hello>>file",                       // Append collé → mot unique
@@ -452,4 +474,4 @@ char	*tests[] = {
 	// // // clear_nodes(&head);
 
 	return (0);
-} */
+}*/
