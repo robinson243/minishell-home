@@ -6,33 +6,32 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/24 19:54:50 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/25 15:43:41 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-int recognize_token(const char *s, int *i)
+int	recognize_token(const char *s, int *i)
 {
-    if (!s || s[*i] == '\0')
-        return WORD;
-    if (s[*i] == '|')
-        return PIPE;
-    if (s[*i] == '<')
-    {
-        if (s[(*i) + 1] == '<')
-            return HEREDOC;
-        return REDIR_IN;
-    }
-    if (s[*i] == '>')
-    {
-        if (s[(*i) + 1] == '>')
-            return REDIR_APPEND;
-        return REDIR_OUT;
-    }
-    return WORD;
+	if (!s || s[*i] == '\0')
+		return (WORD);
+	if (s[*i] == '|')
+		return (PIPE);
+	if (s[*i] == '<')
+	{
+		if (s[(*i) + 1] == '<')
+			return (HEREDOC);
+		return (REDIR_IN);
+	}
+	if (s[*i] == '>')
+	{
+		if (s[(*i) + 1] == '>')
+			return (REDIR_APPEND);
+		return (REDIR_OUT);
+	}
+	return (WORD);
 }
-
 
 int	is_space(char c)
 {
@@ -98,7 +97,6 @@ void	print_list(t_node **head)
 	tmp = *head;
 	while (tmp)
 	{
-		// printf("le type quoted %d\n", tmp->quoted);
 		if (tmp->content)
 			printf("%s\n", tmp->content);
 		else
@@ -147,7 +145,10 @@ char	*expand_dollar_basic(char *s, int *i)
 	name = ft_substr(s, start, *i - start);
 	val = getenv(name);
 	free(name);
-	return (ft_strdup(val ? val : ""));
+	if (val)
+		return (ft_strdup(val));
+	else
+		return (ft_strdup(""));
 }
 
 char	*expand_variables_basic(char *s)
@@ -178,7 +179,6 @@ char	*expand_variables_basic(char *s)
 	return (res);
 }
 
-
 char	*extract_quoted(char *str, int *i)
 {
 	int		j;
@@ -188,13 +188,11 @@ char	*extract_quoted(char *str, int *i)
 	(*i)++;
 	while (str[*i] && str[*i] != '"')
 	{
-		
 		(*i)++;
 	}
 	if (str[*i] == '\0')
 	{
-		ft_putstr_fd("minishell: unexpected EOF while looking for matching '\"'\n",
-			2);
+		ft_putstr_fd("minishell: unexpected EOF near \"\n", 2);
 		return (NULL);
 	}
 	res = ft_substr(str, j, (*i - j));
@@ -215,8 +213,7 @@ char	*extract_single_quoted(char *str, int *i)
 	}
 	if (str[*i] == '\0')
 	{
-		ft_putstr_fd("minishell: unexpected EOF while looking for matching '\''\n",
-			2);
+		ft_putstr_fd("minishell: unexpected EOF near '\''\n", 2);
 		return (NULL);
 	}
 	res = ft_substr(str, j, (*i - j));
@@ -231,53 +228,18 @@ char	*extract_operator(char *str, int *i)
 
 	filter_operator = recognize_token(str, i);
 	res = NULL;
-    if (filter_operator == HEREDOC || filter_operator == REDIR_APPEND)
-    {
-        res = ft_substr(str, *i, 2);
-        *i += 2;
-    }
-    else
-    {
-        res = ft_substr(str, *i, 1);
-        *i += 1;
-    }
+	if (filter_operator == HEREDOC || filter_operator == REDIR_APPEND)
+	{
+		res = ft_substr(str, *i, 2);
+		*i += 2;
+	}
+	else
+	{
+		res = ft_substr(str, *i, 1);
+		*i += 1;
+	}
 	return (res);
 }
-
-// char	*extract_dollar(char *str, int *i)
-// {
-// 	int		j;
-// 	char	*key;
-// 	char	*res;
-
-// 	(*i)++;
-// 	if (str[*i] == '?')
-// 	{
-// 		(*i)++;
-// 		return (ft_strdup("?"));
-// 	}
-// 	if (str[*i] == '$' || str[*i] == '0')
-// 	{
-// 		res = ft_substr(str, *i, 1);
-// 		(*i)++;
-// 		return (res);
-// 	}
-// 	if (!ft_isalpha(str[*i]) && str[*i] != '_')
-// 		return (ft_strdup("$"));
-// 	j = *i;
-// 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-// 		(*i)++;
-// 	key = ft_substr(str, j, (*i - j));
-// 	res = getenv(key);
-// 	if (!res)
-// 		res = ft_strdup("");
-// 	else
-// 		res = ft_strdup(res);
-// 	free(key);
-// 	return (res);
-// }
-
-
 
 char	*extract_word(char *str, int *i)
 {
@@ -292,16 +254,48 @@ char	*extract_word(char *str, int *i)
 	if (!str[*i])
 		return (NULL);
 	j = *i;
+	if (str[*i] == '$')
+		return (extract_dollar(str, i));
 	if (recognize_token(str, i) != WORD)
-	{
 		return (extract_operator(str, i));
-	}
-	while (str[*i] && !is_space(str[*i]) && str[*i] != '"' && recognize_token(str, i) == WORD)
-	{
+	while (str[*i] && !is_space(str[*i]) && str[*i] != '"'
+		&& recognize_token(str, i) == WORD && str[*i] != '$')
 		(*i)++;
-	}
 	tmp = ft_substr(str, j, (*i - j));
 	res = handle_quote_management(tmp, str, i);
+	return (res);
+}
+
+char	*extract_dollar(char *str, int *i)
+{
+	int		j;
+	char	*key;
+	char	*res;
+
+	(*i)++;
+	if (str[*i] == '?')
+	{
+		(*i)++;
+		return (ft_strdup("?"));
+	}
+	if (str[*i] == '$' || str[*i] == '0')
+	{
+		res = ft_substr(str, *i, 1);
+		(*i)++;
+		return (res);
+	}
+	if (!ft_isalpha(str[*i]) && str[*i] != '_')
+		return (ft_strdup("$"));
+	j = *i;
+	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+		(*i)++;
+	key = ft_substr(str, j, (*i - j));
+	res = getenv(key);
+	if (!res)
+		res = ft_strdup("");
+	else
+		res = ft_strdup(res);
+	free(key);
 	return (res);
 }
 
@@ -309,8 +303,10 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 {
 	char	*quoted_word;
 	char	*res;
+	char	*var;
 
 	res = "";
+	var = "";
 	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
 	{
 		if (str[*i] == '\'')
@@ -330,33 +326,6 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	return (res);
 }
 
-// t_node	*lexer(char *input, t_node **head)
-// {
-// 	int		i;
-// 	int		quoted;
-// 	char	*word;
-
-// 	i = 0;
-// 	while (input[i])
-// 	{
-// 		while (input[i] && is_space(input[i]))
-// 			i++;
-// 		if (!input[i])
-// 			break ;
-// 		if (input[i] == '"')
-// 			(word = extract_quoted(input, &i), quoted = 1);
-// 		else if (input[i] == '\'')
-// 			(word = extract_single_quoted(input, &i), quoted = 2);
-// 		else
-// 			(word = extract_word(input, &i), quoted = 0);
-// 		if (word && word[0] != '\0')
-// 			add_node(head, create_node(word, quoted));
-// 		else
-// 			free(word);
-// 	}
-// 	return (*head);
-// }
-
 char	*build_word(char *input, int *i, int *quoted)
 {
 	char	*word;
@@ -369,9 +338,9 @@ char	*build_word(char *input, int *i, int *quoted)
 	while (input[*i] && !is_space(input[*i]))
 	{
 		if (input[*i] == '"')
-			tmp = extract_quoted(input, i), *quoted = 1;
+			tmp = (extract_quoted(input, i), *quoted = 1);
 		else if (input[*i] == '\'')
-			tmp = extract_single_quoted(input, i), *quoted = 2;
+			tmp = (extract_single_quoted(input, i), *quoted = 2);
 		else
 		{
 			if (recognize_token(input, i) != WORD)
@@ -384,7 +353,6 @@ char	*build_word(char *input, int *i, int *quoted)
 	}
 	return (word);
 }
-
 
 t_node	*lexer(char *input, t_node **head)
 {
@@ -429,7 +397,7 @@ t_node	*handle_expands(t_node **head)
 	return (*head);
 }
 
-int	main(void)
+/*int	main(void)
 {
 	t_node	*head;
 	char	*str;
@@ -440,13 +408,15 @@ char *tests[] = {
     // "echo \"42 Paris\" 'Piscine C'",        // Double + simple quotes fermées
     // "ls -l /tmp | grep txt > out.txt",      // Pipe et redirection
     // "echo $USER $HOME $PWD",                 // Variables à expanser (quoted=0)
-    // "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes, simple quotes littérales
+    "echo \"Mix de$USER et 'quotes'\"",     // Variable dans double quotes, simple quotes littérales
     // "echo 'Test $HOME'",                     // Simple quotes, pas d’expansion
     // "echo \"Test $HOME\"",                   // Double quotes, expansion
     // "echo 'unclosed",                        // Simple quote non fermée
     // "echo \"unclosed",                       // Double quote non fermée
     // "cat < file.txt > output.txt",           // Redirections
     "echo salut$USER<<$PWD",                 // Variable + heredoc operator
+	"echo mix $USER\"test\"'ouf'",
+	"cat 'miam'\"ouf\"",
     // "echo 'adjacent''quotes'",               // Quotes simples adjacentes
     // "echo \"adjacent\"\"double\"",           // Quotes doubles adjacentes
     // "echo Mixed$USER\"Test\"'$HOME'",        // Mix quotes et variables
@@ -506,4 +476,4 @@ char *tests[] = {
 	// // // clear_nodes(&head);
 	
 	return (0);
-}
+}*/
