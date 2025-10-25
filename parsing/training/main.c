@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/25 15:43:41 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/25 15:51:25 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,7 @@ char	*extract_quoted(char *str, int *i)
 	return (res);
 }
 
+
 char	*extract_single_quoted(char *str, int *i)
 {
 	int		j;
@@ -268,6 +269,7 @@ char	*extract_word(char *str, int *i)
 
 char	*extract_dollar(char *str, int *i)
 {
+
 	int		j;
 	char	*key;
 	char	*res;
@@ -322,7 +324,8 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 		else
 			res = ft_strjoin(res, extract_word(str, i));
 	}
-	res = ft_strjoin(tmp, res);
+		res = ft_strjoin(tmp, res);
+
 	return (res);
 }
 
@@ -338,9 +341,9 @@ char	*build_word(char *input, int *i, int *quoted)
 	while (input[*i] && !is_space(input[*i]))
 	{
 		if (input[*i] == '"')
-			tmp = (extract_quoted(input, i), *quoted = 1);
+			(tmp = extract_quoted(input, i), *quoted = 1);
 		else if (input[*i] == '\'')
-			tmp = (extract_single_quoted(input, i), *quoted = 2);
+			(tmp = extract_single_quoted(input, i), *quoted = 2);
 		else
 		{
 			if (recognize_token(input, i) != WORD)
@@ -397,7 +400,7 @@ t_node	*handle_expands(t_node **head)
 	return (*head);
 }
 
-/*int	main(void)
+int	main(void)
 {
 	t_node	*head;
 	char	*str;
@@ -476,4 +479,4 @@ char *tests[] = {
 	// // // clear_nodes(&head);
 	
 	return (0);
-}*/
+}
