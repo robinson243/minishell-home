@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/25 15:51:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/25 16:58:25 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,6 @@ char	*extract_quoted(char *str, int *i)
 	return (res);
 }
 
-
 char	*extract_single_quoted(char *str, int *i)
 {
 	int		j;
@@ -269,22 +268,17 @@ char	*extract_word(char *str, int *i)
 
 char	*extract_dollar(char *str, int *i)
 {
-
+	int		start;
 	int		j;
 	char	*key;
 	char	*res;
 
+	start = *i;
 	(*i)++;
-	if (str[*i] == '?')
+	if (str[*i] == '?' || str[*i] == '$' || str[*i] == '0')
 	{
 		(*i)++;
-		return (ft_strdup("?"));
-	}
-	if (str[*i] == '$' || str[*i] == '0')
-	{
-		res = ft_substr(str, *i, 1);
-		(*i)++;
-		return (res);
+		return (ft_substr(str, start, 2));
 	}
 	if (!ft_isalpha(str[*i]) && str[*i] != '_')
 		return (ft_strdup("$"));
@@ -324,8 +318,7 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 		else
 			res = ft_strjoin(res, extract_word(str, i));
 	}
-		res = ft_strjoin(tmp, res);
-
+	res = ft_strjoin(tmp, res);
 	return (res);
 }
 
@@ -351,8 +344,6 @@ char	*build_word(char *input, int *i, int *quoted)
 			tmp = extract_word(input, i);
 		}
 		word = ft_strjoin_free(word, tmp);
-		if (!input[*i] || is_space(input[*i]))
-			break ;
 	}
 	return (word);
 }
@@ -399,6 +390,7 @@ t_node	*handle_expands(t_node **head)
 	}
 	return (*head);
 }
+
 
 int	main(void)
 {
