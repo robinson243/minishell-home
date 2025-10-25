@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/25 16:58:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/25 16:59:20 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -391,7 +391,7 @@ t_node	*handle_expands(t_node **head)
 	return (*head);
 }
 
-
+/*
 int	main(void)
 {
 	t_node	*head;
@@ -471,4 +471,4 @@ char *tests[] = {
 	// // // clear_nodes(&head);
 	
 	return (0);
-}
+}*/
