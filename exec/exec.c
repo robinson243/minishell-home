@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/26 16:37:52 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/26 16:44:15 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 // 	x->prev_nb[0] = x->fd[0];
 // 	waitpid(pid, NULL, 0);
 // }
+
+extern int	g_signal = 0;
 
 int	here_doc(t_file *file)
 {
