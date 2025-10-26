@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 17:44:00 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/26 16:36:46 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include "stdbool.h"
 # include <sys/stat.h>
 # include "wait.h"
+# include "signal.h"
 
 # define WORD 0
 # define PIPE 1
@@ -39,6 +40,8 @@
 # define OUT_APPEND 9
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
+
+extern int	g_signal;
 
 typedef struct s_node
 {

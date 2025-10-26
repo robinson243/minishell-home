@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 17:43:03 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/26 16:20:23 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	exist(char *cmd, char **path, t_globale *data)
 	if (!(*path))
 	{
 		data->exit_code = 127;
+		write(2, cmd, ft_strlen(cmd));
+		write(2, ": command not found\n", 21);
 		return (0);
 	}
 	if (access((*path), X_OK))
@@ -46,6 +48,7 @@ char	*get_path(char **env, char *cmd, t_globale *data)
 	char	*path;
 
 	i = 0;
+	local = NULL;
 	while (env[i])
 	{
 		if (ft_strncmp("PATH=", env[i], 5) == 0)
@@ -83,6 +86,7 @@ int	check_dir(char **path, char *cmd, t_globale *data)
 	{
 		write(2, cmd, ft_strlen(cmd));
 		write(2, " : Is a directory\n", 19);
+		free(*path);
 		data->exit_code = 126;
 		return (0);
 	}

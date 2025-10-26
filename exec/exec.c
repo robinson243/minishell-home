@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 17:42:06 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/26 16:37:52 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	here_doc(t_file *file)
 			break ;
 		}
 		write(infile, line, ft_strlen(line));
+		write(infile, "\n", 1);
 	}
 	close(infile);
 	infile = open(".tmp", O_RDONLY);
@@ -68,6 +69,8 @@ void	do_cmd(t_cmd *cmd, t_globale *data)
 	char	*path;
 
 	path = NULL;
+	if (cmd->skip_cmd)
+		free_exit(data, NULL, data->exit_code);
 	if (is_builtin(cmd->command[0]))
 		do_builtin(data, cmd);
 	else if (exist(cmd->command[0], &path, data))
@@ -85,10 +88,10 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 		cmd->exit_code = 1;
 		return ;
 	}
-	data->signal = fork();
-	if (data->signal == -1)
+	g_signal = fork();
+	if (g_signal == -1)
 		exit(1);
-	if (data->signal == 0)
+	if (g_signal == 0)
 	{
 		redir_in_out(cmd);
 		do_cmd(cmd, data);
@@ -101,18 +104,24 @@ void	wait_all(t_globale *data)
 {
 	int		signal;
 	int		status;
-	t_cmd	*tmp;
+	int		sig;
 
-	tmp = data->cmd;
-	while (tmp)
+	while (1)
 	{
-		signal = waitpid(0, &status, 0);
-		if (signal == data->signal)
+		signal = waitpid(-1, &status, 0);
+		if (signal == g_signal)
 		{
 			if (WIFEXITED(status))
 				data->exit_code = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+			{
+				sig = WTERMSIG(status);
+				if (sig == SIGINT)
+					data->exit_code = 130;
+				else if (sig == SIGQUIT)
+					data->exit_code = 131;
+			}
 		}
-		tmp = tmp->next;
 	}
 }
 
@@ -123,9 +132,10 @@ int	exec(t_globale *data)
 	cmd = data->cmd;
 	if ((cmd && cmd->next == NULL) && is_builtin(cmd->command[0]))
 	{
-		if (cmd->list)
-			open_file(cmd);
-		do_builtin(data, cmd);
+		open_file(cmd);
+		if (!cmd->skip_cmd)
+			do_builtin(data, cmd);
+		return (0);
 	}
 	open_file(cmd);
 	while (cmd)
