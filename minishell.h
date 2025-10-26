@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 15:56:03 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 17:44:00 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include "limits.h"
 # include "stdbool.h"
 # include <sys/stat.h>
+# include "wait.h"
 
 # define WORD 0
 # define PIPE 1
@@ -107,5 +108,6 @@ int		ft_echo(char **args);
 int		exist(char *cmd, char **path, t_globale *data);
 char	*get_path(char **env, char *cmd, t_globale *data);
 int		open_file(t_cmd *cmd);
+int		check_dir(char **path, char *cmd, t_globale *data);
 
 #endif

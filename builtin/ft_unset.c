@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:47:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 15:17:15 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/10/19 18:09:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,23 +70,25 @@ char	**unset(int i, char **env)
 {
 	char	**new_env;
 	int		j;
+	int		l;
 
+	l = 0;
 	j = 0;
 	new_env = malloc (sizeof(char *) * (len(env)));
 	if (!new_env)
 		return (NULL);
-	while (env[i])
+	while (env[l])
 	{
-		if (j != i)
+		if (l != i)
 		{
-			new_env[j] = ft_strdup(env[i]);
+			new_env[j] = ft_strdup(env[l]);
 			if (!new_env[j])
 				return (free_all(new_env), NULL);
-			i++;
+			l++;
 			j++;
 		}
 		else
-			i++;
+			l++;
 	}
 	new_env[j] = NULL;
 	return (new_env);
