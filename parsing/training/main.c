@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/27 16:30:53 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/27 17:04:42 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -492,6 +492,7 @@ char *tests[] = {
 "echo \"\" \"\" \"\"",                   // Plusieurs doubles quotes vides
 "echo \"nested 'single' and $HOME\"",    // Mix nested + variable
 "echo 'nested \"double\" and $HOME'",    // Mix nested + variable non expand
+"echo $0 $?",
 
 
 	NULL
