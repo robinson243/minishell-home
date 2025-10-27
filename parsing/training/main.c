@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/26 12:42:20 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/27 16:30:53 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,6 +335,24 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	return (res);
 }
 
+char	*mini_double_quoted(char *input, int *i, int *quoted)
+{
+	char	*tmp;
+
+	tmp = extract_quoted(input, i);
+	*quoted = 1;
+	return (tmp);
+}
+
+char	*mini_single_quoted(char *input, int *i, int *quoted)
+{
+	char	*tmp;
+
+	tmp = extract_single_quoted(input, i);
+	*quoted = 2;
+	return (tmp);
+}
+
 char	*build_word(char *input, int *i, int *quoted)
 {
 	char	*word;
@@ -347,9 +365,9 @@ char	*build_word(char *input, int *i, int *quoted)
 	while (input[*i] && !is_space(input[*i]))
 	{
 		if (input[*i] == '"')
-			(tmp = extract_quoted(input, i), *quoted = 1);
+			tmp = mini_double_quoted(input, i, quoted);
 		else if (input[*i] == '\'')
-			(tmp = extract_single_quoted(input, i), *quoted = 2);
+			tmp = mini_single_quoted(input, i, quoted);
 		else
 		{
 			if (recognize_token(input, i) != WORD)
@@ -408,7 +426,7 @@ t_node	*handle_expands(t_node **head)
 void	set_token_type(t_node *node)
 {
 	if (!node || !node->content)
-		return;
+		return ;
 	if (ft_strcmp(node->content, "|") == 0)
 		node->type = PIPE;
 	else if (ft_strcmp(node->content, "<") == 0)
