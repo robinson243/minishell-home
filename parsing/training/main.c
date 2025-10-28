@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/28 13:38:13 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/28 13:38:55 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,7 +329,7 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 		else
 			res = ft_strjoin_free(res, extract_word(str, i));
 	}
-	res = ft_strjoin(tmp, res);
+	res = ft_strjoin_free(tmp, res);
 	return (res);
 }
 
