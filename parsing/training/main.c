@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/28 13:49:08 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/28 15:10:44 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,7 +313,7 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 	char	*quoted_word;
 	char	*res;
 
-	res = "";
+	res = ft_strdup("");
 	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
 	{
 		if (str[*i] == '\'')
