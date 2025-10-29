@@ -25,14 +25,6 @@ typedef struct s_files
 	struct s_files	*next;
 }					t_files;
 
-typedef struct s_node
-{
-	int				type;
-	char			*content;
-	int				quoted;
-	struct s_node	*next;
-}					t_node;
-
 typedef struct s_cmd
 {
 	char			*cmd;
@@ -40,11 +32,41 @@ typedef struct s_cmd
 	t_node			*tab_cmd;
 }					t_cmd;
 
-char				*extract_dollar(char *str, int *i);
-char				*ft_strjoin_char(const char *s, char c);
-char				*change_sentence(char *str);
-char	*handle_quote_management(char *tmp, char *str, int *i);
-char	*extract_word(char *str, int *i);
-void	set_token_type(t_node *node);
+typedef struct s_node
+{
+    int type;
+    char *content;
+    int quoted;
+    struct s_node *next;
+} t_node;
+
+
+int     recognize_token(const char *s, int *i);
+int     is_space(char c);
+
+t_node  *create_node(char *content, int quoted);
+void    add_node(t_node **head, t_node *new);
+void    clear_nodes(t_node **head);
+void    print_list(t_node **head);
+
+char    *ft_strjoin_free(char *s1, char *s2);
+
+char    *expand_dollar_basic(char *s, int *i);
+char    *expand_variables_basic(char *s);
+
+char    *extract_quoted(char *str, int *i);
+char    *extract_single_quoted(char *str, int *i);
+char    *extract_operator(char *str, int *i);
+char    *extract_word(char *str, int *i);
+char    *extract_dollar(char *str, int *i);
+char    *handle_quote_management(char *tmp, char *str, int *i);
+
+char    *mini_double_quoted(char *input, int *i, int *quoted);
+char    *mini_single_quoted(char *input, int *i, int *quoted);
+
+char    *build_word(char *input, int *i, int *quoted);
+t_node  *lexer(char *input, t_node **head);
+t_node  *handle_expands(t_node **head);
+void    set_token_type(t_node *node);
 
 #endif
