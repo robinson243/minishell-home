@@ -5,103 +5,85 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/28 16:06:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:54:44 by romukena         ###   ########.fr       */
+/*   Created: 2025/10/29 16:11:04 by romukena          #+#    #+#             */
+/*   Updated: 2025/10/29 16:20:48 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "test.h"
 
-char	*append_char(char *str, char c)
-{
-	char	*new_str;
-	int		i;
-
-	i = 0;
-	new_str = malloc(sizeof(char) * (ft_strlen(str) + 2));
-	if (!new_str)
-		return (NULL);
-	while (str && str[i])
-	{
-		new_str[i] = str[i];
-		i++;
-	}
-	new_str[i++] = c;
-	new_str[i] = 0;
-	free(str);
-	return (new_str);
-}
-
-int	verif(int c, char *str)
+int	ft_strcmp(char *s1, char *s2)
 {
 	int	i;
 
 	i = 0;
-	while (str[i])
+	while (s1[i] == s2[i] && s1[i] && s2[i])
 	{
-		if (c == str[i])
-			return (0);
 		i++;
 	}
-	return (1);
+	return (s1[i] - s2[i]);
 }
 
-int	ft_lstaddback(t_node **lst, t_node *new)
+int	recognize_token(const char *s, int *i)
 {
-	t_node	*current;
-
-	if (!lst || !new)
-		return (0);
-	if (*lst == NULL)
+	if (!s || s[*i] == '\0')
+		return (WORD);
+	if (s[*i] == '|')
+		return (PIPE);
+	if (s[*i] == '<')
 	{
-		*lst = new;
-		(*lst)->next = NULL;
-		return (1);
+		if (s[(*i) + 1] == '<')
+			return (HEREDOC);
+		return (REDIR_IN);
 	}
-	current = *lst;
-	while (current->next != NULL)
-		current = current->next;
-	current->next = new;
-	return (1);
+	if (s[*i] == '>')
+	{
+		if (s[(*i) + 1] == '>')
+			return (REDIR_APPEND);
+		return (REDIR_OUT);
+	}
+	return (WORD);
 }
 
-void	ft_lstclear(t_node **lst)
+void	set_token_type(t_node *node)
 {
-	t_node	*current;
-
-	if (!lst)
+	if (!node || !node->content)
 		return ;
-	current = *lst;
-	while (*lst != NULL)
-	{
-		current = (*lst)->next;
-		free((*lst)->content);
-		free(*lst);
-		*lst = current;
-	}
-	*lst = NULL;
+	if (ft_strcmp(node->content, "|") == 0)
+		node->type = PIPE;
+	else if (ft_strcmp(node->content, "<") == 0)
+		node->type = REDIR_IN;
+	else if (ft_strcmp(node->content, ">") == 0)
+		node->type = REDIR_OUT;
+	else if (ft_strcmp(node->content, ">>") == 0)
+		node->type = REDIR_APPEND;
+	else if (ft_strcmp(node->content, "<<") == 0)
+		node->type = HEREDOC;
+	else
+		node->type = WORD;
 }
 
-t_node	*ft_lstnew(char *str, int types)
+char	*ft_strjoin_free(char *s1, char *s2)
 {
-	t_node	*s;
+	char	*res;
+	size_t	len1;
+	size_t	len2;
 
-	s = malloc(sizeof(t_node));
-	if (s == NULL)
+	if (!s1 && !s2)
 		return (NULL);
-	s->content = ft_strdup(str);
-	s->type = types;
-	s->next = NULL;
-	return (s);
-}
-
-void	print_list(t_node *lst)
-{
-	while (lst)
-	{
-		printf("content = '%s' , ", lst->content);
-		printf("types  :  %d\n", lst->type);
-		lst = lst->next;
-	}
-	printf("NULL\n");
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	res = malloc(len1 + len2 + 1);
+	if (!res)
+		return (NULL);
+	ft_memcpy(res, s1, len1);
+	ft_memcpy(res + len1, s2, len2);
+	res[len1 + len2] = '\0';
+	free(s1);
+	free(s2);
+	return (res);
 }
