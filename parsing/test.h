@@ -36,9 +36,10 @@ typedef struct s_files
 
 typedef struct s_cmd
 {
-	char			*cmd;
+	char			**cmd;
 	char			**args;
-	t_node			*tab_cmd;
+	int				operators;
+	char			*redirect_file;
 }					t_cmd;
 
 int					recognize_token(const char *s, int *i);
