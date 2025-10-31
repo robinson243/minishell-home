@@ -17,7 +17,6 @@
 # define REDIR_OUT 3
 # define REDIR_APPEND 4
 # define HEREDOC 5
-# define FILE 6
 
 typedef struct s_node
 {
@@ -71,5 +70,6 @@ char				*build_word(char *input, int *i, int *quoted);
 t_node				*lexer(char *input, t_node **head);
 t_node				*handle_expands(t_node **head);
 void				set_token_type(t_node *node);
+int					numb_of_commands(t_node **head);
 
 #endif
