@@ -19,7 +19,6 @@
 # define HEREDOC 5
 # define FILE 6
 
-
 typedef struct s_node
 {
 	int				type;
@@ -28,22 +27,25 @@ typedef struct s_node
 	struct s_node	*next;
 }					t_node;
 
+typedef struct s_cmd
+{
+	char			**cmd;
+	char			*args;
+	int				operators;
+	char			*redirect_file;
+	int				pipe;
+	struct s_cmd	*next;
+}					t_cmd;
+
 typedef struct s_files
 {
 	int				fd;
 	struct s_files	*next;
 }					t_files;
 
-typedef struct s_cmd
-{
-	char			**cmd;
-	char			**args;
-	int				operators;
-	char			*redirect_file;
-}					t_cmd;
-
 int					recognize_token(const char *s, int *i);
 int					is_space(char c);
+int					ft_strcmp(char *s1, char *s2);
 
 t_node				*create_node(char *content, int quoted);
 void				add_node(t_node **head, t_node *new);

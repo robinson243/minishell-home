@@ -6,13 +6,13 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/30 13:46:26 by romukena         ###   ########.fr       */
+/*   Updated: 2025/10/30 23:36:35 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-char **gives_cmd(t_node **head)
+/* char **gives_cmd(t_node **head)
 {
 	t_node *tmp;
 	char **cmd;
@@ -36,4 +36,4 @@ char **gives_cmd(t_node **head)
 		tmp->next;
 	}
 	return (cmd);
-}
+} */
