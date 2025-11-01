@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/28 16:00:18 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/26 16:36:46 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/01 18:34:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,12 @@ typedef struct s_cmd
 {
 	char			**command;
 	int				p_nb[2];
-	int				prev_nb;
-	int				infile;
-	int				outfile;
 	bool			skip_cmd;
 	int				exit_code;
 	bool			first;
+	int				prev_nb;
+	int				infile;
+	int				outfile;
 	t_file			*list;
 	struct s_cmd	*next;
 }					t_cmd;
@@ -77,8 +77,6 @@ typedef struct s_globale
 {
 	char			**env;
 	struct s_cmd	*cmd;
-	struct s_node	*node;
-	pid_t			signal;
 	int				exit_code;
 }					t_globale;
 

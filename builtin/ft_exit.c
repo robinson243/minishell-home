@@ -6,11 +6,50 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/18 18:01:06 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/01 18:26:41 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	lst_clear(t_file **lst)
+{
+	t_file	*current;
+	t_file	*data_next;
+
+	current = *lst;
+	if (!*lst)
+		return ;
+	while (current)
+	{
+		data_next = current->next;
+		free(current->path);
+		free(current);
+		current = data_next;
+	}
+	*lst = NULL;
+}
+
+void	cmd_clear(t_cmd **lst)
+{
+	t_cmd	*current;
+	t_cmd	*data_next;
+
+	current = *lst;
+	if (!*lst)
+		return ;
+	while (current)
+	{
+		data_next = current->next;
+		free_all(current->command);
+		my_close(current->infile, current->outfile, current->p_nb[0], current->p_nb[1]);
+		my_close(current->prev_nb, -1, -1, -1);
+		lst_clear(&current->list);
+		free(current);
+		current = data_next;
+	}
+	*lst = NULL;
+}
 
 void	free_exit(t_globale *data, char *str, int code)
 {
@@ -19,14 +58,7 @@ void	free_exit(t_globale *data, char *str, int code)
 	cmd = data->cmd;
 	if (str)
 		perror(str);
-	free_all(cmd->command);
-	while (cmd->list)
-	{
-		free(cmd->list->path);
-		cmd->list = cmd->list->next;
-	}
-	my_close(cmd->infile, cmd->outfile, cmd->p_nb[0], cmd->p_nb[1]);
-	my_close(cmd->prev_nb, -1, -1, -1);
+	cmd_clear(&data->cmd);
 	exit(code);
 }
 

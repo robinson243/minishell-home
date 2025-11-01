@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/26 16:44:15 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/01 18:36:02 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 	}
 	g_signal = fork();
 	if (g_signal == -1)
-		exit(1);
+		free_exit(data, "Fork", 1);
 	if (g_signal == 0)
 	{
 		redir_in_out(cmd);
