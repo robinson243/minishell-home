@@ -38,7 +38,6 @@ typedef struct s_cmd
 	char			**argv;
 	t_redir			*redir;
 	int				pipe_out;
-	int				first;
 	struct s_cmd	*next;
 }					t_cmd;
 

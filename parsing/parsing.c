@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/01 18:02:26 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/01 18:11:02 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ t_cmd *new_cmd(void)
 		return (NULL);
 	node->argv = NULL;
 	node->pipe_out = 0;
-	node->first = 0;
 	node->redir = NULL;
 	node->next = NULL;
 	return (node);
@@ -60,14 +59,17 @@ t_redir *new_redir(int type, char *file)
 
 void add_redir(t_cmd *cmd, t_redir *new)
 {
+	t_redir *tmp;
+	
+	tmp = cmd->redir;
 	if (!cmd->redir)
 	{
 		cmd->redir = new;
 		return ;
 	}
-	while (cmd->redir->next)
-		cmd->redir = cmd->redir->next;
-	cmd->redir = new;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
 }
 
 void add_arg(t_cmd *cmd, char *arg)
