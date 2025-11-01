@@ -26,13 +26,18 @@ typedef struct s_node
 	struct s_node	*next;
 }					t_node;
 
+typedef struct s_redir
+{
+	int				type;
+	char			*file;
+	struct s_redir	*next;
+}					t_redir;
+
 typedef struct s_cmd
 {
-	char			**cmd;
-	char			*args;
-	int				operators;
-	char			*redirect_file;
-	int				pipe;
+	char			**argv;
+	t_redir			*redir;
+	int				pipe_out;
 	struct s_cmd	*next;
 }					t_cmd;
 

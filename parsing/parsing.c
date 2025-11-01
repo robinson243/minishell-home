@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/01 00:47:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/01 10:26:00 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,4 @@ int	numb_of_commands(t_node **head)
 		i++;
 	}
 	return (i);
-}
-
-t_cmd *titi(t_node **head)
-{
-	
 }
