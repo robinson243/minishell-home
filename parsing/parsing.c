@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/01 16:35:15 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/01 17:37:10 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ t_cmd *new_cmd(void)
 	node = malloc(sizeof(t_cmd));
 	if (!node)
 		return (NULL);
+	node->argv = NULL;
+	node->pipe_out = 0;
+	node->redir = NULL;
+	node->next = NULL;
 	return (node);
 }
 
@@ -66,5 +70,13 @@ void add_redir(t_cmd *cmd, t_redir *new)
 
 void add_arg(t_cmd *cmd, char *arg)
 {
-	
+	int	i;
+	i = 0;
+	if (!cmd->argv)
+	{
+		cmd->argv = malloc(sizeof(char * ) * 1);
+		cmd->argv[0] = ft_strdup(arg);
+		return ;
+	}
+	return ;
 }
