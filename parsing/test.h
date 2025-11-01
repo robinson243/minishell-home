@@ -38,6 +38,7 @@ typedef struct s_cmd
 	char			**argv;
 	t_redir			*redir;
 	int				pipe_out;
+	int				first;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -76,5 +77,7 @@ t_node				*lexer(char *input, t_node **head);
 t_node				*handle_expands(t_node **head);
 void				set_token_type(t_node *node);
 int					numb_of_commands(t_node **head);
+
+void	vivi(void);
 
 #endif
