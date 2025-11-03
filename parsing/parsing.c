@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/03 13:40:07 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:41:20 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,6 @@ void	free_cmd_list_no_files(t_cmd *head)
 	}
 }
 
-void	free_parser(t_cmd *head, char **av)
-{
-	free_argv(av);
-	free_cmd_list_no_files(head);
-}
-
 void	init_var(t_cmd **head_cmd, t_cmd **cur_cmd, t_node **tmp, t_node **head)
 {
 	*head_cmd = NULL;
@@ -81,7 +75,11 @@ t_cmd	*parser(t_node **head)
 		else if (tmp->type != PIPE && tmp->type != WORD)
 		{
 			gain_some_lines(&cur_cmd, &head_cmd);
-			add_redir(cur_cmd, new_redir(tmp->type, tmp->content));
+			if (tmp->next && tmp->next->type == WORD)
+			{
+				add_redir(cur_cmd, new_redir(tmp->type, tmp->next->content));
+				tmp = tmp->next;
+			}
 		}
 		if (tmp->type == PIPE)
 			handle_pipe(&cur_cmd, tmp);

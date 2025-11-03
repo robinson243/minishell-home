@@ -57,6 +57,7 @@ void				clear_nodes(t_node **head);
 void				print_list(t_node **head);
 
 char				*ft_strjoin_free(char *s1, char *s2);
+void				print_cmd_list(t_cmd *cmd);
 
 char				*expand_dollar_basic(char *s, int *i);
 char				*expand_variables_basic(char *s);
@@ -70,6 +71,8 @@ char				*handle_quote_management(char *tmp, char *str, int *i);
 
 char				*mini_double_quoted(char *input, int *i, int *quoted);
 char				*mini_single_quoted(char *input, int *i, int *quoted);
+void				gain_some_lines(t_cmd **cur_cmd, t_cmd **head_cmd);
+void				handle_pipe(t_cmd **cur_cmd, t_node *tmp);
 
 char				*build_word(char *input, int *i, int *quoted);
 t_node				*lexer(char *input, t_node **head);
@@ -82,6 +85,6 @@ t_cmd				*new_cmd(void);
 t_redir				*new_redir(int type, char *file);
 t_cmd				*parser(t_node **head);
 
-void				vivi(void);
+void				free_cmd_list_no_files(t_cmd *head);
 
 #endif

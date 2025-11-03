@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:09:19 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/29 16:22:47 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:46:36 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,12 @@ void	clear_nodes(t_node **head)
 	while (current)
 	{
 		tmp = current->next;
-		free(current->content);
+		if (current->content)
+			free(current->content);
 		free(current);
 		current = tmp;
 	}
+	*head = NULL;
 }
 
 void	print_list(t_node **head)

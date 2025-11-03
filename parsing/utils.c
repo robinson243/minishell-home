@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:11:04 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/29 16:20:48 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:51:51 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,32 @@ char	*ft_strjoin_free(char *s1, char *s2)
 	free(s1);
 	free(s2);
 	return (res);
+}
+
+void	print_cmd_list(t_cmd *cmd)
+{
+	t_redir	*r;
+	int		i;
+
+	while (cmd)
+	{
+		printf("=== Command ===\n");
+		if (cmd->argv)
+		{
+			i = 0;
+			while (cmd->argv[i])
+			{
+				printf("argv[%d]: %s\n", i, cmd->argv[i]);
+				i++;
+			}
+		}
+		r = cmd->redir;
+		while (r)
+		{
+			printf("redir type=%d file=%s\n", r->type, r->file);
+			r = r->next;
+		}
+		printf("pipe_out=%d\n\n", cmd->pipe_out);
+		cmd = cmd->next;
+	}
 }

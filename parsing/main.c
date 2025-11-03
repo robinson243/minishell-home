@@ -6,54 +6,33 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/03 13:41:27 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:49:20 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
-/*
-int main(void)
+
+int	main(int ac, char **av, char **envp)
 {
-    // Création manuelle de nodes simulant : "ls -l | grep txt > out.txt"
-    t_node n1 = {WORD, "ls", 0, NULL};
-    t_node n2 = {WORD, "-l", 0, NULL};
-    t_node n3 = {PIPE, "|", 0, NULL};
-    t_node n4 = {WORD, "grep", 0, NULL};
-    t_node n5 = {WORD, "txt", 0, NULL};
-    t_node n6 = {REDIR_OUT, "out.txt", 0, NULL};
+	char	*line;
+	t_cmd	*cmd;
+	t_node	*node;
 
-    // Chaînage
-    n1.next = &n2;
-    n2.next = &n3;
-    n3.next = &n4;
-    n4.next = &n5;
-    n5.next = &n6;
-
-    // Pointeur pour parser
-    t_node *head = &n1;
-    t_cmd *cmd_list = parser(&head);
-
-    // Affichage des commandes
-    for (t_cmd *c = cmd_list; c; c = c->next)
-    {
-        // Arguments
-        if (c->argv)
-        {
-            for (int i = 0; c->argv[i]; i++)
-                printf("argv[%d]: %s\n", i, c->argv[i]);
-        }
-
-        // Redirections
-        if (c->redir)
-        {
-            for (t_redir *r = c->redir; r; r = r->next)
-                printf("redir type=%d file=%s\n", r->type, r->file);
-        }
-
-        // Pipe
-        printf("pipe_out=%d\n\n", c->pipe_out);
-    }
-
-    return 0;
+	node = NULL;
+	cmd = NULL;
+	using_history();
+	(void)ac;
+	(void)av;
+	while ((line = readline("minishell > ")))
+	{
+		lexer(line, &node);
+		handle_expands(&node);
+		cmd = parser(&node);
+		print_cmd_list(cmd);
+		free_cmd_list_no_files(cmd);
+		clear_nodes(&node);
+		add_history(line);
+		free(line);
+	}
+	clear_history();
 }
-*/
