@@ -75,7 +75,7 @@ char				*build_word(char *input, int *i, int *quoted);
 t_node				*lexer(char *input, t_node **head);
 t_node				*handle_expands(t_node **head);
 void				set_token_type(t_node *node);
-int					numb_of_commands(t_node **head);
+/*Fonctions utilitaires pour le parsing final*/
 void				add_arg(t_cmd *cmd, char *arg);
 void				add_redir(t_cmd *cmd, t_redir *new);
 t_cmd				*new_cmd(void);

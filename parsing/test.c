@@ -6,12 +6,12 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 00:11:33 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/01 00:13:11 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:40:55 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
-
+/*
 void	vivi(void)
 {
 	t_node *head;
@@ -112,4 +112,4 @@ void	vivi(void)
 	}
 
 	head = NULL;
-}
+}*/
