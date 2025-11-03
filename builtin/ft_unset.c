@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:47:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 18:09:03 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:12:16 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
 
 void	free_all(char **str)
 {
@@ -39,21 +39,6 @@ int	s_cmp(char *s1, char *s2)
 		i++;
 	}
 	return (s1[i] - s2[i]);
-}
-
-int	existe(char *str, char **env)
-{
-	int	i;
-
-	i = 0;
-
-	while (env[i])
-	{
-		if (s_cmp(str, env[i]) == 0)
-			return (i);
-		i++;
-	}
-	return (-1);
 }
 
 int	len(char **str)

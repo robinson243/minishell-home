@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 18:26:40 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:11:18 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
 
 int	ft_pwd(void);
 

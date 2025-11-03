@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 14:00:52 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 14:59:31 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:11:28 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
 
 int	is_nl(char *args)
 {

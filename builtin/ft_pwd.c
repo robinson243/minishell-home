@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:56:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:40:53 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:12:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>

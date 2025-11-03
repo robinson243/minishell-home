@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/01 18:26:41 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:11:43 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
 
 void	lst_clear(t_file **lst)
 {
@@ -59,6 +59,8 @@ void	free_exit(t_globale *data, char *str, int code)
 	if (str)
 		perror(str);
 	cmd_clear(&data->cmd);
+	free_all(data->env);
+	free(data);
 	exit(code);
 }
 
