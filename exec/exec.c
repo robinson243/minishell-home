@@ -6,34 +6,64 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/01 18:36:02 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:10:47 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "exec.h"
 
-// int	wait_doc(int p[2], pid_t pid)
-// {
-// 	close(p[1]);
-// 	close(p[0]);
-// 	x->prev_nb[0] = x->fd[0];
-// 	waitpid(pid, NULL, 0);
-// }
+pid_t	g_signal;
 
-extern int	g_signal = 0;
+void	sigint_heredoc(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	unlink(".tmp");
+	exit(130);
+}
+
+
+int	my_here_doc(t_file *file, t_cmd *cmd)
+{
+	pid_t	pid;
+	int		fd;
+	int		status;
+
+
+	pid = fork();
+	if (pid == 0)
+	{
+		fd = here_doc(file);
+		if (fd == -1)
+			exit(1);
+		exit(0);
+	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		cmd->skip_cmd = true;
+		unlink(".tmp");
+		return (0);
+	}
+	fd = open(".tmp", O_RDONLY);
+	unlink(".tmp");
+	if (fd != -1)
+		cmd->skip_cmd = true;
+	return (fd);
+}
 
 int	here_doc(t_file *file)
 {
 	char	*line;
 	int		infile;
 
+	signal(SIGINT, sigint_heredoc);
+	signal(SIGQUIT, SIG_IGN);
 	infile = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (infile == -1)
-		return (-1);
-	line = NULL;
+		exit(1);
 	while (1)
 	{
-		free(line);
 		line = readline("> ");
 		if (!line)
 			break ;
@@ -44,12 +74,10 @@ int	here_doc(t_file *file)
 		}
 		write(infile, line, ft_strlen(line));
 		write(infile, "\n", 1);
+		free(line);
 	}
 	close(infile);
-	infile = open(".tmp", O_RDONLY);
-	if (infile != -1)
-		unlink(".tmp");
-	return (infile);
+	exit(0);
 }
 
 void	next(t_cmd *cmd)
@@ -62,7 +90,7 @@ void	next(t_cmd *cmd)
 	my_close(cmd->prev_nb, cmd->infile, cmd->p_nb[1], cmd->outfile);
 	if (cmd->next)
 		cmd->next->prev_nb = tmp_fd;
-	else
+	else if(cmd->p_nb[0] >= 0) 
 		close(cmd->p_nb[0]);
 }
 
@@ -72,12 +100,15 @@ void	do_cmd(t_cmd *cmd, t_globale *data)
 
 	path = NULL;
 	if (cmd->skip_cmd)
-		free_exit(data, NULL, data->exit_code);
+		free_exit(data, NULL, 1);
 	if (is_builtin(cmd->command[0]))
 		do_builtin(data, cmd);
-	else if (exist(cmd->command[0], &path, data))
+	else if (exist(cmd->command[0], &path, cmd, data))
+	{
 		execve(path, cmd->command, data->env);
-	free_exit(data, NULL, data->exit_code);
+		free(path);
+	}
+	free_exit(data, NULL, cmd->exit_code);
 }
 
 void	exec_cmd(t_cmd *cmd, t_globale *data)
@@ -95,6 +126,8 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 		free_exit(data, "Fork", 1);
 	if (g_signal == 0)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		redir_in_out(cmd);
 		do_cmd(cmd, data);
 	}
@@ -102,26 +135,28 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 		next(cmd);
 }
 
-void	wait_all(t_globale *data)
+void	wait_all(int *exit_code)
 {
 	int		signal;
 	int		status;
 	int		sig;
 
-	while (1)
+	while ((signal = waitpid(-1, &status, 0)))
 	{
-		signal = waitpid(-1, &status, 0);
 		if (signal == g_signal)
 		{
 			if (WIFEXITED(status))
-				data->exit_code = WEXITSTATUS(status);
+				*exit_code = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
 			{
 				sig = WTERMSIG(status);
 				if (sig == SIGINT)
-					data->exit_code = 130;
+					*exit_code = 130;
 				else if (sig == SIGQUIT)
-					data->exit_code = 131;
+				{
+					write(2, "Quit (core dumped)\n", 19);
+					*exit_code = 131;
+				}
 			}
 		}
 	}
@@ -130,7 +165,9 @@ void	wait_all(t_globale *data)
 int	exec(t_globale *data)
 {
 	t_cmd	*cmd;
+	int		exit_code;
 
+	exit_code = 1;
 	cmd = data->cmd;
 	if ((cmd && cmd->next == NULL) && is_builtin(cmd->command[0]))
 	{
@@ -147,6 +184,6 @@ int	exec(t_globale *data)
 		exec_cmd(cmd, data);
 		cmd = cmd->next;
 	}
-	wait_all(data);
-	return (0);
+	wait_all(&exit_code);
+	return (exit_code);
 }

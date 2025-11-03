@@ -6,21 +6,21 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 14:58:02 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:10:39 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "exec.h"
 
 void	my_close(int fd1, int fd2, int fd3, int fd4)
 {
-	if (fd1 != 1)
+	if (fd1 >= 0)
 		close(fd1);
-	if (fd2 != 1)
+	if (fd2 >= 0)
 		close(fd2);
-	if (fd3 != 1)
+	if (fd3 >= 0)
 		close(fd3);
-	if (fd4 != 1)
+	if (fd4 >= 0)
 		close(fd4);
 }
 
@@ -73,7 +73,7 @@ int	do_builtin(t_globale *data, t_cmd *cmd)
 	commande = cmd->command;
 	if (cmd->skip_cmd)
 	{
-		data->exit_code = 1;
+		cmd->exit_code = 1;
 		return (0);
 	}
 	if (!ft_strncmp(commande[0], "unset", INT_MAX))

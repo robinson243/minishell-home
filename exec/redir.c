@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/10/19 15:55:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:08:17 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "exec.h"
 
 int	open_file(t_cmd *cmd)
 {
@@ -60,6 +60,8 @@ void	redir_in(t_cmd *cmd)
 	}
 	if (cmd->infile != -1)
 		close(cmd->infile);
+	if (cmd->prev_nb >= 0)
+		close(cmd->prev_nb);
 }
 
 void	redir_out(t_cmd *cmd)
@@ -81,15 +83,13 @@ void	redir_out(t_cmd *cmd)
 void	redir_in_out(t_cmd *cmd)
 {
 	redir_in(cmd);
-	if (cmd->skip_cmd == true)
-		return ;
 	redir_out(cmd);
 }
 
 int	my_open(t_file *list, t_cmd *cmd)
 {
 	if (!list || !list->path)
-		return (-1);
+		return (1);
 	if (list->type == INFILE)
 		cmd->infile = open(list->path, O_RDONLY);
 	else if (list->type == OUTFILE)
@@ -97,7 +97,7 @@ int	my_open(t_file *list, t_cmd *cmd)
 	else if (list->type == OUT_APPEND)
 		cmd->outfile = open(list->path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (list->type == HEREDOC)
-		cmd->infile = here_doc(list);
+		cmd->infile = my_here_doc(list, cmd);
 	else
 		list->fd = -1;
 	if ((list->type == INFILE || list->type == HEREDOC) && cmd->infile == -1)
