@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:10:39 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 17:25:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	do_builtin(t_globale *data, t_cmd *cmd)
 {
 	char	**commande;
 
-	commande = cmd->command;
+	commande = cmd->argv;
 	if (cmd->skip_cmd)
 	{
 		cmd->exit_code = 1;
