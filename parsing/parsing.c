@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/03 15:41:20 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:58:31 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,12 @@ t_cmd	*parser(t_node **head)
 	init_var(&head_cmd, &cur_cmd, &tmp, head);
 	while (tmp)
 	{
-		if (tmp->type == WORD)
+		if (tmp->type == WORD || tmp->type != PIPE)
 		{
 			gain_some_lines(&cur_cmd, &head_cmd);
-			add_arg(cur_cmd, tmp->content);
-		}
-		else if (tmp->type != PIPE && tmp->type != WORD)
-		{
-			gain_some_lines(&cur_cmd, &head_cmd);
-			if (tmp->next && tmp->next->type == WORD)
+			if (tmp->type == WORD)
+				add_arg(cur_cmd, tmp->content);
+			else if (tmp->next && tmp->next->type == WORD)
 			{
 				add_redir(cur_cmd, new_redir(tmp->type, tmp->next->content));
 				tmp = tmp->next;
