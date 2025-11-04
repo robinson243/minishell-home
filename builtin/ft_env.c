@@ -6,11 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:45:55 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 15:56:33 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:11:36 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
 
 int	env(char **env)
 {
@@ -24,7 +24,4 @@ int	env(char **env)
 	return (0);
 }
 
-// int	main(int ac, char **av, char **envp)
-// {
-// 	env(envp);
-// }
+

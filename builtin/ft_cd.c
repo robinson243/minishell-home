@@ -6,11 +6,13 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/09/30 17:56:14 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/03 16:11:18 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../exec/exec.h"
+
+int	ft_pwd(void);
 
 char	*ft_user(char **env)
 {
@@ -62,8 +64,27 @@ int	ft_cd(char	**cmd, char **env)
 	return (0);
 }
 
-int main(int ac, char **av, char **env)
-{
-	ft_cd(av + 1, env);
-    return 0;
-}
+// int	main(int ac, char **av, char **env)
+// {
+// 	char		*line;
+// 	char		**res;
+
+// 	(void)ac;
+// 	(void)av;
+// 	while (1)
+// 	{
+// 		line = readline("minishell> ");
+// 		if (!line || line[0] == '9')
+// 		{
+// 			printf("exit\n");
+// 			break ;
+// 		}
+// 		res = ft_split(line, ' ');
+// 		if (ft_strncmp("cd", res[0], 2) == 0)
+// 			ft_cd(res, env);
+// 		if (ft_strncmp("pwd", res[0], 3) == 0)
+// 			ft_pwd();
+// 		free(line);
+// 	}
+// 	return (0);
+// }
