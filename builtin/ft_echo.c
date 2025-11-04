@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 14:00:52 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:11:28 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:27:54 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	is_nl(char *args)
 	return (0);
 }
 
-int	ft_echo(char **args)
+int	ft_echo(char **args, t_globale *data)
 {
 	int	j;
 	int	i;
@@ -41,12 +41,17 @@ int	ft_echo(char **args)
 		i = 1;
 		nl = 0;
 	}
-	while (args[i])
+	if (ft_strncmp(args[0], "$?", INT_MAX) == 0)
+		printf("%d", data->exit_code);
+	else
 	{
-		write(1, args[i], ft_strlen(args[i]));
-		if (args[i + 1])
-			write(1, " ", 1);
-		i++;
+		while (args[i])
+		{
+			write(1, args[i], ft_strlen(args[i]));
+			if (args[i + 1])
+				write(1, " ", 1);
+			i++;
+		}
 	}
 	if (nl)
 		write(1, "\n", 1);

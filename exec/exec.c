@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 17:25:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:59:48 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,45 +14,92 @@
 
 pid_t	g_signal;
 
-void	next(t_cmd *cmd)
+void	sigint_main(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+
+t_exec	*init_data(t_cmd *cmd)
+{
+	t_exec		*head;
+	t_exec		*curr;
+	t_exec		*new;
+	t_cmd		*tmp;
+
+	head = NULL;
+	curr = NULL;
+	tmp = cmd;
+	while (tmp)
+	{
+		new = malloc(sizeof(t_exec));
+		new->cmd = tmp;
+		new->skip_cmd = false;
+		new->exit_code = 0;
+		new->first = (tmp == cmd);
+		new->prev_nb = -1;
+		new->infile = -1;
+		new->outfile = -1;
+		new->next = NULL;
+		if (!head)
+			head = new;
+		else
+			curr->next = new;
+		curr = new;
+		tmp = tmp->next;
+	}
+	return (head);
+}
+
+void	next(t_exec *exec)
 {
 	int	tmp_fd;
 
 	tmp_fd = -1;
-	if (cmd->next)
-		tmp_fd = cmd->p_nb[0];
-	my_close(cmd->prev_nb, cmd->infile, cmd->p_nb[1], cmd->outfile);
-	if (cmd->next)
-		cmd->next->prev_nb = tmp_fd;
-	else if (cmd->p_nb[0] >= 0)
-		close(cmd->p_nb[0]);
+	if (exec->next)
+		tmp_fd = exec->p_nb[0];
+	my_close(exec->prev_nb, exec->infile, exec->p_nb[1], exec->outfile);
+	if (exec->next)
+		exec->next->prev_nb = tmp_fd;
+	else if (exec->p_nb[0] >= 0)
+		close(exec->p_nb[0]);
 }
 
-void	do_cmd(t_cmd *cmd, t_globale *data)
+void	do_cmd(t_exec *exec, t_globale *data)
 {
 	char	*path;
+	t_cmd	*cmd;
 
+	cmd = exec->cmd;
 	path = NULL;
-	if (cmd->skip_cmd)
+	if (exec->skip_cmd)
 		free_exit(data, NULL, 1);
 	if (is_builtin(cmd->argv[0]))
-		do_builtin(data, cmd);
-	else if (exist(cmd->argv[0], &path, cmd, data))
+		do_builtin(data, exec);
+	else if (exist(&path, cmd, data, exec))
 	{
 		execve(path, cmd->argv, data->env);
 		free(path);
 	}
-	free_exit(data, NULL, cmd->exit_code);
+	free_exit(data, NULL, exec->exit_code);
 }
 
-void	exec_cmd(t_cmd *cmd, t_globale *data)
+void	exec_cmd(t_exec *exec, t_globale *data)
 {
 	t_redir	*list;
+	t_cmd	*cmd;
 
-	if (cmd->skip_cmd)
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	cmd = exec->cmd;
+	if (exec->skip_cmd)
 	{
-		next(cmd);
-		cmd->exit_code = 1;
+		next(exec);
+		exec->exit_code = 1;
 		return ;
 	}
 	g_signal = fork();
@@ -62,11 +109,11 @@ void	exec_cmd(t_cmd *cmd, t_globale *data)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		redir_in_out(cmd);
-		do_cmd(cmd, data);
+		redir_in_out(exec);
+		do_cmd(exec, data);
 	}
 	else
-		next(cmd);
+		next(exec);
 }
 
 void	wait_all(int *exit_code)
@@ -92,35 +139,38 @@ void	wait_all(int *exit_code)
 					*exit_code = 131;
 				}
 			}
+			break ;
 		}
 	}
 }
 
 int	exec(t_cmd *command, char **env)
 {
-	t_cmd		*cmd;
+	t_exec		*exec;
 	int			exit_code;
 	t_globale	*data;
 
+	signal(SIGINT, sigint_main);
+	signal(SIGQUIT, SIG_IGN);
 	data = malloc(sizeof(t_globale));
+	data->exec = init_data(command);
 	data->env = env;
-	data->cmd = command;
-	exit_code = 1;
-	cmd = data->cmd;
-	if ((cmd && cmd->next == NULL) && is_builtin(cmd->argv[0]))
+	exit_code = 0;
+	exec = data->exec;
+	if ((exec && exec->next == NULL) && is_builtin(exec->cmd->argv[0]))
 	{
-		open_file(cmd);
-		if (!cmd->skip_cmd)
-			do_builtin(data, cmd);
+		open_file(exec);
+		if (!exec->skip_cmd)
+			do_builtin(data, exec);
 		return (0);
 	}
-	open_file(cmd);
-	while (cmd)
+	open_file(exec);
+	while (exec)
 	{
-		if (cmd->next && pipe(cmd->p_nb) == -1)
+		if (pipe(exec->p_nb) == -1)
 			return (1);
-		exec_cmd(cmd, data);
-		cmd = cmd->next;
+		exec_cmd(exec, data);
+		exec = exec->next;
 	}
 	wait_all(&exit_code);
 	return (exit_code);

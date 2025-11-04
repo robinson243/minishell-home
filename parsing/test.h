@@ -2,6 +2,7 @@
 # define TEST_H
 
 # include "../libft/libft.h"
+# include "../exec/exec.h"
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>

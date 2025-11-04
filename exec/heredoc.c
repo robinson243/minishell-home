@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 17:18:02 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:57:36 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,36 +18,6 @@ void	sigint_heredoc(int sig)
 	write(1, "\n", 1);
 	unlink(".tmp");
 	exit(130);
-}
-
-
-int	my_here_doc(t_redir *file, t_cmd *cmd)
-{
-	pid_t	pid;
-	int		fd;
-	int		status;
-
-
-	pid = fork();
-	if (pid == 0)
-	{
-		fd = here_doc(file);
-		if (fd == -1)
-			exit(1);
-		exit(0);
-	}
-	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-	{
-		cmd->skip_cmd = true;
-		unlink(".tmp");
-		return (0);
-	}
-	fd = open(".tmp", O_RDONLY);
-	unlink(".tmp");
-	if (fd != -1)
-		cmd->skip_cmd = true;
-	return (fd);
 }
 
 int	here_doc(t_redir *file)
@@ -65,7 +35,7 @@ int	here_doc(t_redir *file)
 		line = readline("> ");
 		if (!line)
 			break ;
-		if (ft_strncmp(line, file->file, INT_MAX) == 0)
+		if (strcmp(line, file->file) == 0)
 		{
 			free(line);
 			break ;
@@ -76,4 +46,37 @@ int	here_doc(t_redir *file)
 	}
 	close(infile);
 	exit(0);
+}
+
+int	my_here_doc(t_redir *file, t_cmd *cmd, t_exec *exec)
+{
+	pid_t	pid;
+	int		fd;
+	int		status;
+
+	(void)cmd;
+	pid = fork();
+	if (pid == -1)
+		return (perror("fork"), -1);
+	if (pid == 0)
+	{
+		fd = here_doc(file);
+		exit(0);
+	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		exec->skip_cmd = true;
+		unlink(".tmp");
+		return (-1);
+	}
+	fd = open(".tmp", O_RDONLY);
+	unlink(".tmp");
+	if (fd == -1)
+		return (perror(".tmp"), -1);
+	return (fd);
 }

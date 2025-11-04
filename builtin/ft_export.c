@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:11:52 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:40:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,12 +106,15 @@ char	**export(int pos, char **env, char *str)
 			return (free_all(new_env), NULL);
 		i++;
 	}
-	new_env[i++] = strdup(str);
+	new_env[i] = strdup(str);
+	if (!new_env[i])
+		return (free_all(new_env), NULL);
+	i++;
 	new_env[i] = NULL;
 	return (new_env);
 }
 
-char	**ft_export(char **cmd, char **env, t_cmd *command)
+char	**ft_export(char **cmd, char **env, t_cmd *command, t_exec *exec)
 {
 	int		i;
 	char	**new_env;
@@ -125,7 +128,7 @@ char	**ft_export(char **cmd, char **env, t_cmd *command)
 		if (!invalide_arg(cmd[i]))
 		{
 			write(2, "export: invalid identifier\n", 28);
-			command->exit_code = 1;
+			exec->exit_code = 1;
 			i++;
 			continue ;
 		}

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 15:45:35 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:12:24 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:48:13 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ char	**ft_strdupdup(char **str)
 
 	i = 0;
 	res = NULL;
+	res = malloc(sizeof(char *) * (len_list(str) + 1));
+	if (!res)
+		return (NULL);
 	while (str[i])
 	{
 		res[i] = ft_strdup(str[i]);

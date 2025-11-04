@@ -6,16 +6,16 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:11:43 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:38:23 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../exec/exec.h"
 
-void	lst_clear(t_file **lst)
+void	lst_clear(t_redir **lst)
 {
-	t_file	*current;
-	t_file	*data_next;
+	t_redir	*current;
+	t_redir	*data_next;
 
 	current = *lst;
 	if (!*lst)
@@ -23,42 +23,44 @@ void	lst_clear(t_file **lst)
 	while (current)
 	{
 		data_next = current->next;
-		free(current->path);
+		free(current->file);
 		free(current);
 		current = data_next;
 	}
 	*lst = NULL;
 }
 
-void	cmd_clear(t_cmd **lst)
+void	cmd_clear(t_exec *exec)
 {
 	t_cmd	*current;
 	t_cmd	*data_next;
+	t_exec	*curr;
 
-	current = *lst;
-	if (!*lst)
+	curr = exec;
+	current = exec->cmd;
+	if (!exec)
 		return ;
 	while (current)
 	{
 		data_next = current->next;
-		free_all(current->command);
-		my_close(current->infile, current->outfile, current->p_nb[0], current->p_nb[1]);
-		my_close(current->prev_nb, -1, -1, -1);
-		lst_clear(&current->list);
+		free_all(current->argv);
+		my_close(curr->infile, curr->outfile, curr->p_nb[0], curr->p_nb[1]);
+		my_close(curr->prev_nb, -1, -1, -1);
+		lst_clear(&current->redir);
 		free(current);
 		current = data_next;
 	}
-	*lst = NULL;
+	exec = NULL;
 }
 
 void	free_exit(t_globale *data, char *str, int code)
 {
 	t_cmd	*cmd;
 
-	cmd = data->cmd;
+	cmd = data->exec->cmd;
 	if (str)
 		perror(str);
-	cmd_clear(&data->cmd);
+	cmd_clear(data->exec);
 	free_all(data->env);
 	free(data);
 	exit(code);
@@ -91,30 +93,30 @@ long long	my_atoi(char *s, int *err)
 	return (result);
 }
 
-void	ft_exit(t_globale *data, t_cmd *cmd)
+void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)
 {
 	int			err;
 	long long	res;
 
 	err = 0;
-	if (cmd->command[1])
+	if (cmd->argv[1])
 	{
-		res = my_atoi(cmd->command[1], &err);
+		res = my_atoi(cmd->argv[1], &err);
 		if (err)
 		{
 			write(2, "exit: ", 7);
-			write(2, cmd->command[1], ft_strlen(cmd->command[1]));
+			write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
 			write(2, ": numeric argument required\n", 29);
 			free_exit(data, NULL, 2);
 		}
 	}
-	if (cmd->command[1] && cmd->command[2])
+	if (cmd->argv[1] && cmd->argv[2])
 	{
 		write(2, "exit: too many arguments\n", 26);
-		cmd->exit_code = 1;
+		exec->exit_code = 1;
 		return ;
 	}
-	if (!cmd->command[1])
+	if (!cmd->argv[1])
 		free_exit(data, NULL, 0);
 	free_exit(data, NULL, (int)(res % 256));
 }

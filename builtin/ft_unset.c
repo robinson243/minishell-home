@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:47:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:12:16 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:41:37 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ char	**ft_unset(char **cmd, char	**env)
 	}
 	if (new_env == NULL)
 		return (env);
-	// free_all(env); // dupliquer le env sinon segfault
+	free_all(env);
 	return (new_env);
 }
 

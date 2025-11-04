@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 17:24:58 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:25:36 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,32 +36,33 @@
 # define HEREDOC 5
 
 # define LIM 6
-# define INFILE 7
-# define OUTFILE 8
-# define OUT_APPEND 9
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
 
 extern pid_t	g_signal;
 
-// typedef struct s_cmd
-// {
-// 	char			**command;
-// 	int				p_nb[2];
-// 	bool			skip_cmd;
-// 	int				exit_code;
-// 	bool			first;
-// 	int				prev_nb;
-// 	int				infile;
-// 	int				outfile;
-// 	t_redir			*list;
-// 	struct s_cmd	*next;
-// }					t_cmd;
+
+typedef struct s_cmd   t_cmd;
+typedef struct s_redir t_redir;
+
+
+typedef struct s_exec
+{
+	t_cmd			*cmd;
+	int				p_nb[2];
+	bool			skip_cmd;
+	int				exit_code;
+	bool			first;
+	int				prev_nb;
+	int				infile;
+	int				outfile;
+	struct s_exec	*next;
+}					t_exec;
 
 typedef struct s_globale
 {
 	char			**env;
-	struct s_cmd	*cmd;
+	t_exec			*exec;
 	int				exit_code;
 }					t_globale;
 
@@ -69,24 +70,24 @@ int		ft_pwd(void);
 void	my_close(int fd1, int fd2, int fd3, int fd4);
 char	*ft_strslashjoin(char const *s1, char const *s2);
 void	free_all(char **str);
-int		my_open(t_redir *list, t_cmd *cmd);
+int		my_open(t_redir *list, t_exec *exec);
 int		is_builtin(char	*command);
 char	**ft_unset(char **cmd, char	**env);
-void	ft_exit(t_globale *data, t_cmd *cmd);
+void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec);
 int		ft_pwd(void);
 int		env(char **env);
 int		ft_cd(char	**cmd, char **env);
-void	redir_in_out(t_cmd *cmd);
-int		do_builtin(t_globale *data, t_cmd *cmd);
+void	redir_in_out(t_exec *exec);
+int		do_builtin(t_globale *data, t_exec *exec);
 int		here_doc(t_redir *file);
-void	redir_out(t_cmd *cmd);
+void	redir_out(t_exec *exec);
 void	free_exit(t_globale *data, char *str, int code);
-int		ft_echo(char **args);
-int		exist(char *cmd, char **path, t_cmd *command, t_globale *data);
-char	*get_path(char **env, char *cmd, t_cmd *command);
-int		open_file(t_cmd *cmd);
-int		check_dir(char **path, char *cmd, t_cmd *command);
-int		my_here_doc(t_redir *file, t_cmd *cmd);
+int		ft_echo(char **args, t_globale *data);
+int     exist(char **path, t_cmd *command, t_globale *data, t_exec *exec);
+char	*get_path(char **env, char *cmd, t_cmd *command, t_exec *exec);
+int		open_file(t_exec *exec);
+int		check_dir(char **path, char *cmd, t_cmd *command, t_exec *exec);
+int		my_here_doc(t_redir *file, t_cmd *cmd, t_exec *exec);
 int		existe(char *str, char **env);
 void	ft_swap(int i, int j, char **tab);
 char	**ft_strdupdup(char **str);
