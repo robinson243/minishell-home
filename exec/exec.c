@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 14:59:48 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:07:48 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ t_exec	*init_data(t_cmd *cmd)
 		new->prev_nb = -1;
 		new->infile = -1;
 		new->outfile = -1;
+		new->p_nb[0] = -1;
+		new->p_nb[1] = -1;
 		new->next = NULL;
 		if (!head)
 			head = new;
