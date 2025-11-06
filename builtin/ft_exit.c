@@ -12,6 +12,32 @@
 
 #include "../exec/exec.h"
 
+void	free_cmd_list(t_cmd *head)
+{
+	t_cmd	*cur;
+	t_cmd	*tmp;
+	t_redir	*r;
+	t_redir	*r_tmp;
+
+	cur = head;
+	while (cur)
+	{
+		free_all(cur->argv);
+		r = cur->redir;
+		while (r)
+		{
+			r_tmp = r->next;
+			if (r->file)
+				free(r->file);
+			free(r);
+			r = r_tmp;
+		}
+		tmp = cur;
+		cur = cur->next;
+		free(tmp);
+	}
+}
+
 void	lst_clear(t_redir **lst)
 {
 	t_redir	*current;
@@ -53,19 +79,6 @@ void	cmd_clear(t_exec *exec)
 	exec = NULL;
 }
 
-void	free_exit(t_globale *data, char *str, int code)
-{
-	t_cmd	*cmd;
-
-	cmd = data->exec->cmd;
-	if (str)
-		perror(str);
-	cmd_clear(data->exec);
-	free_all(data->env);
-	free(data);
-	exit(code);
-}
-
 long long	my_atoi(char *s, int *err)
 {
 	int			i;
@@ -91,6 +104,33 @@ long long	my_atoi(char *s, int *err)
 	if (result > INT_MAX || result < INT_MIN)
 		*err = 1;
 	return (result);
+}
+
+void	free_exit(t_globale *data, char *msg, int code)
+{
+	t_exec	*exec;
+	t_exec	*tmp;
+
+	if (msg)
+		perror(msg);
+	if (!data)
+		exit(code);
+	exec = data->exec;
+	if (data->exec && data->exec->cmd)
+                free_cmd_list(data->exec->cmd);
+	while (exec)
+	{
+		tmp = exec->next;
+		my_close(exec->prev_nb, exec->infile, exec->p_nb[0], exec->p_nb[1]);
+		my_close(exec->outfile, -1, -1, -1);
+		free(exec);
+		exec = tmp;
+	}
+	if (data->env)
+		free_all(data->env);
+	free(data);
+	clear_history();
+	exit(code);
 }
 
 void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)

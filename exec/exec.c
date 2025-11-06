@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 15:07:48 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:06:22 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,6 @@
 
 pid_t	g_signal;
 
-void	sigint_main(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-}
 
 
 t_exec	*init_data(t_cmd *cmd)
@@ -84,6 +76,8 @@ void	do_cmd(t_exec *exec, t_globale *data)
 		do_builtin(data, exec);
 	else if (exist(&path, cmd, data, exec))
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		execve(path, cmd->argv, data->env);
 		free(path);
 	}
@@ -95,8 +89,6 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 	t_redir	*list;
 	t_cmd	*cmd;
 
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
 	cmd = exec->cmd;
 	if (exec->skip_cmd)
 	{
@@ -109,7 +101,6 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 		free_exit(data, "Fork", 1);
 	if (g_signal == 0)
 	{
-		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		redir_in_out(exec);
 		do_cmd(exec, data);
@@ -152,8 +143,8 @@ int	exec(t_cmd *command, char **env)
 	int			exit_code;
 	t_globale	*data;
 
-	signal(SIGINT, sigint_main);
-	signal(SIGQUIT, SIG_IGN);
+	// signal(SIGINT, sigint_main);
+	// signal(SIGQUIT, SIG_IGN);
 	data = malloc(sizeof(t_globale));
 	data->exec = init_data(command);
 	data->env = env;
