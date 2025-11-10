@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 14:24:31 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/10 15:23:44 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,34 +63,36 @@ int	is_builtin(char	*command)
 		return (1);
 	if (!ft_strncmp(command, "cd", INT_MAX))
 		return (1);
+	if (!ft_strncmp(command, "echo", INT_MAX))
+		return (1);
 	return (0);
 }
 
-int	do_builtin(t_globale *data, t_exec *exec)
+void	do_builtin(t_globale *data, t_exec *exec)
 {
 	char	**commande;
 	t_cmd	*cmd;
+	int		std;
 
 	cmd = exec->cmd;
 	commande = cmd->argv;
 	if (exec->skip_cmd)
-	{
 		exec->exit_code = 1;
-		return (0);
-	}
+	std = dup(1);
+	redir_out(exec);
 	if (!ft_strncmp(commande[0], "unset", INT_MAX))
-		data->env = ft_unset(commande, data->env);
+		data->env = ft_unset(commande, data->env, exec);
 	if (!ft_strncmp(commande[0], "exit", INT_MAX))
 		ft_exit(data, cmd, exec);
 	if (!ft_strncmp(commande[0], "pwd", INT_MAX))
 		exec->exit_code = ft_pwd();
 	if (!ft_strncmp(commande[0], "env", INT_MAX))
 		exec->exit_code = env(data->env);
-	// if (!ft_strncmp(commande[0], "export", INT_MAX))
-	// 	ft_export();
+	if (!ft_strncmp(commande[0], "export", INT_MAX))
+		data->env = ft_export(commande, data->env, cmd, exec);
 	if (!ft_strncmp(commande[0], "cd", INT_MAX))
 		exec->exit_code = ft_cd(commande, data->env);
 	if (!ft_strncmp(commande[0], "echo", INT_MAX))
 		exec->exit_code = ft_echo(commande + 1, data);
-	return (0);
+	dup2(std, 1);
 }

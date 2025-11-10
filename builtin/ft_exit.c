@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 13:38:23 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/10 11:27:17 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,10 @@ void	free_exit(t_globale *data, char *msg, int code)
 	if (!data)
 		exit(code);
 	exec = data->exec;
+	clear_nodes(&data->node);
+	free(data->line);
 	if (data->exec && data->exec->cmd)
-                free_cmd_list(data->exec->cmd);
+        free_cmd_list(data->exec->cmd);
 	while (exec)
 	{
 		tmp = exec->next;

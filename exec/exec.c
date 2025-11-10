@@ -3,18 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/06 15:06:22 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/10 15:29:57 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-pid_t	g_signal;
+// pid_t	g_signal;
 
-
+void	init(t_exec *new)
+{
+	new->prev_nb = -1;
+	new->infile = -1;
+	new->outfile = -1;
+	new->p_nb[0] = -1;
+	new->p_nb[1] = -1;
+}
 
 t_exec	*init_data(t_cmd *cmd)
 {
@@ -33,11 +40,7 @@ t_exec	*init_data(t_cmd *cmd)
 		new->skip_cmd = false;
 		new->exit_code = 0;
 		new->first = (tmp == cmd);
-		new->prev_nb = -1;
-		new->infile = -1;
-		new->outfile = -1;
-		new->p_nb[0] = -1;
-		new->p_nb[1] = -1;
+		init(new);
 		new->next = NULL;
 		if (!head)
 			head = new;
@@ -96,12 +99,16 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 		exec->exit_code = 1;
 		return ;
 	}
+	if (!cmd->argv || !cmd->argv[0])
+	{
+		exec->exit_code = 0;
+		return ;
+	}
 	g_signal = fork();
 	if (g_signal == -1)
 		free_exit(data, "Fork", 1);
 	if (g_signal == 0)
 	{
-		signal(SIGQUIT, SIG_DFL);
 		redir_in_out(exec);
 		do_cmd(exec, data);
 	}
@@ -111,13 +118,13 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 
 void	wait_all(int *exit_code)
 {
-	int		signal;
+	pid_t	pid;
 	int		status;
 	int		sig;
 
-	while ((signal = waitpid(-1, &status, 0)))
+	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
-		if (signal == g_signal)
+		if (pid == g_signal)
 		{
 			if (WIFEXITED(status))
 				*exit_code = WEXITSTATUS(status);
@@ -132,25 +139,26 @@ void	wait_all(int *exit_code)
 					*exit_code = 131;
 				}
 			}
-			break ;
 		}
 	}
 }
 
-int	exec(t_cmd *command, char **env)
+int	exec(t_cmd *command, char **env, t_node *node, char *line, int prv_code)
 {
 	t_exec		*exec;
 	int			exit_code;
 	t_globale	*data;
 
-	// signal(SIGINT, sigint_main);
-	// signal(SIGQUIT, SIG_IGN);
 	data = malloc(sizeof(t_globale));
 	data->exec = init_data(command);
 	data->env = env;
+	data->node = node;
+	data->line = line;
+	data->preview_code = prv_code;
 	exit_code = 0;
 	exec = data->exec;
-	if ((exec && exec->next == NULL) && is_builtin(exec->cmd->argv[0]))
+	if ((exec && exec->next == NULL) && exec->cmd->argv && exec->cmd->argv[0]
+		&& is_builtin(exec->cmd->argv[0]))
 	{
 		open_file(exec);
 		if (!exec->skip_cmd)

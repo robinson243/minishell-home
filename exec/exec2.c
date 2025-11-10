@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 13:16:17 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:07:55 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,3 @@ int	check_dir(char **path, char *cmd, t_cmd *command, t_exec *exec)
 	}
 	return (1);
 }
-

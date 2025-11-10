@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:47:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 13:41:37 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:34:49 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ char	**unset(int i, char **env)
 	return (new_env);
 }
 
-char	**ft_unset(char **cmd, char	**env)
+char	**ft_unset(char **cmd, char	**env, t_exec *exec)
 {
 	int		i;
 	char	**new_env;
@@ -96,16 +96,15 @@ char	**ft_unset(char **cmd, char	**env)
 			new_env = unset(existe(cmd[i], env), env);
 			if (!new_env)
 			{
-				perror("malloc :");
-				return (env);
+				exec->exit_code = 1;
+				return (perror("Mallo"), env);
 			}
 		}
 		i++;
 	}
 	if (new_env == NULL)
 		return (env);
-	free_all(env);
-	return (new_env);
+	return (free_all(env), new_env);
 }
 
 // int	main(int ac, char **av, char **envp)
