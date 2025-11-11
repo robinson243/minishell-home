@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 14:39:21 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:36:45 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,15 @@ void					ft_swap(int i, int j, char **tab);
 char					**ft_strdupdup(char **str);
 int						len_list(char **env);
 int						exec(t_cmd *command, char **env, t_node *node,
-							char *line, int prv_code);
+							int prv_code);
 char					**ft_export(char **cmd, char **env, t_cmd *command,
 							t_exec *exec);
-static void				handle_sigint(int code);
-void					clear_rl_line(void);
+void					handle_sigint(int code);
+void					free_exec(t_globale *data);
+void					init_data(t_globale *data, t_node *node,
+							int prv_code);
+void					handle_sigint_child(int sig);
+t_exec					*init_exec(t_cmd *cmd);
+void					setup_signals_parent(void);
 
 #endif

@@ -6,51 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 15:29:57 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:34:56 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
-
-// pid_t	g_signal;
-
-void	init(t_exec *new)
-{
-	new->prev_nb = -1;
-	new->infile = -1;
-	new->outfile = -1;
-	new->p_nb[0] = -1;
-	new->p_nb[1] = -1;
-}
-
-t_exec	*init_data(t_cmd *cmd)
-{
-	t_exec		*head;
-	t_exec		*curr;
-	t_exec		*new;
-	t_cmd		*tmp;
-
-	head = NULL;
-	curr = NULL;
-	tmp = cmd;
-	while (tmp)
-	{
-		new = malloc(sizeof(t_exec));
-		new->cmd = tmp;
-		new->skip_cmd = false;
-		new->exit_code = 0;
-		new->first = (tmp == cmd);
-		init(new);
-		new->next = NULL;
-		if (!head)
-			head = new;
-		else
-			curr->next = new;
-		curr = new;
-		tmp = tmp->next;
-	}
-	return (head);
-}
 
 void	next(t_exec *exec)
 {
@@ -73,6 +33,7 @@ void	do_cmd(t_exec *exec, t_globale *data)
 
 	cmd = exec->cmd;
 	path = NULL;
+	redir_in_out(exec);
 	if (exec->skip_cmd)
 		free_exit(data, NULL, 1);
 	if (is_builtin(cmd->argv[0]))
@@ -97,23 +58,23 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 	{
 		next(exec);
 		exec->exit_code = 1;
-		return ;
 	}
-	if (!cmd->argv || !cmd->argv[0])
-	{
+	else if (!cmd->argv || !cmd->argv[0])
 		exec->exit_code = 0;
-		return ;
-	}
-	g_signal = fork();
-	if (g_signal == -1)
-		free_exit(data, "Fork", 1);
-	if (g_signal == 0)
-	{
-		redir_in_out(exec);
-		do_cmd(exec, data);
-	}
 	else
-		next(exec);
+	{
+		g_signal = fork();
+		if (g_signal == -1)
+			free_exit(data, "Fork", 1);
+		if (g_signal == 0)
+			do_cmd(exec, data);
+		else
+		{
+			signal(SIGINT, handle_sigint_child);
+			signal(SIGQUIT, SIG_IGN);
+			next(exec);
+		}
+	}
 }
 
 void	wait_all(int *exit_code)
@@ -141,20 +102,19 @@ void	wait_all(int *exit_code)
 			}
 		}
 	}
+	setup_signals_parent();
 }
 
-int	exec(t_cmd *command, char **env, t_node *node, char *line, int prv_code)
+int	exec(t_cmd *command, char **env, t_node *node, int prv_code)
 {
 	t_exec		*exec;
 	int			exit_code;
 	t_globale	*data;
 
 	data = malloc(sizeof(t_globale));
-	data->exec = init_data(command);
 	data->env = env;
-	data->node = node;
-	data->line = line;
-	data->preview_code = prv_code;
+	data->exec = init_exec(command);
+	init_data(data, node, prv_code);
 	exit_code = 0;
 	exec = data->exec;
 	if ((exec && exec->next == NULL) && exec->cmd->argv && exec->cmd->argv[0]
@@ -163,7 +123,7 @@ int	exec(t_cmd *command, char **env, t_node *node, char *line, int prv_code)
 		open_file(exec);
 		if (!exec->skip_cmd)
 			do_builtin(data, exec);
-		return (0);
+		return (exec->exit_code);
 	}
 	open_file(exec);
 	while (exec)
@@ -174,5 +134,6 @@ int	exec(t_cmd *command, char **env, t_node *node, char *line, int prv_code)
 		exec = exec->next;
 	}
 	wait_all(&exit_code);
+	free_exec(data);
 	return (exit_code);
 }

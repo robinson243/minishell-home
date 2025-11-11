@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 14:07:55 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:22:27 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,10 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 	return (1);
 }
 
-char	*get_path(char **env, char *cmd, t_cmd *command, t_exec *exec)
+char	**remp_local(char **env, t_exec *exec)
 {
 	int		i;
 	char	**local;
-	char	*path;
 
 	i = 0;
 	local = NULL;
@@ -59,7 +58,17 @@ char	*get_path(char **env, char *cmd, t_cmd *command, t_exec *exec)
 		}
 		i++;
 	}
+	return (local);
+}
+
+char	*get_path(char **env, char *cmd, t_cmd *command, t_exec *exec)
+{
+	int		i;
+	char	**local;
+	char	*path;
+
 	i = 0;
+	local = remp_local(env, exec);
 	if (!local)
 		return (NULL);
 	while (local[i])

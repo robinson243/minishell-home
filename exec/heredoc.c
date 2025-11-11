@@ -6,20 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 14:08:04 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:22:44 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
-
-static void	handle_sigint(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-}
 
 void	sigint_heredoc(int sig)
 {

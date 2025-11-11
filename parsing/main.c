@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/10 14:48:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:31:26 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,7 @@
 
 pid_t	g_signal;
 
-void	clear_rl_line(void)
-{
-	rl_replace_line("", 0);
-	rl_on_new_line();
-}
-
-static void handle_sigint(int sig)
+void handle_sigint(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
@@ -90,11 +84,11 @@ int	main(int ac, char **av, char **envp)
 		handle_expands(&node);
 		cmd = parser(&node);
 		//print_cmd_list(cmd);
-		prv_code = exec(cmd, env, node, line, prv_code);
-		clear_nodes(&node);
-		free_cmd_list_no_files(cmd);
 		add_history(line);
 		free(line);
+		prv_code = exec(cmd, env, node, prv_code);
+		clear_nodes(&node);
+		free_cmd_list_no_files(cmd);
 		g_signal = 0;
 	}
 	clear_history();

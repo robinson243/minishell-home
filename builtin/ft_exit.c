@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 11:27:17 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:48:19 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,29 +56,6 @@ void	lst_clear(t_redir **lst)
 	*lst = NULL;
 }
 
-void	cmd_clear(t_exec *exec)
-{
-	t_cmd	*current;
-	t_cmd	*data_next;
-	t_exec	*curr;
-
-	curr = exec;
-	current = exec->cmd;
-	if (!exec)
-		return ;
-	while (current)
-	{
-		data_next = current->next;
-		free_all(current->argv);
-		my_close(curr->infile, curr->outfile, curr->p_nb[0], curr->p_nb[1]);
-		my_close(curr->prev_nb, -1, -1, -1);
-		lst_clear(&current->redir);
-		free(current);
-		current = data_next;
-	}
-	exec = NULL;
-}
-
 long long	my_atoi(char *s, int *err)
 {
 	int			i;
@@ -117,9 +94,8 @@ void	free_exit(t_globale *data, char *msg, int code)
 		exit(code);
 	exec = data->exec;
 	clear_nodes(&data->node);
-	free(data->line);
 	if (data->exec && data->exec->cmd)
-        free_cmd_list(data->exec->cmd);
+		free_cmd_list(data->exec->cmd);
 	while (exec)
 	{
 		tmp = exec->next;
@@ -135,28 +111,63 @@ void	free_exit(t_globale *data, char *msg, int code)
 	exit(code);
 }
 
+void	free_exec(t_globale *data)
+{
+	t_exec	*exec;
+	t_exec	*tmp;
+
+	exec = data->exec;
+	while (exec)
+	{
+		tmp = exec->next;
+		my_close(exec->prev_nb, exec->infile, exec->p_nb[0], exec->p_nb[1]);
+		my_close(exec->outfile, -1, -1, -1);
+		free(exec);
+		exec = tmp;
+	}
+	free(data);
+}
+
+int		is_num(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] == ' ')
+		i++;
+	if (str[i] == '-')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)
 {
 	int			err;
 	long long	res;
 
 	err = 0;
+	if (cmd->argv[1] && cmd->argv[2])
+	{
+		write(2, "exit: too many arguments\n", 26);
+		exec->exit_code = 1;
+		return ;
+	}
 	if (cmd->argv[1])
 	{
 		res = my_atoi(cmd->argv[1], &err);
-		if (err)
+		if (err || !is_num(cmd->argv[1]))
 		{
 			write(2, "exit: ", 7);
 			write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
 			write(2, ": numeric argument required\n", 29);
 			free_exit(data, NULL, 2);
 		}
-	}
-	if (cmd->argv[1] && cmd->argv[2])
-	{
-		write(2, "exit: too many arguments\n", 26);
-		exec->exit_code = 1;
-		return ;
 	}
 	if (!cmd->argv[1])
 		free_exit(data, NULL, 0);
