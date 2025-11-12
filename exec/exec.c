@@ -6,144 +6,86 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:10:47 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/11 12:34:56 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-pid_t	g_signal;
-
-void	sigint_heredoc(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	unlink(".tmp");
-	exit(130);
-}
-
-
-int	my_here_doc(t_file *file, t_cmd *cmd)
-{
-	pid_t	pid;
-	int		fd;
-	int		status;
-
-
-	pid = fork();
-	if (pid == 0)
-	{
-		fd = here_doc(file);
-		if (fd == -1)
-			exit(1);
-		exit(0);
-	}
-	waitpid(pid, &status, 0);
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-	{
-		cmd->skip_cmd = true;
-		unlink(".tmp");
-		return (0);
-	}
-	fd = open(".tmp", O_RDONLY);
-	unlink(".tmp");
-	if (fd != -1)
-		cmd->skip_cmd = true;
-	return (fd);
-}
-
-int	here_doc(t_file *file)
-{
-	char	*line;
-	int		infile;
-
-	signal(SIGINT, sigint_heredoc);
-	signal(SIGQUIT, SIG_IGN);
-	infile = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (infile == -1)
-		exit(1);
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-			break ;
-		if (ft_strncmp(line, file->path, INT_MAX) == 0)
-		{
-			free(line);
-			break ;
-		}
-		write(infile, line, ft_strlen(line));
-		write(infile, "\n", 1);
-		free(line);
-	}
-	close(infile);
-	exit(0);
-}
-
-void	next(t_cmd *cmd)
+void	next(t_exec *exec)
 {
 	int	tmp_fd;
 
 	tmp_fd = -1;
-	if (cmd->next)
-		tmp_fd = cmd->p_nb[0];
-	my_close(cmd->prev_nb, cmd->infile, cmd->p_nb[1], cmd->outfile);
-	if (cmd->next)
-		cmd->next->prev_nb = tmp_fd;
-	else if(cmd->p_nb[0] >= 0) 
-		close(cmd->p_nb[0]);
+	if (exec->next)
+		tmp_fd = exec->p_nb[0];
+	my_close(exec->prev_nb, exec->infile, exec->p_nb[1], exec->outfile);
+	if (exec->next)
+		exec->next->prev_nb = tmp_fd;
+	else if (exec->p_nb[0] >= 0)
+		close(exec->p_nb[0]);
 }
 
-void	do_cmd(t_cmd *cmd, t_globale *data)
+void	do_cmd(t_exec *exec, t_globale *data)
 {
 	char	*path;
+	t_cmd	*cmd;
 
+	cmd = exec->cmd;
 	path = NULL;
-	if (cmd->skip_cmd)
+	redir_in_out(exec);
+	if (exec->skip_cmd)
 		free_exit(data, NULL, 1);
-	if (is_builtin(cmd->command[0]))
-		do_builtin(data, cmd);
-	else if (exist(cmd->command[0], &path, cmd, data))
-	{
-		execve(path, cmd->command, data->env);
-		free(path);
-	}
-	free_exit(data, NULL, cmd->exit_code);
-}
-
-void	exec_cmd(t_cmd *cmd, t_globale *data)
-{
-	t_file	*list;
-
-	if (cmd->skip_cmd)
-	{
-		next(cmd);
-		cmd->exit_code = 1;
-		return ;
-	}
-	g_signal = fork();
-	if (g_signal == -1)
-		free_exit(data, "Fork", 1);
-	if (g_signal == 0)
+	if (is_builtin(cmd->argv[0]))
+		do_builtin(data, exec);
+	else if (exist(&path, cmd, data, exec))
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		redir_in_out(cmd);
-		do_cmd(cmd, data);
+		execve(path, cmd->argv, data->env);
+		free(path);
 	}
+	free_exit(data, NULL, exec->exit_code);
+}
+
+void	exec_cmd(t_exec *exec, t_globale *data)
+{
+	t_redir	*list;
+	t_cmd	*cmd;
+
+	cmd = exec->cmd;
+	if (exec->skip_cmd)
+	{
+		next(exec);
+		exec->exit_code = 1;
+	}
+	else if (!cmd->argv || !cmd->argv[0])
+		exec->exit_code = 0;
 	else
-		next(cmd);
+	{
+		g_signal = fork();
+		if (g_signal == -1)
+			free_exit(data, "Fork", 1);
+		if (g_signal == 0)
+			do_cmd(exec, data);
+		else
+		{
+			signal(SIGINT, handle_sigint_child);
+			signal(SIGQUIT, SIG_IGN);
+			next(exec);
+		}
+	}
 }
 
 void	wait_all(int *exit_code)
 {
-	int		signal;
+	pid_t	pid;
 	int		status;
 	int		sig;
 
-	while ((signal = waitpid(-1, &status, 0)))
+	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
-		if (signal == g_signal)
+		if (pid == g_signal)
 		{
 			if (WIFEXITED(status))
 				*exit_code = WEXITSTATUS(status);
@@ -160,30 +102,38 @@ void	wait_all(int *exit_code)
 			}
 		}
 	}
+	setup_signals_parent();
 }
 
-int	exec(t_globale *data)
+int	exec(t_cmd *command, char **env, t_node *node, int prv_code)
 {
-	t_cmd	*cmd;
-	int		exit_code;
+	t_exec		*exec;
+	int			exit_code;
+	t_globale	*data;
 
-	exit_code = 1;
-	cmd = data->cmd;
-	if ((cmd && cmd->next == NULL) && is_builtin(cmd->command[0]))
+	data = malloc(sizeof(t_globale));
+	data->env = env;
+	data->exec = init_exec(command);
+	init_data(data, node, prv_code);
+	exit_code = 0;
+	exec = data->exec;
+	if ((exec && exec->next == NULL) && exec->cmd->argv && exec->cmd->argv[0]
+		&& is_builtin(exec->cmd->argv[0]))
 	{
-		open_file(cmd);
-		if (!cmd->skip_cmd)
-			do_builtin(data, cmd);
-		return (0);
+		open_file(exec);
+		if (!exec->skip_cmd)
+			do_builtin(data, exec);
+		return (exec->exit_code);
 	}
-	open_file(cmd);
-	while (cmd)
+	open_file(exec);
+	while (exec)
 	{
-		if (cmd->next && pipe(cmd->p_nb) == -1)
+		if (pipe(exec->p_nb) == -1)
 			return (1);
-		exec_cmd(cmd, data);
-		cmd = cmd->next;
+		exec_cmd(exec, data);
+		exec = exec->next;
 	}
 	wait_all(&exit_code);
+	free_exec(data);
 	return (exit_code);
 }

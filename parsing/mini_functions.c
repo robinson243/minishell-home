@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   mini_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:13:06 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/03 13:41:36 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:26:10 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
-
-int	is_space(char c)
-{
-	if ((c >= 9 && c <= 13) || c == 32)
-		return (1);
-	return (0);
-}
 
 char	*mini_double_quoted(char *input, int *i, int *quoted)
 {

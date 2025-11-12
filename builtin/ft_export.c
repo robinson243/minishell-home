@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:11:52 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:30:46 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ char	**export(int pos, char **env, char *str)
 		if (!new_env)
 			return (NULL);
 		free(new_env[pos]);
-		new_env[pos] = strdup(str);
+		new_env[pos] = ft_strdup(str);
 		return (new_env);
 	}
 	new_env = malloc(sizeof(char *) * (size + 2));
@@ -101,17 +101,20 @@ char	**export(int pos, char **env, char *str)
 		return (NULL);
 	while (i < size)
 	{
-		new_env[i] = strdup(env[i]);
+		new_env[i] = ft_strdup(env[i]);
 		if (!new_env[i])
 			return (free_all(new_env), NULL);
 		i++;
 	}
-	new_env[i++] = strdup(str);
+	new_env[i] = ft_strdup(str);
+	if (!new_env[i])
+		return (free_all(new_env), NULL);
+	i++;
 	new_env[i] = NULL;
 	return (new_env);
 }
 
-char	**ft_export(char **cmd, char **env, t_cmd *command)
+char	**ft_export(char **cmd, char **env, t_cmd *command, t_exec *exec)
 {
 	int		i;
 	char	**new_env;
@@ -125,17 +128,19 @@ char	**ft_export(char **cmd, char **env, t_cmd *command)
 		if (!invalide_arg(cmd[i]))
 		{
 			write(2, "export: invalid identifier\n", 28);
-			command->exit_code = 1;
+			exec->exit_code = 1;
 			i++;
 			continue ;
 		}
 		new_env = export(existe(cmd[i], env), env, cmd[i]);
 		if (!new_env)
+		{
+			exec->exit_code = 1;
 			return (perror("malloc :"), env);
+		}
 		free_all(env);
 		env = new_env;
 		i++;
 	}
 	return (new_env);
 }
-

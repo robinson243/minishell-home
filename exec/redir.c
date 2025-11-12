@@ -6,110 +6,103 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/03 16:08:17 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/10 14:04:09 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-int	open_file(t_cmd *cmd)
+void	open_file(t_exec *exec)
 {
-	t_file	*tmp;
-	t_cmd	*command;
+	t_redir	*tmp;
 
-	command = cmd;
-	while (command)
+	while (exec)
 	{
-		tmp = command->list;
-		command->infile = -1;
-		command->outfile = -1;
-		if (!command->list)
+		tmp = exec->cmd->redir;
+		if (!tmp)
 		{
-			command = command->next;
+			exec = exec->next;
 			continue ;
 		}
 		while (tmp)
 		{
-			if (tmp->type == INFILE || tmp->type == HEREDOC)
-				my_close(command->infile, -1, -1, -1);
+			if (tmp->type == REDIR_IN || tmp->type == HEREDOC)
+				my_close(exec->infile, -1, -1, -1);
 			else
-				my_close(command->outfile, -1, -1, -1);
-			if (!my_open(tmp, command))
+				my_close(exec->outfile, -1, -1, -1);
+			if (!my_open(tmp, exec))
 			{
-				command->skip_cmd = true;
+				exec->skip_cmd = true;
 				break ;
 			}
 			tmp = tmp->next;
 		}
-		command = command->next;
+		exec = exec->next;
 	}
-	return (0);
 }
 
-void	redir_in(t_cmd *cmd)
+void	redir_in(t_exec *exec)
 {
-	if (cmd->first == 0 && cmd->infile == -1)
+	if (exec->first == 0 && exec->infile == -1)
 	{
-		if (dup2(cmd->prev_nb, 0) == -1)
-			cmd->skip_cmd = true;
+		if (dup2(exec->prev_nb, 0) == -1)
+			exec->skip_cmd = true;
 	}
-	else if (cmd->infile != -1)
+	else if (exec->infile != -1)
 	{
-		if (dup2(cmd->infile, 0) == -1)
-			cmd->skip_cmd = true;
+		if (dup2(exec->infile, 0) == -1)
+			exec->skip_cmd = true;
 	}
-	if (cmd->infile != -1)
-		close(cmd->infile);
-	if (cmd->prev_nb >= 0)
-		close(cmd->prev_nb);
+	if (exec->infile != -1)
+		close(exec->infile);
+	if (exec->prev_nb >= 0)
+		close(exec->prev_nb);
+	close(exec->p_nb[0]);
 }
 
-void	redir_out(t_cmd *cmd)
+void	redir_out(t_exec *exec)
 {
-	if (cmd->next != NULL && cmd->outfile == -1)
+	if (exec->next != NULL && exec->outfile == -1)
 	{
-		if (dup2(cmd->p_nb[1], 1) == -1)
-			cmd->skip_cmd = true;
+		if (dup2(exec->p_nb[1], 1) == -1)
+			exec->skip_cmd = true;
 	}
-	else if (cmd->outfile != -1)
+	else if (exec->outfile != -1)
 	{
-		if (dup2(cmd->outfile, 1) == -1)
-			cmd->skip_cmd = true;
+		if (dup2(exec->outfile, 1) == -1)
+			exec->skip_cmd = true;
+		close(exec->outfile);
 	}
-	if (cmd->outfile != -1)
-		close(cmd->outfile);
+	my_close(exec->p_nb[1], -1, -1, -1);
 }
 
-void	redir_in_out(t_cmd *cmd)
+void	redir_in_out(t_exec *exec)
 {
-	redir_in(cmd);
-	redir_out(cmd);
+	redir_in(exec);
+	redir_out(exec);
 }
 
-int	my_open(t_file *list, t_cmd *cmd)
+int	my_open(t_redir *list, t_exec *exec)
 {
-	if (!list || !list->path)
+	t_cmd	*cmd;
+
+	cmd = exec->cmd;
+	if (!list || !list->file)
 		return (1);
-	if (list->type == INFILE)
-		cmd->infile = open(list->path, O_RDONLY);
-	else if (list->type == OUTFILE)
-		cmd->outfile = open(list->path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else if (list->type == OUT_APPEND)
-		cmd->outfile = open(list->path, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (list->type == REDIR_IN)
+		exec->infile = open(list->file, O_RDONLY);
+	else if (list->type == REDIR_OUT)
+		exec->outfile = open(list->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (list->type == REDIR_APPEND)
+		exec->outfile = open(list->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (list->type == HEREDOC)
-		cmd->infile = my_here_doc(list, cmd);
-	else
-		list->fd = -1;
-	if ((list->type == INFILE || list->type == HEREDOC) && cmd->infile == -1)
-	{
-		perror(list->path);
+		exec->infile = my_here_doc(list->file);
+	if ((list->type == REDIR_IN) && exec->infile == -1)
+		return (perror(list->file), 0);
+	else if ((list->type == REDIR_OUT || list->type == REDIR_APPEND)
+		&& exec->outfile == -1)
+		return (perror(list->file), 0);
+	else if (list->type == HEREDOC && exec->infile == -1)
 		return (0);
-	}
-	else if ((list->type == OUTFILE || list->type == OUT_APPEND)
-		&& cmd->outfile == -1)
-	{
-		perror(list->path);
-		return (0);
-	}
 	return (1);
 }
