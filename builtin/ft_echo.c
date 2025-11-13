@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 14:00:52 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 15:28:32 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/13 15:26:07 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,11 @@ int	ft_echo(char **args, t_globale *data)
 	while (args[i])
 	{
 		if (ft_strcmp(args[i], "$?") == 0)
-			write(1, ft_itoa(data->preview_code), ft_strlen(ft_itoa(data->preview_code)));
-		else
+			write(1, ft_itoa(data->preview_code),
+				ft_strlen(ft_itoa(data->preview_code)));
+		else if (!is_nl(args[i]))
 			write(1, args[i], ft_strlen(args[i]));
-		if (args[i + 1])
+		if (args[i + 1] && !is_nl(args[i]))
 			write(1, " ", 1);
 		i++;
 	}
