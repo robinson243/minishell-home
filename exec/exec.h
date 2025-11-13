@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/11 12:36:45 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/13 14:40:15 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int						existe(char *str, char **env);
 void					ft_swap(int i, int j, char **tab);
 char					**ft_strdupdup(char **str);
 int						len_list(char **env);
-int						exec(t_cmd *command, char **env, t_node *node,
+int						exec(t_cmd *command, char ***env, t_node *node,
 							int prv_code);
 char					**ft_export(char **cmd, char **env, t_cmd *command,
 							t_exec *exec);
@@ -109,5 +109,6 @@ void					init_data(t_globale *data, t_node *node,
 void					handle_sigint_child(int sig);
 t_exec					*init_exec(t_cmd *cmd);
 void					setup_signals_parent(void);
+int						is_num(char *str);
 
 #endif

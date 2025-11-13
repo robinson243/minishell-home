@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 15:23:44 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/13 15:03:16 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,4 +95,5 @@ void	do_builtin(t_globale *data, t_exec *exec)
 	if (!ft_strncmp(commande[0], "echo", INT_MAX))
 		exec->exit_code = ft_echo(commande + 1, data);
 	dup2(std, 1);
+	close(std);
 }
