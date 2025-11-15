@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/03 15:17:28 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/15 19:20:32 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 		else if (str[*i] == '"')
 		{
 			quoted_word = extract_quoted(str, i);
+			printf("quoted = |%s|\n", quoted_word);
 			res = ft_strjoin_free(res, quoted_word);
 		}
 		else
@@ -79,7 +80,7 @@ t_node	*lexer(char *input, t_node **head)
 		if (!input[i])
 			break ;
 		word = build_word(input, &i, &quoted);
-		if (word && word[0])
+		if (word)
 			add_node(head, create_node(word, quoted));
 		else
 			free(word);

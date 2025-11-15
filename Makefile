@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I./libft -I./parsing -I./exec -I./builtin
+CFLAGS = -Wall -Wextra -Werror -I./libft -I./parsing -I./exec -I./builtin -g3
 LDFLAGS = -lreadline libft.a
 
 NAME = minishell

@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/04 14:58:31 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/15 18:00:25 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,29 @@ void	init_var(t_cmd **head_cmd, t_cmd **cur_cmd, t_node **tmp, t_node **head)
 	*tmp = *head;
 }
 
+int	check_pipe_syntax(t_node *tmp)
+{
+	if (!tmp)
+		return (1);
+	if (tmp->type == PIPE)
+		return (0);
+	while (tmp)
+	{
+		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE))
+			return (0);
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
 t_cmd	*parser(t_node **head)
 {
 	t_cmd	*head_cmd;
 	t_cmd	*cur_cmd;
 	t_node	*tmp;
 
+	if (!check_pipe_syntax(*head))
+		return (ft_putstr_fd("Pipe error\n", 2), NULL);
 	init_var(&head_cmd, &cur_cmd, &tmp, head);
 	while (tmp)
 	{

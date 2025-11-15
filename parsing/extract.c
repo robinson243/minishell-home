@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/10/29 16:17:20 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/15 19:25:33 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,7 @@ char	*extract_quoted(char *str, int *i)
 	j = *i + 1;
 	(*i)++;
 	while (str[*i] && str[*i] != '"')
-	{
-		(*i)++;
-	}
+	(*i)++;
 	if (str[*i] == '\0')
 	{
 		ft_putstr_fd("minishell: unexpected EOF near \"\n", 2);
@@ -41,9 +39,7 @@ char	*extract_single_quoted(char *str, int *i)
 	j = *i + 1;
 	(*i)++;
 	while (str[*i] && str[*i] != '\'')
-	{
 		(*i)++;
-	}
 	if (str[*i] == '\0')
 	{
 		ft_putstr_fd("minishell: unexpected EOF near '\''\n", 2);
