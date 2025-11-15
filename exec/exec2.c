@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/11 12:22:27 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:37:29 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ char	*get_path(char **env, char *cmd, t_cmd *command, t_exec *exec)
 	char	**local;
 	char	*path;
 
+	(void)command;
 	i = 0;
 	local = remp_local(env, exec);
 	if (!local)
@@ -91,6 +92,7 @@ int	check_dir(char **path, char *cmd, t_cmd *command, t_exec *exec)
 	struct stat	path_stat;
 
 	stat(*path, &path_stat);
+	(void)command;
 	if (!S_ISREG(path_stat.st_mode))
 	{
 		write(2, cmd, ft_strlen(cmd));

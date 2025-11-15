@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/11 12:48:19 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:35:28 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)
 	long long	res;
 
 	err = 0;
+	res = 0;
 	if (cmd->argv[1] && cmd->argv[2])
 	{
 		write(2, "exit: too many arguments\n", 26);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 14:30:46 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:35:53 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ char	**ft_export(char **cmd, char **env, t_cmd *command, t_exec *exec)
 
 	i = 1;
 	new_env = NULL;
+	(void)command;
 	if (!cmd[1])
 		export_noargs(env);
 	while (cmd[i])
