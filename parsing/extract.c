@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/15 19:25:33 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/16 02:55:25 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,7 @@ char	*extract_word(char *str, int *i)
 	int		j;
 	char	*tmp;
 	char	*res;
-	char	*dollar_string;
-
-	dollar_string = "";
+	
 	while (is_space(str[*i]))
 		(*i)++;
 	if (!str[*i])
