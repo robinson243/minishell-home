@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:17:52 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:37:40 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,14 @@ void	do_cmd(t_exec *exec, t_globale *data)
 void	exec_cmd(t_exec *exec, t_globale *data)
 {
 	t_redir	*list;
-	t_cmd	*cmd;
 
-	cmd = exec->cmd;
 	(void)list;
 	if (exec->skip_cmd)
 	{
 		next(exec);
 		exec->exit_code = 1;
 	}
-	else if (!cmd->argv || !cmd->argv[0])
+	else if (!exec->cmd->argv || !exec->cmd->argv[0])
 		exec->exit_code = 0;
 	else
 	{
@@ -76,34 +74,6 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 			next(exec);
 		}
 	}
-}
-
-void	wait_all(int *exit_code)
-{
-	pid_t	pid;
-	int		status;
-	int		sig;
-
-	while ((pid = waitpid(-1, &status, 0)) > 0)
-	{
-		if (pid == g_signal)
-		{
-			if (WIFEXITED(status))
-				*exit_code = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-			{
-				sig = WTERMSIG(status);
-				if (sig == SIGINT)
-					*exit_code = 130;
-				else if (sig == SIGQUIT)
-				{
-					write(2, "Quit (core dumped)\n", 19);
-					*exit_code = 131;
-				}
-			}
-		}
-	}
-	setup_signals_parent();
 }
 
 int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
