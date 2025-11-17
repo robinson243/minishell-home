@@ -1,0 +1,9 @@
+a
+b
+builtin
+exec
+libft
+libft.a
+Makefile
+minishell
+parsing

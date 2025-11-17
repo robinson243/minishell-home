@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:50:04 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:43:22 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,9 @@ int	ft_cd(char	**cmd, char **env)
 	{
 		if (chdir(cmd[1]) != 0)
 		{
-			perror("cd");
+			write(2, "cd: ", 4);
+			write(2, cmd[1], ft_strlen(cmd[1]));
+			write(2, ": No such file or directory\n", 29);
 			return (1);
 		}
 	}
