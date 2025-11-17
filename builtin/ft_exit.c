@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/15 17:35:28 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:16:20 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,24 +126,6 @@ void	free_exec(t_globale *data)
 		exec = tmp;
 	}
 	free(data);
-}
-
-int		is_num(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] == ' ')
-		i++;
-	if (str[i] == '-')
-		i++;
-	while (str[i])
-	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
 }
 
 void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)

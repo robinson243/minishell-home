@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/10 14:04:09 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/16 02:54:47 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ int	my_open(t_redir *list, t_exec *exec)
 {
 	t_cmd	*cmd;
 
+	(void)cmd;
 	cmd = exec->cmd;
 	if (!list || !list->file)
 		return (1);
