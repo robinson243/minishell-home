@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:37:18 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 12:14:48 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,5 +110,8 @@ t_exec					*init_exec(t_cmd *cmd);
 void					setup_signals_parent(void);
 int						is_num(char *str);
 void					wait_all(int *exit_code);
+void					lst_clear(t_redir **lst);
+int						export_noargs(char **env);
+int						invalide_arg(char *str);
 
 #endif

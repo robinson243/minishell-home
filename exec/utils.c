@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:27:11 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:50:51 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,18 @@ void	do_builtin(t_globale *data, t_exec *exec)
 		exec->exit_code = ft_echo(commande + 1, data);
 	dup2(std, 1);
 	close(std);
+}
+
+void	next(t_exec *exec)
+{
+	int	tmp_fd;
+
+	tmp_fd = -1;
+	if (exec->next)
+		tmp_fd = exec->p_nb[0];
+	my_close(exec->prev_nb, exec->infile, exec->p_nb[1], exec->outfile);
+	if (exec->next)
+		exec->next->prev_nb = tmp_fd;
+	else if (exec->p_nb[0] >= 0)
+		close(exec->p_nb[0]);
 }

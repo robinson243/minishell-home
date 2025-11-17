@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:16:20 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 12:04:56 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,6 @@ void	free_cmd_list(t_cmd *head)
 		cur = cur->next;
 		free(tmp);
 	}
-}
-
-void	lst_clear(t_redir **lst)
-{
-	t_redir	*current;
-	t_redir	*data_next;
-
-	current = *lst;
-	if (!*lst)
-		return ;
-	while (current)
-	{
-		data_next = current->next;
-		free(current->file);
-		free(current);
-		current = data_next;
-	}
-	*lst = NULL;
 }
 
 long long	my_atoi(char *s, int *err)

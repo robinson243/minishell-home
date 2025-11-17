@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/17 11:14:49 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:28:02 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ int	main(int ac, char **av, char **envp)
 		lexer(line, &node);
 		handle_expands(&node);
 		cmd = parser(&node);
-		// print_cmd_list(cmd);
-		// print_list(&node);
+		print_cmd_list(cmd);
+		//print_list(&node);
 		add_history(line);
 		free(line);
 		prv_code = exec(cmd, &env, node, prv_code);
