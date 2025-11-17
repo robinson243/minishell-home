@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/15 18:00:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:27:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ int	check_pipe_syntax(t_node *tmp)
 	{
 		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE))
 			return (0);
+		if (tmp->type != WORD && (!tmp->next || tmp->next->type != WORD))
+			return (0);
 		tmp = tmp->next;
 	}
 	return (1);
@@ -80,7 +82,7 @@ t_cmd	*parser(t_node **head)
 	t_node	*tmp;
 
 	if (!check_pipe_syntax(*head))
-		return (ft_putstr_fd("Pipe error\n", 2), NULL);
+		return (ft_putstr_fd("Operator error\n", 2), NULL);
 	init_var(&head_cmd, &cur_cmd, &tmp, head);
 	while (tmp)
 	{
