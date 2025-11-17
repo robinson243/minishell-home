@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   extract.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/16 02:55:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:52:10 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*extract_quoted(char *str, int *i)
 	j = *i + 1;
 	(*i)++;
 	while (str[*i] && str[*i] != '"')
-	(*i)++;
+		(*i)++;
 	if (str[*i] == '\0')
 	{
 		ft_putstr_fd("minishell: unexpected EOF near \"\n", 2);
@@ -75,7 +75,7 @@ char	*extract_word(char *str, int *i)
 	int		j;
 	char	*tmp;
 	char	*res;
-	
+
 	while (is_space(str[*i]))
 		(*i)++;
 	if (!str[*i])

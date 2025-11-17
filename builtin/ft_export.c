@@ -6,98 +6,37 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:18:28 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:48:29 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../exec/exec.h"
 
-int	invalide_arg(char *str)
+char	**export_update(int pos, char **env, char *str)
 {
-	int	i;
+	char	**new_env;
 
-	if (!str || !str[0])
-		return (0);
-	if (!ft_isalpha(str[0]) && str[0] != '_')
-		return (0);
-	i = 1;
-	while (str[i] && str[i] != '=')
+	new_env = ft_strdupdup(env);
+	if (!new_env)
+		return (NULL);
+	free(new_env[pos]);
+	new_env[pos] = ft_strdup(str);
+	if (!new_env[pos])
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return (0);
-		i++;
+		free_all(new_env);
+		return (NULL);
 	}
-	return (1);
+	free_all(env);
+	return (new_env);
 }
 
-void	sort_env(char **env, int len)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-
-	i = 0;
-	while (i < len - 1)
-	{
-		j = i + 1;
-		while (j < len)
-		{
-			if (ft_strncmp(env[i], env[j], INT_MAX) > 0)
-			{
-				tmp = env[i];
-				env[i] = env[j];
-				env[j] = tmp;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
-int	export_noargs(char **env)
-{
-	char	**arr;
-	int		i;
-	int		j;
-
-	arr = ft_strdupdup(env);
-	if (!arr)
-		return (1);
-	sort_env(arr, len_list(env));
-	i = 0;
-	while (arr[i])
-	{
-		printf("export ");
-		j = 0;
-		while (arr[i][j] && arr[i][j] != '=')
-			printf("%c", arr[i][j++]);
-		if (arr[i][j] == '=')
-			printf("=\"%s\"\n", &arr[i][j + 1]);
-		else
-			printf("\n");
-		i++;
-	}
-	free_all(arr);
-	return (0);
-}
-
-char	**export(int pos, char **env, char *str)
+char	**export_add(char **env, char *str)
 {
 	char	**new_env;
 	int		size;
 	int		i;
 
 	size = len_list(env);
-	if (pos != -1)
-	{
-		new_env = ft_strdupdup(env);
-		if (!new_env)
-			return (NULL);
-		free(new_env[pos]);
-		new_env[pos] = ft_strdup(str);
-		free_all(env);
-		return (new_env);
-	}
 	new_env = malloc(sizeof(char *) * (size + 2));
 	if (!new_env)
 		return (NULL);
@@ -108,39 +47,63 @@ char	**export(int pos, char **env, char *str)
 		if (!new_env[i])
 			return (free_all(new_env), NULL);
 	}
-	new_env[i++] = ft_strdup(str);
+	new_env[i] = ft_strdup(str);
+	if (!new_env[i])
+		return (free_all(new_env), NULL);
+	i++;
 	new_env[i] = NULL;
 	free_all(env);
+	return (new_env);
+}
+
+char	**export(int pos, char **env, char *str)
+{
+	if (pos != -1)
+		return (export_update(pos, env, str));
+	return (export_add(env, str));
+}
+
+char	**do_export(char *arg, char **env, t_exec *exec)
+{
+	char	**new_env;
+	char	*normalized;
+
+	if (!invalide_arg(arg))
+	{
+		write(2, "export: invalid identifier\n", 28);
+		exec->exit_code = 1;
+		return (env);
+	}
+	normalized = normalize_export_arg(arg);
+	if (!normalized)
+	{
+		perror("Malloc");
+		exec->exit_code = 1;
+		return (env);
+	}
+	new_env = export(existe(normalized, env), env, normalized);
+	if (!new_env)
+	{
+		exec->exit_code = 1;
+		perror("Malloc");
+		return (env);
+	}
 	return (new_env);
 }
 
 char	**ft_export(char **cmd, char **env, t_exec *exec)
 {
 	int		i;
-	char	**new_env;
 
 	i = 1;
-	new_env = NULL;
 	if (!cmd[1])
-		return (export_noargs(env), env);
+	{
+		exec->exit_code = export_noargs(env);
+		return (env);
+	}
 	while (cmd[i])
 	{
-		if (!invalide_arg(cmd[i]))
-		{
-			write(2, "export: invalid identifier\n", 28);
-			exec->exit_code = 1;
-		}
-		else
-		{
-			new_env = export(existe(cmd[i], env), env, cmd[i]);
-			if (!new_env)
-			{
-				exec->exit_code = 1;
-				perror("Malloc");
-				return (env);
-			}
-			env = new_env;
-		}
+		env = do_export(cmd[i], env, exec);
 		i++;
 	}
 	return (env);

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/13 15:20:54 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:50:04 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int	ft_cd(char	**cmd, char **env)
 	}
 	else
 	{
-		// printf("%s\n", cmd[1]);
 		if (chdir(cmd[1]) != 0)
 		{
 			perror("cd");

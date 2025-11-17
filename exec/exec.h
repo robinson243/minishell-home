@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/13 14:40:15 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:13:27 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ int						env(char **env);
 int						ft_cd(char **cmd, char **env);
 void					redir_in_out(t_exec *exec);
 void					do_builtin(t_globale *data, t_exec *exec);
-int						here_doc(t_redir *file);
 void					redir_out(t_exec *exec);
 void					free_exit(t_globale *data, char *str, int code);
 int						ft_echo(char **args, t_globale *data);
@@ -100,7 +99,7 @@ char					**ft_strdupdup(char **str);
 int						len_list(char **env);
 int						exec(t_cmd *command, char ***env, t_node *node,
 							int prv_code);
-char					**ft_export(char **cmd, char **env, t_cmd *command,
+char					**ft_export(char **cmd, char **env,
 							t_exec *exec);
 void					handle_sigint(int code);
 void					free_exec(t_globale *data);
@@ -110,5 +109,11 @@ void					handle_sigint_child(int sig);
 t_exec					*init_exec(t_cmd *cmd);
 void					setup_signals_parent(void);
 int						is_num(char *str);
+void					wait_all(int *exit_code);
+void					lst_clear(t_redir **lst);
+int						export_noargs(char **env);
+int						invalide_arg(char *str);
+char					*normalize_export_arg(char *arg);
+void					next(t_exec *exec);
 
 #endif
