@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 15:45:35 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/04 13:48:13 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/13 14:22:39 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int	existe(char *str, char **env)
 		len++;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], str, len) == 0 &&
-			(env[i][len] == '=' || env[i][len] == '\0'))
+		if (ft_strncmp(env[i], str, len) == 0
+			&& (env[i][len] == '=' || env[i][len] == '\0'))
 			return (i);
 		i++;
 	}
@@ -74,3 +74,20 @@ int	len_list(char **env)
 	return (i);
 }
 
+int	is_num(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] == ' ')
+		i++;
+	if (str[i] == '-')
+		i++;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}

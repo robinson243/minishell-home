@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/15 17:35:53 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:18:28 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,11 @@ int	invalide_arg(char *str)
 {
 	int	i;
 
-	i = 0;
-	if (!str[0] || (str[0] != '_' && !ft_isalpha(str[0])))
+	if (!str || !str[0])
 		return (0);
+	if (!ft_isalpha(str[0]) && str[0] != '_')
+		return (0);
+	i = 1;
 	while (str[i] && str[i] != '=')
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_')
@@ -30,21 +32,21 @@ int	invalide_arg(char *str)
 
 void	sort_env(char **env, int len)
 {
-	int	i;
-	int	j;
-	int	diff;
+	int		i;
+	int		j;
+	char	*tmp;
 
 	i = 0;
-	while (i < len)
+	while (i < len - 1)
 	{
 		j = i + 1;
 		while (j < len)
 		{
-			diff = ft_strncmp(env[i], env[j], __INT_MAX__);
-			if (diff > 0)
+			if (ft_strncmp(env[i], env[j], INT_MAX) > 0)
 			{
-				ft_swap(i, j, env);
-				continue ;
+				tmp = env[i];
+				env[i] = env[j];
+				env[j] = tmp;
 			}
 			j++;
 		}
@@ -65,11 +67,11 @@ int	export_noargs(char **env)
 	i = 0;
 	while (arr[i])
 	{
-		printf("export");
+		printf("export ");
 		j = 0;
 		while (arr[i][j] && arr[i][j] != '=')
 			printf("%c", arr[i][j++]);
-		if (arr[i][j] && arr[i][j] == '=')
+		if (arr[i][j] == '=')
 			printf("=\"%s\"\n", &arr[i][j + 1]);
 		else
 			printf("\n");
@@ -85,7 +87,6 @@ char	**export(int pos, char **env, char *str)
 	int		size;
 	int		i;
 
-	i = 0;
 	size = len_list(env);
 	if (pos != -1)
 	{
@@ -94,54 +95,53 @@ char	**export(int pos, char **env, char *str)
 			return (NULL);
 		free(new_env[pos]);
 		new_env[pos] = ft_strdup(str);
+		free_all(env);
 		return (new_env);
 	}
 	new_env = malloc(sizeof(char *) * (size + 2));
 	if (!new_env)
 		return (NULL);
-	while (i < size)
+	i = -1;
+	while (++i < size)
 	{
 		new_env[i] = ft_strdup(env[i]);
 		if (!new_env[i])
 			return (free_all(new_env), NULL);
-		i++;
 	}
-	new_env[i] = ft_strdup(str);
-	if (!new_env[i])
-		return (free_all(new_env), NULL);
-	i++;
+	new_env[i++] = ft_strdup(str);
 	new_env[i] = NULL;
+	free_all(env);
 	return (new_env);
 }
 
-char	**ft_export(char **cmd, char **env, t_cmd *command, t_exec *exec)
+char	**ft_export(char **cmd, char **env, t_exec *exec)
 {
 	int		i;
 	char	**new_env;
 
 	i = 1;
 	new_env = NULL;
-	(void)command;
 	if (!cmd[1])
-		export_noargs(env);
+		return (export_noargs(env), env);
 	while (cmd[i])
 	{
 		if (!invalide_arg(cmd[i]))
 		{
 			write(2, "export: invalid identifier\n", 28);
 			exec->exit_code = 1;
-			i++;
-			continue ;
 		}
-		new_env = export(existe(cmd[i], env), env, cmd[i]);
-		if (!new_env)
+		else
 		{
-			exec->exit_code = 1;
-			return (perror("malloc :"), env);
+			new_env = export(existe(cmd[i], env), env, cmd[i]);
+			if (!new_env)
+			{
+				exec->exit_code = 1;
+				perror("Malloc");
+				return (env);
+			}
+			env = new_env;
 		}
-		free_all(env);
-		env = new_env;
 		i++;
 	}
-	return (new_env);
+	return (env);
 }

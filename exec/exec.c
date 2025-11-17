@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/15 17:38:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:17:52 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,14 +106,14 @@ void	wait_all(int *exit_code)
 	setup_signals_parent();
 }
 
-int	exec(t_cmd *command, char **env, t_node *node, int prv_code)
+int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 {
 	t_exec		*exec;
 	int			exit_code;
 	t_globale	*data;
 
 	data = malloc(sizeof(t_globale));
-	data->env = env;
+	data->env = *env;
 	data->exec = init_exec(command);
 	init_data(data, node, prv_code);
 	exit_code = 0;
@@ -124,7 +124,9 @@ int	exec(t_cmd *command, char **env, t_node *node, int prv_code)
 		open_file(exec);
 		if (!exec->skip_cmd)
 			do_builtin(data, exec);
-		return (exec->exit_code);
+		*env = data->env;
+		exit_code = exec->exit_code;
+		return (free_exec(data), exit_code);
 	}
 	open_file(exec);
 	while (exec)
@@ -135,6 +137,7 @@ int	exec(t_cmd *command, char **env, t_node *node, int prv_code)
 		exec = exec->next;
 	}
 	wait_all(&exit_code);
+	*env = data->env;
 	free_exec(data);
 	return (exit_code);
 }
