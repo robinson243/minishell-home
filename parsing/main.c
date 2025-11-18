@@ -6,15 +6,15 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 14:21:32 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:00:52 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-pid_t	g_signal;
+pid_t		g_signal;
 
-void handle_sigint(int sig)
+void	handle_sigint(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
@@ -95,4 +95,3 @@ int	main(int ac, char **av, char **envp)
 	free_all(env);
 	clear_history();
 }
-
