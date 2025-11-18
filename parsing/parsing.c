@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 14:26:33 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:03:00 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,24 +80,26 @@ t_cmd	*parser(t_node **head)
 	t_cmd	*head_cmd;
 	t_cmd	*cur_cmd;
 	t_node	*tmp;
-	t_node	*last_word_node;
 
 	if (!check_pipe_syntax(*head))
 		return (ft_putstr_fd("Operator error\n", 2), NULL);
 	init_var(&head_cmd, &cur_cmd, &tmp, head);
-	last_word_node = NULL;
 	while (tmp)
 	{
 		if (tmp->type == WORD || tmp->type != PIPE)
 		{
 			gain_some_lines(&cur_cmd, &head_cmd);
-			process_word_node(cur_cmd, tmp, &last_word_node);
+			if (tmp->type == WORD)
+				add_arg(cur_cmd, tmp->content);
+			else if (tmp->next && tmp->next->type == WORD)
+			{
+				add_redir(cur_cmd, new_redir(tmp->type, tmp->next->content));
+				tmp = tmp->next;
+			}
 		}
 		if (tmp->type == PIPE)
-			process_pipe_node(&cur_cmd, tmp, &last_word_node);
+			handle_pipe(&cur_cmd, tmp);
 		tmp = tmp->next;
 	}
-	if (last_word_node)
-		cur_cmd->quoted = last_word_node->quoted;
 	return (head_cmd);
 }
