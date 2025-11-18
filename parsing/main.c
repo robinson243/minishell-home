@@ -6,15 +6,15 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 16:47:29 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:09:20 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-pid_t	g_signal;
+pid_t		g_signal;
 
-void handle_sigint(int sig)
+void	handle_sigint(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
@@ -84,7 +84,7 @@ int	main(int ac, char **av, char **envp)
 		handle_expands(&node, env);
 		cmd = parser(&node);
 		//print_cmd_list(cmd);
-		//print_list(&node);
+		// print_list(&node);
 		add_history(line);
 		free(line);
 		prv_code = exec(cmd, &env, node, prv_code);
@@ -96,4 +96,3 @@ int	main(int ac, char **av, char **envp)
 	clear_history();
 	return (prv_code);
 }
-

@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 14:01:36 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 16:59:30 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ t_cmd	*new_cmd(void)
 	node->argv = NULL;
 	node->pipe_out = 0;
 	node->redir = NULL;
-	node->quoted = 0;
 	node->next = NULL;
 	return (node);
 }
