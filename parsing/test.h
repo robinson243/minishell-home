@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 12:02:09 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:47:15 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,17 +78,18 @@ char				*expand_variables_basic(char *s, char **envp);
 char				*extract_quoted(char *str, int *i);
 char				*extract_single_quoted(char *str, int *i);
 char				*extract_operator(char *str, int *i);
-char				*extract_word(char *str, int *i);
-char				*extract_dollar(char *str, int *i);
-char				*handle_quote_management(char *tmp, char *str, int *i);
+char				*extract_dollar(char *str, int *i, char **envp);
+char				*extract_word(char *str, int *i, char **envp);
+char				*handle_quote_management(char *tmp, char *str, int *i,
+						char **envp);
 
 char				*mini_double_quoted(char *input, int *i, int *quoted);
 char				*mini_single_quoted(char *input, int *i, int *quoted);
 void				gain_some_lines(t_cmd **cur_cmd, t_cmd **head_cmd);
 void				handle_pipe(t_cmd **cur_cmd, t_node *tmp);
 
-char				*build_word(char *input, int *i, int *quoted);
-t_node				*lexer(char *input, t_node **head);
+char				*build_word(char *input, int *i, int *quoted, char **envp);
+t_node				*lexer(char *input, t_node **head, char **envp);
 char				*find_path(char *str, char **envp);
 t_node				*handle_expands(t_node **head, char **envp);
 void				set_token_type(t_node *node);

@@ -6,13 +6,13 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/15 19:20:32 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:54:58 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-char	*handle_quote_management(char *tmp, char *str, int *i)
+char	*handle_quote_management(char *tmp, char *str, int *i, char **envp)
 {
 	char	*quoted_word;
 	char	*res;
@@ -28,17 +28,16 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 		else if (str[*i] == '"')
 		{
 			quoted_word = extract_quoted(str, i);
-			printf("quoted = |%s|\n", quoted_word);
 			res = ft_strjoin_free(res, quoted_word);
 		}
 		else
-			res = ft_strjoin_free(res, extract_word(str, i));
+			res = ft_strjoin_free(res, extract_word(str, i, envp));
 	}
 	res = ft_strjoin_free(tmp, res);
 	return (res);
 }
 
-char	*build_word(char *input, int *i, int *quoted)
+char	*build_word(char *input, int *i, int *quoted, char **envp)
 {
 	char	*word;
 	char	*tmp;
@@ -57,7 +56,7 @@ char	*build_word(char *input, int *i, int *quoted)
 		{
 			if (recognize_token(input, i) != WORD)
 				break ;
-			tmp = extract_word(input, i);
+			tmp = extract_word(input, i, envp);
 		}
 		if (!tmp)
 			break ;
@@ -66,7 +65,7 @@ char	*build_word(char *input, int *i, int *quoted)
 	return (word);
 }
 
-t_node	*lexer(char *input, t_node **head)
+t_node	*lexer(char *input, t_node **head, char **envp)
 {
 	int		i;
 	int		quoted;
@@ -79,7 +78,7 @@ t_node	*lexer(char *input, t_node **head)
 			i++;
 		if (!input[i])
 			break ;
-		word = build_word(input, &i, &quoted);
+		word = build_word(input, &i, &quoted, envp);
 		if (word)
 			add_node(head, create_node(word, quoted));
 		else

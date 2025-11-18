@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 12:04:32 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:49:01 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	main(int ac, char **av, char **envp)
 	{
 		if (empty_line(line))
 			continue ;
-		lexer(line, &node);
+		lexer(line, &node, env);
 		handle_expands(&node, env);
 		cmd = parser(&node);
 		// print_cmd_list(cmd);

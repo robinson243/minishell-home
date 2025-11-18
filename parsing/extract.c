@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   extract.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/17 13:52:10 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:03:55 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	*extract_operator(char *str, int *i)
 	return (res);
 }
 
-char	*extract_word(char *str, int *i)
+char	*extract_word(char *str, int *i, char **envp)
 {
 	int		j;
 	char	*tmp;
@@ -82,18 +82,19 @@ char	*extract_word(char *str, int *i)
 		return (NULL);
 	j = *i;
 	if (str[*i] == '$')
-		return (extract_dollar(str, i));
+		return (extract_dollar(str, i, envp));
 	if (recognize_token(str, i) != WORD)
 		return (extract_operator(str, i));
-	while (str[*i] && !is_space(str[*i]) && str[*i] != '"'
+	while (str[*i] && !is_space(str[*i]) && str[*i] != '"' && str[*i] != '\''
 		&& recognize_token(str, i) == WORD && str[*i] != '$')
 		(*i)++;
 	tmp = ft_substr(str, j, (*i - j));
-	res = handle_quote_management(tmp, str, i);
+	res = handle_quote_management(tmp, str, i, envp);
+	printf("extracted word: [%s]\n", res);
 	return (res);
 }
 
-char	*extract_dollar(char *str, int *i)
+char	*extract_dollar(char *str, int *i, char **envp)
 {
 	int		start;
 	int		j;
@@ -113,7 +114,7 @@ char	*extract_dollar(char *str, int *i)
 	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
 		(*i)++;
 	key = ft_substr(str, j, (*i - j));
-	res = getenv(key);
+	res = find_path(key, envp);
 	if (!res)
 		res = ft_strdup("");
 	else
