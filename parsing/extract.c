@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 13:03:55 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:15:24 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ char	*extract_word(char *str, int *i, char **envp)
 		(*i)++;
 	tmp = ft_substr(str, j, (*i - j));
 	res = handle_quote_management(tmp, str, i, envp);
-	printf("extracted word: [%s]\n", res);
 	return (res);
 }
 
