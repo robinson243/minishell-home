@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/15 19:20:32 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:08:16 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ char	*handle_quote_management(char *tmp, char *str, int *i)
 		else if (str[*i] == '"')
 		{
 			quoted_word = extract_quoted(str, i);
-			printf("quoted = |%s|\n", quoted_word);
 			res = ft_strjoin_free(res, quoted_word);
 		}
 		else

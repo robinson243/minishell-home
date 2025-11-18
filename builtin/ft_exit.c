@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 12:04:56 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:27:49 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,11 @@ void	free_cmd_list(t_cmd *head)
 {
 	t_cmd	*cur;
 	t_cmd	*tmp;
-	t_redir	*r;
-	t_redir	*r_tmp;
 
 	cur = head;
 	while (cur)
 	{
 		free_all(cur->argv);
-		r = cur->redir;
-		while (r)
-		{
-			r_tmp = r->next;
-			if (r->file)
-				free(r->file);
-			free(r);
-			r = r_tmp;
-		}
 		tmp = cur;
 		cur = cur->next;
 		free(tmp);
@@ -49,9 +38,10 @@ long long	my_atoi(char *s, int *err)
 	result = 0;
 	while (s[i] == ' ')
 		i++;
-	if (s[i] == '-')
+	if (s[i] == '-' || s[i] == '+')
 	{
-		signe = -1;
+		if (s[i] == '-')
+			signe = -1;
 		i++;
 	}
 	while (s[i] >= '0' && s[i] <= '9')
