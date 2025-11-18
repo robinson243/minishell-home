@@ -1,0 +1,895 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   extract.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 14:29:52 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+char	*extract_quoted(char *str, int *i)
+{
+	int		j;
+	char	*res;
+
+	j = *i + 1;
+	(*i)++;
+	while (str[*i] && str[*i] != '"')
+		(*i)++;
+	if (str[*i] == '\0')
+	{
+		ft_putstr_fd("minishell: unexpected EOF near \"\n", 2);
+		return (NULL);
+	}
+	res = ft_substr(str, j, (*i - j));
+	(*i)++;
+	return (res);
+}
+
+char	*extract_single_quoted(char *str, int *i)
+{
+	int		j;
+	char	*res;
+
+	j = *i + 1;
+	(*i)++;
+	while (str[*i] && str[*i] != '\'')
+		(*i)++;
+	if (str[*i] == '\0')
+	{
+		ft_putstr_fd("minishell: unexpected EOF near '\''\n", 2);
+		return (NULL);
+	}
+	res = ft_substr(str, j, (*i - j));
+	(*i)++;
+	return (res);
+}
+
+char	*extract_operator(char *str, int *i)
+{
+	char	*res;
+	int		filter_operator;
+
+	filter_operator = recognize_token(str, i);
+	res = NULL;
+	if (filter_operator == HEREDOC || filter_operator == REDIR_APPEND)
+	{
+		res = ft_substr(str, *i, 2);
+		*i += 2;
+	}
+	else
+	{
+		res = ft_substr(str, *i, 1);
+		*i += 1;
+	}
+	return (res);
+}
+
+char	*extract_word(char *str, int *i, char **envp)
+{
+	int		j;
+	char	*tmp;
+	char	*res;
+
+	while (is_space(str[*i]))
+		(*i)++;
+	if (!str[*i])
+		return (NULL);
+	j = *i;
+	if (str[*i] == '$')
+		return (extract_dollar(str, i, envp));
+	if (recognize_token(str, i) != WORD)
+		return (extract_operator(str, i));
+	while (str[*i] && !is_space(str[*i]) && str[*i] != '"' && str[*i] != '\''
+		&& recognize_token(str, i) == WORD && str[*i] != '$')
+		(*i)++;
+	tmp = ft_substr(str, j, (*i - j));
+	res = handle_quote_management(tmp, str, i, envp);
+	return (res);
+}
+
+char	*extract_dollar(char *str, int *i, char **envp)
+{
+	int		start;
+	int		j;
+	char	*key;
+	char	*res;
+
+	start = *i;
+	(*i)++;
+	if (str[*i] == '?' || str[*i] == '$' || str[*i] == '0')
+	{
+		(*i)++;
+		return (ft_substr(str, start, 2));
+	}
+	if (!ft_isalpha(str[*i]) && str[*i] != '_')
+		return (ft_strdup("$"));
+	j = *i;
+	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
+		(*i)++;
+	key = ft_substr(str, j, (*i - j));
+	res = find_path(key, envp);
+	if (!res)
+		res = ft_strdup("");
+	else
+		res = ft_strdup(res);
+	free(key);
+	return (res);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_expands.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 12:00:26 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+char	*find_path(char *str, char **envp)
+{
+	int		i;
+	int		len;
+	char	*s;
+
+	i = 0;
+	len = ft_strlen(str);
+	while (envp[i])
+	{
+		if (ft_strncmp(str, envp[i], len) == 0)
+		{
+			s = ft_strdup(envp[i] + len + 1);
+			return (s);
+		}
+		i++;
+	}
+	return (NULL);
+}
+
+char	*expand_dollar_basic(char *s, int *i, char **envp)
+{
+	int			start;
+	char		*name;
+	const char	*val;
+
+	(*i)++;
+	if (!ft_isalpha(s[*i]) && s[*i] != '_')
+		return (ft_strdup("$"));
+	start = *i;
+	while (s[*i] && (ft_isalnum(s[*i]) || s[*i] == '_'))
+		(*i)++;
+	name = ft_substr(s, start, *i - start);
+	val = find_path(name, envp);
+	free(name);
+	if (val)
+		return (ft_strdup(val));
+	else
+		return (ft_strdup(""));
+}
+
+char	*expand_variables_basic(char *s, char **envp)
+{
+	int		i;
+	char	*res;
+	char	*tmp;
+	int		start;
+
+	i = 0;
+	res = ft_strdup("");
+	while (s[i])
+	{
+		if (s[i] != '$')
+		{
+			start = i;
+			while (s[i] && s[i] != '$')
+				i++;
+			tmp = ft_substr(s, start, i - start);
+			res = ft_strjoin_free(res, tmp);
+		}
+		else
+		{
+			tmp = expand_dollar_basic(s, &i, envp);
+			res = ft_strjoin_free(res, tmp);
+		}
+	}
+	return (res);
+}
+
+t_node	*handle_expands(t_node **head, char **envp)
+{
+	t_node	*tmp;
+	char	*expanded;
+
+	tmp = *head;
+	if (!*head || !head)
+		return (NULL);
+	while (tmp)
+	{
+		set_token_type(tmp);
+		if (tmp->quoted == 0 || tmp->quoted == 1)
+		{
+			expanded = expand_variables_basic(tmp->content, envp);
+			free(tmp->content);
+			tmp->content = expanded;
+		}
+		tmp = tmp->next;
+	}
+	return (*head);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 14:33:06 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+char	*handle_quote_management(char *tmp, char *str, int *i, char **envp)
+{
+	char	*quoted_word;
+	char	*res;
+
+	res = ft_strdup("");
+	while (str[*i] && recognize_token(str, i) == WORD && !is_space(str[*i]))
+	{
+		if (str[*i] == '\'')
+		{
+			quoted_word = extract_single_quoted(str, i);
+			res = ft_strjoin_free(res, quoted_word);
+		}
+		else if (str[*i] == '"')
+		{
+			quoted_word = extract_quoted(str, i);
+			res = ft_strjoin_free(res, quoted_word);
+		}
+		else
+			res = ft_strjoin_free(res, extract_word(str, i, envp));
+	}
+	res = ft_strjoin_free(tmp, res);
+	return (res);
+}
+
+char	*build_word(char *input, int *i, int *quoted, char **envp)
+{
+	char	*word;
+	char	*tmp;
+
+	word = ft_strdup("");
+	*quoted = 0;
+	if (recognize_token(input, i) != WORD)
+		return (free(word), extract_operator(input, i));
+	while (input[*i] && !is_space(input[*i]))
+	{
+		if (input[*i] == '"')
+			tmp = mini_double_quoted(input, i, quoted);
+		else if (input[*i] == '\'')
+			tmp = mini_single_quoted(input, i, quoted);
+		else
+		{
+			if (recognize_token(input, i) != WORD)
+				break ;
+			tmp = extract_word(input, i, envp);
+		}
+		if (!tmp)
+			break ;
+		word = ft_strjoin_free(word, tmp);
+	}
+	return (word);
+}
+
+t_node	*lexer(char *input, t_node **head, char **envp)
+{
+	int		i;
+	int		quoted;
+	char	*word;
+
+	i = 0;
+	quoted = 0;
+	while (input[i])
+	{
+		while (input[i] && is_space(input[i]))
+			i++;
+		if (!input[i])
+			break ;
+		word = build_word(input, &i, &quoted, envp);
+		if (word)
+			add_node(head, create_node(word, quoted));
+		else
+			free(word);
+	}
+	return (*head);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 16:24:37 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+pid_t	g_signal;
+
+void handle_sigint(int sig)
+{
+	(void)sig;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+static void	handle_sigsegv(int code)
+{
+	(void)code;
+	write(2, "Segmentation fault\n", 19);
+	exit(11);
+}
+
+static void	handle_sigabrt(int code)
+{
+	(void)code;
+	write(1, "abort\n", 6);
+}
+
+void	signals(void)
+{
+	signal(SIGINT, &handle_sigint);
+	signal(SIGSEGV, &handle_sigsegv);
+	signal(SIGABRT, &handle_sigabrt);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+bool	empty_line(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i] && is_space(line[i]))
+		i++;
+	if (i == (int)ft_strlen(line))
+	{
+		free(line);
+		return (true);
+	}
+	return (false);
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	char	*line;
+	t_cmd	*cmd;
+	t_node	*node;
+	char	**env;
+	int		prv_code;
+
+	prv_code = 0;
+	env = ft_strdupdup(envp);
+	node = NULL;
+	cmd = NULL;
+	using_history();
+	(void)ac;
+	(void)av;
+	signals();
+	g_signal = 0;
+	while ((line = readline("minishell > ")))
+	{
+		if (empty_line(line))
+			continue ;
+		lexer(line, &node, env);
+		handle_expands(&node, env);
+		cmd = parser(&node);
+		print_cmd_list(cmd);
+		print_list(&node);
+		add_history(line);
+		free(line);
+		prv_code = exec(cmd, &env, node, prv_code);
+		clear_nodes(&node);
+		free_cmd_list_no_files(cmd);
+		g_signal = 0;
+	}
+	free_all(env);
+	clear_history();
+	return (prv_code);
+}
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mini_functions.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/29 16:13:06 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/15 19:18:30 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+char	*mini_double_quoted(char *input, int *i, int *quoted)
+{
+	char	*tmp;
+
+	tmp = extract_quoted(input, i);
+	*quoted = 1;
+	return (tmp);
+}
+
+char	*mini_single_quoted(char *input, int *i, int *quoted)
+{
+	char	*tmp;
+
+	tmp = extract_single_quoted(input, i);
+	*quoted = 2;
+	return (tmp);
+}
+
+void	gain_some_lines(t_cmd **cur_cmd, t_cmd **head_cmd)
+{
+	if (!*cur_cmd)
+	{
+		*cur_cmd = new_cmd();
+		if (!*head_cmd)
+			*head_cmd = *cur_cmd;
+	}
+}
+
+void	handle_pipe(t_cmd **cur_cmd, t_node *tmp)
+{
+	if (tmp->type == PIPE && tmp->next)
+	{
+		(*cur_cmd)->pipe_out = 1;
+		(*cur_cmd)->next = new_cmd();
+		*cur_cmd = (*cur_cmd)->next;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   node.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/29 16:09:19 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 13:43:16 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+t_node	*create_node(char *content, int quoted)
+{
+	t_node	*node;
+
+	node = malloc(sizeof(t_node));
+	if (!node)
+		return (NULL);
+	node->content = content;
+	node->quoted = quoted;
+	node->next = NULL;
+	return (node);
+}
+
+void	add_node(t_node **head, t_node *new)
+{
+	t_node	*current;
+
+	if (*head == NULL)
+	{
+		*head = new;
+		return ;
+	}
+	current = *head;
+	while (current->next != NULL)
+		current = current->next;
+	current->next = new;
+}
+
+void	clear_nodes(t_node **head)
+{
+	t_node	*current;
+	t_node	*tmp;
+
+	if (*head == NULL)
+		return ;
+	current = *head;
+	while (current)
+	{
+		tmp = current->next;
+		if (current->content)
+			free(current->content);
+		free(current);
+		current = tmp;
+	}
+	*head = NULL;
+}
+
+void	print_list(t_node **head)
+{
+	t_node	*tmp;
+
+	if (!head || !*head)
+	{
+		printf("(liste vide)\n");
+		return ;
+	}
+	tmp = *head;
+	while (tmp)
+	{
+		printf("le type est %d\n", tmp->type);
+		printf("C'est quoted ou pas %d \n", tmp->quoted);
+		if (tmp->content)
+			printf("%s\n", tmp->content);
+		else
+			printf("(null)\n");
+		tmp = tmp->next;
+	}
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 14:26:33 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+void	free_argv(char **argv)
+{
+	int	i;
+
+	i = 0;
+	if (!argv)
+		return ;
+	while (argv[i])
+	{
+		free(argv[i]);
+		i++;
+	}
+	free(argv);
+}
+
+void	free_cmd_list_no_files(t_cmd *head)
+{
+	t_cmd	*cur;
+	t_cmd	*tmp;
+	t_redir	*r;
+	t_redir	*r_tmp;
+
+	cur = head;
+	while (cur)
+	{
+		free_argv(cur->argv);
+		r = cur->redir;
+		while (r)
+		{
+			r_tmp = r;
+			r = r->next;
+			free(r_tmp);
+		}
+		tmp = cur;
+		cur = cur->next;
+		free(tmp);
+	}
+}
+
+void	init_var(t_cmd **head_cmd, t_cmd **cur_cmd, t_node **tmp, t_node **head)
+{
+	*head_cmd = NULL;
+	*cur_cmd = NULL;
+	*tmp = *head;
+}
+
+int	check_pipe_syntax(t_node *tmp)
+{
+	if (!tmp)
+		return (1);
+	if (tmp->type == PIPE)
+		return (0);
+	while (tmp)
+	{
+		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE))
+			return (0);
+		if (tmp->type != WORD && (!tmp->next || tmp->next->type != WORD))
+			return (0);
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
+t_cmd	*parser(t_node **head)
+{
+	t_cmd	*head_cmd;
+	t_cmd	*cur_cmd;
+	t_node	*tmp;
+	t_node	*last_word_node;
+
+	if (!check_pipe_syntax(*head))
+		return (ft_putstr_fd("Operator error\n", 2), NULL);
+	init_var(&head_cmd, &cur_cmd, &tmp, head);
+	last_word_node = NULL;
+	while (tmp)
+	{
+		if (tmp->type == WORD || tmp->type != PIPE)
+		{
+			gain_some_lines(&cur_cmd, &head_cmd);
+			process_word_node(cur_cmd, tmp, &last_word_node);
+		}
+		if (tmp->type == PIPE)
+			process_pipe_node(&cur_cmd, tmp, &last_word_node);
+		tmp = tmp->next;
+	}
+	if (last_word_node)
+		cur_cmd->quoted = last_word_node->quoted;
+	return (head_cmd);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_mini.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/18 14:25:45 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 14:26:27 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+void	process_word_node(t_cmd *cur_cmd, t_node *tmp, t_node **last_word_node)
+{
+	if (tmp->type == WORD)
+	{
+		add_arg(cur_cmd, tmp->content);
+		*last_word_node = tmp;
+	}
+	else if (tmp->next && tmp->next->type == WORD)
+	{
+		add_redir(cur_cmd, new_redir(tmp->type, tmp->next->content));
+	}
+}
+
+void	process_pipe_node(t_cmd **cur_cmd, t_node *tmp, t_node **last_word_node)
+{
+	if (*last_word_node)
+		(*cur_cmd)->quoted = (*last_word_node)->quoted;
+	handle_pipe(cur_cmd, tmp);
+	*last_word_node = NULL;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utility_parsing.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 14:01:36 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+t_cmd	*new_cmd(void)
+{
+	t_cmd	*node;
+
+	node = malloc(sizeof(t_cmd));
+	if (!node)
+		return (NULL);
+	node->argv = NULL;
+	node->pipe_out = 0;
+	node->redir = NULL;
+	node->quoted = 0;
+	node->next = NULL;
+	return (node);
+}
+
+t_redir	*new_redir(int type, char *file)
+{
+	t_redir	*node;
+
+	node = malloc(sizeof(t_redir));
+	if (!node)
+		return (NULL);
+	node->file = file;
+	node->type = type;
+	node->next = NULL;
+	return (node);
+}
+
+void	add_redir(t_cmd *cmd, t_redir *new)
+{
+	t_redir	*tmp;
+
+	tmp = cmd->redir;
+	if (!cmd->redir)
+	{
+		cmd->redir = new;
+		return ;
+	}
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
+}
+
+int	len_tab(char **tab)
+{
+	int	i;
+
+	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i])
+		i++;
+	return (i);
+}
+
+void	add_arg(t_cmd *cmd, char *arg)
+{
+	int		i;
+	int		j;
+	int		len;
+	char	**tab;
+
+	i = 0;
+	j = 0;
+	len = len_tab(cmd->argv);
+	tab = malloc(sizeof(char *) * (len + 2));
+	while (cmd->argv && cmd->argv[i])
+	{
+		tab[i] = ft_strdup(cmd->argv[i]);
+		i++;
+	}
+	tab[i] = ft_strdup(arg);
+	tab[i + 1] = NULL;
+	while (cmd->argv && cmd->argv[j])
+		free(cmd->argv[j++]);
+	free(cmd->argv);
+	cmd->argv = tab;
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/29 16:11:04 by romukena          #+#    #+#             */
+/*   Updated: 2025/11/18 14:20:09 by romukena         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "test.h"
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] && s2[i])
+	{
+		i++;
+	}
+	return (s1[i] - s2[i]);
+}
+
+int	recognize_token(const char *s, int *i)
+{
+	if (!s || s[*i] == '\0')
+		return (WORD);
+	if (s[*i] == '|')
+		return (PIPE);
+	if (s[*i] == '<')
+	{
+		if (s[(*i) + 1] == '<')
+			return (HEREDOC);
+		return (REDIR_IN);
+	}
+	if (s[*i] == '>')
+	{
+		if (s[(*i) + 1] == '>')
+			return (REDIR_APPEND);
+		return (REDIR_OUT);
+	}
+	return (WORD);
+}
+
+void	set_token_type(t_node *node)
+{
+	if (!node || !node->content)
+		return ;
+	if (ft_strcmp(node->content, "|") == 0)
+		node->type = PIPE;
+	else if (ft_strcmp(node->content, "<") == 0)
+		node->type = REDIR_IN;
+	else if (ft_strcmp(node->content, ">") == 0)
+		node->type = REDIR_OUT;
+	else if (ft_strcmp(node->content, ">>") == 0)
+		node->type = REDIR_APPEND;
+	else if (ft_strcmp(node->content, "<<") == 0)
+		node->type = HEREDOC;
+	else
+		node->type = WORD;
+}
+
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*res;
+	size_t	len1;
+	size_t	len2;
+
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
+	if (!s2)
+		return (ft_strdup(s1));
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	res = malloc(len1 + len2 + 1);
+	if (!res)
+		return (NULL);
+	ft_memcpy(res, s1, len1);
+	ft_memcpy(res + len1, s2, len2);
+	res[len1 + len2] = '\0';
+	free(s1);
+	free(s2);
+	return (res);
+}
+
+void	print_cmd_list(t_cmd *cmd)
+{
+	t_redir	*r;
+	int		i;
+
+	while (cmd)
+	{
+		printf("=== Command ===\n");
+		if (cmd->argv)
+		{
+			i = 0;
+			while (cmd->argv[i])
+			{
+				printf("le quoted %d\n", cmd->quoted);
+				printf("argv[%d]: %s\n", i, cmd->argv[i]);
+				i++;
+			}
+		}
+		r = cmd->redir;
+		while (r)
+		{
+			printf("redir type=%d file=%s\n", r->type, r->file);
+			r = r->next;
+		}
+		printf("pipe_out=%d\n\n", cmd->pipe_out);
+		cmd = cmd->next;
+	}
+}
