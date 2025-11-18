@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 16:59:30 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 18:01:21 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	add_redir(t_cmd *cmd, t_redir *new)
 {
 	t_redir	*tmp;
 
+	new->file = ft_strdup(new->file);
 	tmp = cmd->redir;
 	if (!cmd->redir)
 	{
@@ -77,6 +78,8 @@ void	add_arg(t_cmd *cmd, char *arg)
 	j = 0;
 	len = len_tab(cmd->argv);
 	tab = malloc(sizeof(char *) * (len + 2));
+	if (!tab)
+		return ;
 	while (cmd->argv && cmd->argv[i])
 	{
 		tab[i] = ft_strdup(cmd->argv[i]);
