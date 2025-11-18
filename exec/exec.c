@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 13:50:43 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:03:15 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,10 @@ int	exec_builtin(t_globale *data, char ***env)
 
 	exec = data->exec;
 	open_file(exec);
-	if (!exec->skip_cmd)
+	if (exec->skip_cmd == false)
 		do_builtin(data, exec);
+	else
+		exec->exit_code = 1;
 	*env = data->env;
 	exit_code = exec->exit_code;
 	return (free_exec(data), exit_code);
@@ -79,11 +81,14 @@ int	exec_builtin(t_globale *data, char ***env)
 int	exec_line(t_globale *data)
 {
 	t_exec	*exec;
+	int		ex_code;
 
+	ex_code = 0;
 	exec = data->exec;
+	open_file(exec);
 	while (exec)
 	{
-		open_file(exec);
+		ex_code = 0;
 		if (pipe(exec->p_nb) == -1)
 		{
 			perror("pipe");
@@ -91,18 +96,19 @@ int	exec_line(t_globale *data)
 			return (1);
 		}
 		exec_cmd(exec, data);
+		ex_code = exec->exit_code;
 		exec = exec->next;
 	}
-	return (0);
+	return (ex_code);
 }
 
 int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 {
 	t_globale	*data;
 	int			exit_code;
-	int			err_pipe;
+	int			err;
 
-	err_pipe = 0;
+	err = 0;
 	data = malloc(sizeof(t_globale));
 	data->env = *env;
 	data->exec = init_exec(command);
@@ -112,11 +118,11 @@ int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 		&& data->exec->cmd->argv && data->exec->cmd->argv[0]
 		&& is_builtin(data->exec->cmd->argv[0]))
 		return (exec_builtin(data, env));
-	err_pipe = exec_line(data);
+	err = exec_line(data);
 	wait_all(&exit_code);
 	*env = data->env;
 	free_exec(data);
-	if (err_pipe)
-		return (1);
+	if (err)
+		return (err);
 	return (exit_code);
 }

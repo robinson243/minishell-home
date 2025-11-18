@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:50:04 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:39:51 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*ft_user(char **env)
 		{
 			path_user = ft_strdup(env[i] + 8);
 			if (!path_user)
-				return (NULL);
+				return (perror("Malloc"), NULL);
 		}
 		i++;
 	}
@@ -40,25 +40,27 @@ int	ft_cd(char	**cmd, char **env)
 {
 	char	*path_user;
 
+	path_user = NULL;
+	if (cmd[1] && cmd[2])
+	{
+		write(2, "cd: too many arguments\n", 24);
+		return (1);
+	}
 	if (!cmd[1])
 	{
 		path_user = ft_user(env);
 		if (!path_user)
 			return (1);
 		if (chdir(path_user) != 0)
-		{
-			perror("cd");
-			return (1);
-		}
-		return (0);
+			return (perror("cd"), free(path_user), 1);
+		return (free(path_user), 0);
 	}
-	else
+	if (chdir(cmd[1]) != 0)
 	{
-		if (chdir(cmd[1]) != 0)
-		{
-			perror("cd");
-			return (1);
-		}
+		write(2, "cd: ", 4);
+		write(2, cmd[1], ft_strlen(cmd[1]));
+		write(2, ": No such file or directory\n", 29);
+		return (1);
 	}
 	return (0);
 }
