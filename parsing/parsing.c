@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 17:03:00 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:33:32 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,16 @@ int	check_pipe_syntax(t_node *tmp)
 		return (0);
 	while (tmp)
 	{
-		if (tmp->type == PIPE && (!tmp->next || tmp->next->type == PIPE))
-			return (0);
-		if (tmp->type != WORD && (!tmp->next || tmp->next->type != WORD))
+		if (tmp->type == PIPE)
+		{
+			if (!tmp->next)
+				return (0);
+			if (tmp->next->type == PIPE)
+				return (0);
+		}
+		if ((tmp->type == REDIR_IN || tmp->type == REDIR_OUT
+				|| tmp->type == REDIR_APPEND || tmp->type == HEREDOC)
+			&& (!tmp->next || tmp->next->type == PIPE))
 			return (0);
 		tmp = tmp->next;
 	}
