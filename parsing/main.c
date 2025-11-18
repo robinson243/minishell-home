@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 21:46:15 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/19 00:16:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,5 @@ int	main(int ac, char **av, char **envp)
 	}
 	free_all(env);
 	clear_history();
+	return (prv_code);
 }
