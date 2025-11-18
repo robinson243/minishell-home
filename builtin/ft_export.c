@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 13:48:29 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:17:35 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,17 @@ char	**do_export(char *arg, char **env, t_exec *exec)
 
 	if (!invalide_arg(arg))
 	{
-		write(2, "export: invalid identifier\n", 28);
+		ft_putstr_fd("export: `", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
 		exec->exit_code = 1;
 		return (env);
 	}
 	normalized = normalize_export_arg(arg);
 	if (!normalized)
 	{
-		perror("Malloc");
 		exec->exit_code = 1;
-		return (env);
+		return (perror("Malloc"), env);
 	}
 	new_env = export(existe(normalized, env), env, normalized);
 	if (!new_env)

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 13:50:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 16:30:01 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	do_builtin(t_globale *data, t_exec *exec)
 	if (!ft_strncmp(commande[0], "cd", INT_MAX))
 		exec->exit_code = ft_cd(commande, data->env);
 	if (!ft_strncmp(commande[0], "echo", INT_MAX))
-		exec->exit_code = ft_echo(commande + 1, data);
+		exec->exit_code = ft_echo(commande + 1, data, exec->cmd->quoted);
 	dup2(std, 1);
 	close(std);
 }
