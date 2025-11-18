@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/17 15:53:08 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 12:04:32 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ int	main(int ac, char **av, char **envp)
 		if (empty_line(line))
 			continue ;
 		lexer(line, &node);
-		handle_expands(&node);
+		handle_expands(&node, env);
 		cmd = parser(&node);
-		print_cmd_list(cmd);
-		print_list(&node);
+		// print_cmd_list(cmd);
+		// print_list(&node);
 		add_history(line);
 		free(line);
 		prv_code = exec(cmd, &env, node, prv_code);
@@ -95,3 +95,4 @@ int	main(int ac, char **av, char **envp)
 	free_all(env);
 	clear_history();
 }
+
