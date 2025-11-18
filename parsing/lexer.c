@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 12:54:58 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:55:54 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ t_node	*lexer(char *input, t_node **head, char **envp)
 	char	*word;
 
 	i = 0;
+	quoted = 0;
 	while (input[i])
 	{
 		while (input[i] && is_space(input[i]))

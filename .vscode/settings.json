@@ -4,6 +4,7 @@
 		"readline.h": "c",
 		"history.h": "c",
 		"titi": "c",
-		"toto": "c"
+		"toto": "c",
+		"tata": "c"
 	}
 }
