@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 17:02:42 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 21:41:46 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,11 @@ char	*expand_variables_basic(char *s, char **envp)
 	return (res);
 }
 
-t_node	*handle_expands(t_node **head, char **envp)
+t_node	*handle_expands(t_node **head, char **envp, int prv_code)
 {
 	t_node	*tmp;
 	char	*expanded;
+	char	*status_str;
 
 	tmp = *head;
 	if (!*head || !head)
@@ -92,11 +93,17 @@ t_node	*handle_expands(t_node **head, char **envp)
 	while (tmp)
 	{
 		set_token_type(tmp);
-		if (tmp->quoted == 0 || tmp->quoted == 1)
+		if ((tmp->quoted == 0 || tmp->quoted == 1) && tmp->type == WORD)
 		{
 			expanded = expand_variables_basic(tmp->content, envp);
 			free(tmp->content);
 			tmp->content = expanded;
+			if (ft_strcmp(tmp->content, "$?") == 0)
+			{
+				status_str = ft_itoa(prv_code);
+				free(tmp->content);
+				tmp->content = status_str;
+			}
 		}
 		tmp = tmp->next;
 	}

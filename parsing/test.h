@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 17:02:02 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 21:26:17 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ typedef struct s_cmd
 	char			**argv;
 	t_redir			*redir;
 	int				pipe_out;
-	int				quoted;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -92,13 +91,9 @@ void				handle_pipe(t_cmd **cur_cmd, t_node *tmp);
 char				*build_word(char *input, int *i, int *quoted, char **envp);
 t_node				*lexer(char *input, t_node **head, char **envp);
 char				*find_path(char *str, char **envp);
-t_node				*handle_expands(t_node **head, char **envp);
+t_node				*handle_expands(t_node **head, char **envp, int prv_code);
 void				set_token_type(t_node *node);
 
-void				process_word_node(t_cmd *cur_cmd, t_node *tmp,
-						t_node **last_word_node);
-void				process_pipe_node(t_cmd **cur_cmd, t_node *tmp,
-						t_node **last_word_node);
 /*Fonctions utilitaires pour le parsing final*/
 void				add_arg(t_cmd *cmd, char *arg);
 void				add_redir(t_cmd *cmd, t_redir *new);

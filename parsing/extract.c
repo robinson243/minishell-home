@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 16:58:53 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 21:33:33 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,17 +95,15 @@ char	*extract_word(char *str, int *i, char **envp)
 
 char	*extract_dollar(char *str, int *i, char **envp)
 {
-	int		start;
 	int		j;
 	char	*key;
 	char	*res;
 
-	start = *i;
 	(*i)++;
-	if (str[*i] == '?' || str[*i] == '$' || str[*i] == '0')
+	if (str[*i] == '?')
 	{
 		(*i)++;
-		return (ft_substr(str, start, 2));
+		return (ft_strdup("$?"));
 	}
 	if (!ft_isalpha(str[*i]) && str[*i] != '_')
 		return (ft_strdup("$"));
