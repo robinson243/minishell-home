@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:11:04 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/15 19:07:07 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:20:09 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ void	print_cmd_list(t_cmd *cmd)
 			i = 0;
 			while (cmd->argv[i])
 			{
+				printf("le quoted %d\n", cmd->quoted);
 				printf("argv[%d]: %s\n", i, cmd->argv[i]);
 				i++;
 			}

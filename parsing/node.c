@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:09:19 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/03 15:46:36 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:43:16 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	print_list(t_node **head)
 	while (tmp)
 	{
 		printf("le type est %d\n", tmp->type);
+		printf("C'est quoted ou pas %d \n", tmp->quoted);
 		if (tmp->content)
 			printf("%s\n", tmp->content);
 		else
