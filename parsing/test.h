@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 21:26:17 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/19 11:08:19 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char				*ft_strjoin_free(char *s1, char *s2);
 void				print_cmd_list(t_cmd *cmd);
 
 char				*expand_dollar_basic(char *s, int *i, char **envp);
-char				*expand_variables_basic(char *s, char **envp);
+char				*expand_variables_basic(char *s, char **envp, int prv_code);
 
 char				*extract_quoted(char *str, int *i);
 char				*extract_single_quoted(char *str, int *i);

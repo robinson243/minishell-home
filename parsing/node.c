@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:09:19 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 20:19:28 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/19 10:56:26 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,5 @@ void	print_list(t_node **head)
 			printf("(null)\n");
 		tmp = tmp->next;
 	}
+	printf("Fin de ligne\n\n");
 }
