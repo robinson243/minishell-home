@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 14:13:27 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/18 16:29:12 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void					redir_in_out(t_exec *exec);
 void					do_builtin(t_globale *data, t_exec *exec);
 void					redir_out(t_exec *exec);
 void					free_exit(t_globale *data, char *str, int code);
-int						ft_echo(char **args, t_globale *data);
+int						ft_echo(char **args, t_globale *data, int quoted);
 int						exist(char **path, t_cmd *command, t_globale *data,
 							t_exec *exec);
 char					*get_path(char **env, char *cmd, t_cmd *command,

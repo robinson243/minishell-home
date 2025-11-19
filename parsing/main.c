@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/19 00:16:50 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/19 09:53:22 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,11 @@ int	main(int ac, char **av, char **envp)
 		lexer(line, &node, env);
 		handle_expands(&node, env, prv_code);
 		cmd = parser(&node);
-		print_cmd_list(cmd);
-		print_list(&node);
+		//print_cmd_list(cmd);
+		// print_list(&node);
 		add_history(line);
 		free(line);
-		// prv_code = exec(cmd, &env, node, prv_code);
+		prv_code = exec(cmd, &env, node, prv_code);
 		clear_nodes(&node);
 		free_cmd_list_no_files(cmd);
 		g_signal = 0;
