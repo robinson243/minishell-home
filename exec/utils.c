@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 16:30:01 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/19 09:59:43 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	do_builtin(t_globale *data, t_exec *exec)
 	if (!ft_strncmp(commande[0], "cd", INT_MAX))
 		exec->exit_code = ft_cd(commande, data->env);
 	if (!ft_strncmp(commande[0], "echo", INT_MAX))
-		exec->exit_code = ft_echo(commande + 1, data, exec->cmd->quoted);
+		exec->exit_code = ft_echo(commande + 1);
 	dup2(std, 1);
 	close(std);
 }

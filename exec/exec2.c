@@ -3,17 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   exec2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 17:05:06 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/19 10:47:29 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
+// int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
+// {
+// 	if (access(command->argv[0], F_OK) == 0)
+// 	{
+// 		*path = ft_strdup(command->argv[0]);
+// 		if (!(*path))
+// 			exec->exit_code = 1;
+// 	}
+// 	else
+// 		*path = get_path(data->env, command->argv[0], command, exec);
+// 	if (!(*path) && exec->exit_code == 1)
+// 		free_exit(data, "Malloc", 1);
+// 	if (!(*path))
+// 	{
+// 		exec->exit_code = 127;
+// 		write(2, command->argv[0], ft_strlen(command->argv[0]));
+// 		write(2, ": command not found\n", 21);
+// 		return (0);
+// 	}
+// 	if (access((*path), X_OK))
+// 	{
+// 		exec->exit_code = 126;
+// 		return (perror(*path), free((*path)), 0);
+// 	}
+// 	if (!check_dir(path, command->argv[0], command, exec))
+// 		return (0);
+// 	return (1);
+// }
+
+
 int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 {
+	int			has_slash;
+
+	has_slash = (ft_strchr(command->argv[0], '/') != NULL);
 	if (access(command->argv[0], F_OK) == 0)
 	{
 		*path = ft_strdup(command->argv[0]);
@@ -21,7 +54,7 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 			exec->exit_code = 1;
 	}
 	else
-		*path = get_path(data->env, command->argv[0], command, exec);
+		*path = get_path(data->env, command->argv[0], exec);
 	if (!(*path) && exec->exit_code == 1)
 		free_exit(data, "Malloc", 1);
 	if (!(*path))
@@ -31,13 +64,24 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 		write(2, ": command not found\n", 21);
 		return (0);
 	}
-	if (access((*path), X_OK))
-	{
-		exec->exit_code = 126;
-		return (perror(*path), free((*path)), 0);
-	}
-	if (!check_dir(path, command->argv[0], command, exec))
+	if (check_dir(path, command->argv[0], command, exec) == 0)
 		return (0);
+	if (access(*path, X_OK) != 0)
+	{
+		if (has_slash)
+		{
+			exec->exit_code = 126;
+			perror(*path);
+		}
+		else
+		{
+			exec->exit_code = 127;
+			write(2, command->argv[0], ft_strlen(command->argv[0]));
+			write(2, ": command not found\n", 21);
+		}
+		free(*path);
+		return (0);
+	}
 	return (1);
 }
 
@@ -61,30 +105,31 @@ char	**remp_local(char **env, t_exec *exec)
 	return (local);
 }
 
-char	*get_path(char **env, char *cmd, t_cmd *command, t_exec *exec)
+char	*get_path(char **env, char *cmd, t_exec *exec)
 {
 	int		i;
 	char	**local;
 	char	*path;
 
-	(void)command;
 	i = 0;
 	local = remp_local(env, exec);
 	if (!local)
 		return (NULL);
 	while (local[i])
 	{
-		path = ft_strslashjoin(local[i++], cmd);
+		path = ft_strslashjoin(local[i], cmd);
 		if (!path)
 		{
 			exec->exit_code = 1;
 			return (free_all(local), NULL);
 		}
-		if (access(path, F_OK) == 0)
+		if (access(path, X_OK) == 0)
 			return (free_all(local), path);
 		free(path);
+		i++;
 	}
-	return (free_all(local), NULL);
+	free_all(local);
+	return (NULL);
 }
 
 int	check_dir(char **path, char *cmd, t_cmd *command, t_exec *exec)
