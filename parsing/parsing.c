@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 20:38:40 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/20 12:42:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	free_cmd_list_no_files(t_cmd *head)
 		r = cur->redir;
 		while (r)
 		{
+			if (r->file)
+                free(r->file); 
 			r_tmp = r;
 			r = r->next;
 			free(r_tmp);

@@ -1,0 +1,68 @@
+HEREDOC:
+==26057== 5 bytes in 1 blocks are definitely lost in loss record 6 of 82
+==26057==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==26057==    by 0x40693E: ft_strdup (in /home/romukena/Documents/minishell-home/minishell)
+==26057==    by 0x405B6C: add_redir (utility_parsing.c:46)
+==26057==    by 0x405A16: parser (parsing.c:103)
+==26057==    by 0x4052B4: main (main.c:86)
+
+commande '':
+==26504== 15 bytes in 3 blocks are definitely lost in loss record 9 of 64
+==26504==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==26504==    by 0x40693E: ft_strdup (in /home/romukena/Documents/minishell-home/minishell)
+==26504==    by 0x405B6C: add_redir (utility_parsing.c:46)
+==26504==    by 0x405A16: parser (parsing.c:103)
+==26504==    by 0x4052B4: main (main.c:86)
+
+exit minishell ctrl+d:
+==26479== FILE DESCRIPTORS: 3 open (3 std) at exit.
+==26479== 
+==26479== HEAP SUMMARY:
+==26479==     in use at exit: 208,518 bytes in 237 blocks
+==26479==   total heap usage: 1,867 allocs, 1,630 frees, 513,567 bytes allocated
+==26479== 
+==26479== 9 bytes in 1 blocks are definitely lost in loss record 4 of 69
+==26479==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==26479==    by 0x40693E: ft_strdup (in /home/romukena/Documents/minishell-home/minishell)
+==26479==    by 0x4047F3: find_path (handle_expands.c:27)
+==26479==    by 0x40494C: expand_dollar_basic (handle_expands.c:48)
+==26479==    by 0x404A00: expand_dollar_segment (handle_expands.c:65)
+==26479==    by 0x404AF8: expand_variables_basic (handle_expands.c:88)
+==26479==    by 0x404BB9: handle_expands (handle_expands.c:108)
+==26479==    by 0x4052AB: main (main.c:85)
+==26479== 
+==26479== 9 bytes in 1 blocks are definitely lost in loss record 5 of 69
+==26479==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==26479==    by 0x40693E: ft_strdup (in /home/romukena/Documents/minishell-home/minishell)
+==26479==    by 0x4047F3: find_path (handle_expands.c:27)
+==26479==    by 0x404727: extract_dollar (extract.c:114)
+==26479==    by 0x404474: extract_word (extract.c:85)
+==26479==    by 0x404EFA: build_word (lexer.c:59)
+==26479==    by 0x404FEF: lexer (lexer.c:81)
+==26479==    by 0x40529B: main (main.c:84)
+==26479== 
+==26479== 60 bytes in 10 blocks are definitely lost in loss record 19 of 69
+==26479==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==26479==    by 0x40693E: ft_strdup (in /home/romukena/Documents/minishell-home/minishell)
+==26479==    by 0x405B6C: add_redir (utility_parsing.c:46)
+==26479==    by 0x405A16: parser (parsing.c:103)
+==26479==    by 0x4052B4: main (main.c:86)
+
+variable d'environnement a mettre a jour: SHLVL = SHLVL + 1, PWD et OLD_PWD a mettre a jour en fonction de la commande cd
+
+sans PATH: ls
+
+==27007== 10 bytes in 1 blocks are definitely lost in loss record 3 of 64
+==27007==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==27007==    by 0x40693E: ft_strdup (in /home/romukena/Documents/minishell-home/minishell)
+==27007==    by 0x4067F1: normalize_export_arg (export_utils.c:109)
+==27007==    by 0x40213C: do_export (ft_export.c:79)
+==27007==    by 0x402259: ft_export (ft_export.c:107)
+==27007==    by 0x40401C: do_builtin (utils.c:90)
+==27007==    by 0x4030D6: exec_builtin (exec.c:73)
+==27007==    by 0x4032AF: exec (exec.c:120)
+==27007==    by 0x4052DE: main (main.c:91)
+
+exit ./minishell avec le dernier code d'erreur
+
+verifie qu'il ouvre pas toutes les pipes d'un coup, ouverture une par une
