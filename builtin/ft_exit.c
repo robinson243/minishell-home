@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 13:27:49 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/19 17:52:36 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ long long	my_atoi(char *s, int *err)
 	signe = 1;
 	i = 0;
 	result = 0;
+	*err = 1;
 	while (s[i] == ' ')
 		i++;
 	if (s[i] == '-' || s[i] == '+')
@@ -46,12 +47,13 @@ long long	my_atoi(char *s, int *err)
 	}
 	while (s[i] >= '0' && s[i] <= '9')
 	{
+		*err = 0;
 		result = result * 10 + s[i] - 48;
 		i++;
 	}
 	result = result * signe;
-	if (result > INT_MAX || result < INT_MIN)
-		*err = 1;
+	// if (result > INT_MAX || result < INT_MIN)
+	// 	*err = 1;
 	return (result);
 }
 
@@ -100,29 +102,68 @@ void	free_exec(t_globale *data)
 	free(data);
 }
 
-void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)
+int is_long_long(char *str)
+{
+    char *max = "9223372036854775807";
+    char *min = "9223372036854775808";
+    int neg = 0;
+    int len = 0;
+		
+    while (*str == ' ' || *str == '\t')
+        str++;
+    if (*str == '-' || *str == '+')
+    {
+        if (*str == '-')
+            neg = 1;
+        str++;
+    }
+    while (*str == '0')
+        str++;
+    char *digits = str;
+    while (isdigit(*str))
+    {
+        len++;
+        str++;
+    }
+    if (*str != '\0')
+        return (0);
+    if (len < 19)
+        return (1);
+		if (len > 19)
+        return (0);
+    if (!neg && ft_strcmp(digits, max) > 0)
+        return (0);
+    if (neg && ft_strcmp(digits, min) > 0)
+        return (0);
+    return (1);
+}
+
+
+void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec, int std)
 {
 	int			err;
 	long long	res;
 
 	err = 0;
 	res = 0;
-	if (cmd->argv[1] && cmd->argv[2])
-	{
-		write(2, "exit: too many arguments\n", 26);
-		exec->exit_code = 1;
-		return ;
-	}
+	if (std >= 0)
+		close(std);
 	if (cmd->argv[1])
 	{
 		res = my_atoi(cmd->argv[1], &err);
-		if (err || !is_num(cmd->argv[1]))
+		if (err || !is_long_long(cmd->argv[1]))
 		{
 			write(2, "exit: ", 7);
 			write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
 			write(2, ": numeric argument required\n", 29);
 			free_exit(data, NULL, 2);
 		}
+	}
+	if (cmd->argv[1] && cmd->argv[2])
+	{
+		write(2, "exit: too many arguments\n", 26);
+		exec->exit_code = 1;
+		return ;
 	}
 	if (!cmd->argv[1])
 		free_exit(data, NULL, 0);

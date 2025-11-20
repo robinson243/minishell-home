@@ -6,7 +6,7 @@
 /*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 14:00:52 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 10:24:11 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/19 14:25:53 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	is_nl(char *args)
 	int	j;
 
 	j = 1;
-	if (args[0] == '-')
+	if (args[0] == '-' && args[1])
 	{
 		while (args[j] && args[j] == 'n')
 			j++;
@@ -41,9 +41,8 @@ int	ft_echo(char **args)
 	}
 	while (args[i])
 	{
-		if (!is_nl(args[i]))
-			write(1, args[i], ft_strlen(args[i]));
-		if (args[i + 1] && !is_nl(args[i]))
+		write(1, args[i], ft_strlen(args[i]));
+		if (args[i + 1])
 			write(1, " ", 1);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 09:59:43 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/19 12:37:09 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	do_builtin(t_globale *data, t_exec *exec)
 	if (!ft_strncmp(commande[0], "unset", INT_MAX))
 		data->env = ft_unset(commande, data->env, exec);
 	if (!ft_strncmp(commande[0], "exit", INT_MAX))
-		ft_exit(data, exec->cmd, exec);
+		ft_exit(data, exec->cmd, exec, std);
 	if (!ft_strncmp(commande[0], "pwd", INT_MAX))
 		exec->exit_code = ft_pwd();
 	if (!ft_strncmp(commande[0], "env", INT_MAX))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 12:39:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/19 14:38:09 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ char	*ft_user(char **env)
 		return (NULL);
 	while (env[i])
 	{
-		if (ft_strncmp("ZDOTDIR=", env[i], 8) == 0)
+		if (ft_strncmp("HOME=", env[i], 5) == 0)
 		{
-			path_user = ft_strdup(env[i] + 8);
+			path_user = ft_strdup(env[i] + 5);
 			if (!path_user)
 				return (perror("Malloc"), NULL);
 		}
@@ -55,7 +55,9 @@ int	ft_cd(char	**cmd, char **env)
 			return (perror("cd"), free(path_user), 1);
 		return (free(path_user), 0);
 	}
-	if (chdir(cmd[1]) != 0)
+	if (cmd[1][0] == '-' && !cmd[1][1])
+		ft_pwd();
+	else if (chdir(cmd[1]) != 0)
 	{
 		write(2, "cd: ", 4);
 		write(2, cmd[1], ft_strlen(cmd[1]));

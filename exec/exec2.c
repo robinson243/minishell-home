@@ -6,7 +6,7 @@
 /*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 10:47:29 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/19 11:33:05 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,18 @@
 
 int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 {
-	int			has_slash;
+	int	has_slash;
 
 	has_slash = (ft_strchr(command->argv[0], '/') != NULL);
-	if (access(command->argv[0], F_OK) == 0)
+	*path = NULL;
+	if (has_slash)
 	{
-		*path = ft_strdup(command->argv[0]);
-		if (!(*path))
-			exec->exit_code = 1;
+		if (access(command->argv[0], F_OK) == 0)
+		{
+			*path = ft_strdup(command->argv[0]);
+			if (!(*path))
+				exec->exit_code = 1;
+		}
 	}
 	else
 		*path = get_path(data->env, command->argv[0], exec);
@@ -64,7 +68,7 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 		write(2, ": command not found\n", 21);
 		return (0);
 	}
-	if (check_dir(path, command->argv[0], command, exec) == 0)
+	if (!check_dir(path, command->argv[0], command, exec))
 		return (0);
 	if (access(*path, X_OK) != 0)
 	{
@@ -121,10 +125,14 @@ char	*get_path(char **env, char *cmd, t_exec *exec)
 		if (!path)
 		{
 			exec->exit_code = 1;
-			return (free_all(local), NULL);
+			free_all(local);
+			return (NULL);
 		}
 		if (access(path, X_OK) == 0)
-			return (free_all(local), path);
+		{
+			free_all(local);
+			return (path);
+		}
 		free(path);
 		i++;
 	}
@@ -134,14 +142,15 @@ char	*get_path(char **env, char *cmd, t_exec *exec)
 
 int	check_dir(char **path, char *cmd, t_cmd *command, t_exec *exec)
 {
-	struct stat	path_stat;
+	struct stat	st;
 
-	stat(*path, &path_stat);
 	(void)command;
-	if (!S_ISREG(path_stat.st_mode))
+	if (stat(*path, &st) != 0)
+		return (1);
+	if (S_ISDIR(st.st_mode))
 	{
 		write(2, cmd, ft_strlen(cmd));
-		write(2, " : Is a directory\n", 19);
+		write(2, ": Is a directory\n", 18);
 		free(*path);
 		exec->exit_code = 126;
 		return (0);
