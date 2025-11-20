@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 12:35:19 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/20 12:57:07 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,10 @@ void					free_all(char **str);
 int						my_open(t_redir *list, t_exec *exec);
 int						is_builtin(char *command);
 char					**ft_unset(char **cmd, char **env, t_exec *exec);
-void					ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec, int std);
+void					ft_exit(t_globale *data, t_cmd *cmd,
+							t_exec *exec);
 int						ft_pwd(void);
-int						env(char **env);
+int						env(char **env, char **commande);
 int						ft_cd(char **cmd, char **env);
 void					redir_in_out(t_exec *exec);
 void					do_builtin(t_globale *data, t_exec *exec);

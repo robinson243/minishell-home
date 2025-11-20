@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 14:00:52 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 14:25:53 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/20 12:49:25 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ int	ft_echo(char **args)
 
 	i = 0;
 	nl = 1;
-	if (args[0] && is_nl(args[0]))
+	while (args[i] && is_nl(args[i]))
 	{
-		i = 1;
+		i++;
 		nl = 0;
 	}
 	while (args[i])

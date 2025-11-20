@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 12:37:09 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/20 12:56:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,16 +76,16 @@ void	do_builtin(t_globale *data, t_exec *exec)
 	commande = exec->cmd->argv;
 	if (exec->skip_cmd)
 		exec->exit_code = 1;
+	if (!ft_strncmp(commande[0], "exit", INT_MAX))
+		ft_exit(data, exec->cmd, exec);
 	std = dup(1);
 	redir_out(exec);
 	if (!ft_strncmp(commande[0], "unset", INT_MAX))
 		data->env = ft_unset(commande, data->env, exec);
-	if (!ft_strncmp(commande[0], "exit", INT_MAX))
-		ft_exit(data, exec->cmd, exec, std);
 	if (!ft_strncmp(commande[0], "pwd", INT_MAX))
 		exec->exit_code = ft_pwd();
 	if (!ft_strncmp(commande[0], "env", INT_MAX))
-		exec->exit_code = env(data->env);
+		exec->exit_code = env(data->env, commande);
 	if (!ft_strncmp(commande[0], "export", INT_MAX))
 		data->env = ft_export(commande, data->env, exec);
 	if (!ft_strncmp(commande[0], "cd", INT_MAX))
