@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 17:52:36 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/20 12:27:43 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ long long	my_atoi(char *s, int *err)
 		i++;
 	}
 	result = result * signe;
-	// if (result > INT_MAX || result < INT_MIN)
-	// 	*err = 1;
 	return (result);
 }
 
@@ -102,52 +100,47 @@ void	free_exec(t_globale *data)
 	free(data);
 }
 
-int is_long_long(char *str)
+int	is_long_long(char *str)
 {
-    char *max = "9223372036854775807";
-    char *min = "9223372036854775808";
-    int neg = 0;
-    int len = 0;
-		
-    while (*str == ' ' || *str == '\t')
-        str++;
-    if (*str == '-' || *str == '+')
-    {
-        if (*str == '-')
-            neg = 1;
-        str++;
-    }
-    while (*str == '0')
-        str++;
-    char *digits = str;
-    while (isdigit(*str))
-    {
-        len++;
-        str++;
-    }
-    if (*str != '\0')
-        return (0);
-    if (len < 19)
-        return (1);
-		if (len > 19)
-        return (0);
-    if (!neg && ft_strcmp(digits, max) > 0)
-        return (0);
-    if (neg && ft_strcmp(digits, min) > 0)
-        return (0);
-    return (1);
+	int		neg;
+	int		len;
+	char	*digits;
+
+	neg = 0;
+	len = 0;
+	while (*str == ' ' || *str == '\t')
+		str++;
+	if (*str == '-' || *str == '+')
+	{
+		if (*str == '-')
+			neg = 1;
+		str++;
+	}
+	while (*str == '0')
+		str++;
+	digits = str;
+	while (isdigit(*str))
+	{
+		len++;
+		str++;
+	}
+	if (*str != '\0' || len > 19)
+		return (0);
+	if (len < 19)
+		return (1);
+	if ((!neg && ft_strcmp(digits, "9223372036854775807") > 0)
+		|| (neg && ft_strcmp(digits, "9223372036854775808") > 0))
+		return (0);
+	return (1);
 }
 
-
-void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec, int std)
+void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)
 {
 	int			err;
 	long long	res;
 
 	err = 0;
 	res = 0;
-	if (std >= 0)
-		close(std);
 	if (cmd->argv[1])
 	{
 		res = my_atoi(cmd->argv[1], &err);

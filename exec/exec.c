@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 14:03:15 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:32:31 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	do_cmd(t_exec *exec, t_globale *data)
 		free_exit(data, NULL, 1);
 	if (is_builtin(cmd->argv[0]))
 		do_builtin(data, exec);
+	else if (cmd->argv && !cmd->argv[0])
+		exec->exit_code = 127;
 	else if (exist(&path, cmd, data, exec))
 	{
 		signal(SIGINT, SIG_DFL);

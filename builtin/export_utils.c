@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:58:58 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 13:48:48 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:17:11 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int	invalide_arg(char *str)
 	i = 1;
 	while (str[i] && str[i] != '=')
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_')
+		if (!ft_isalnum(str[i]) && str[i] != '_' && !(str[i] == '+'
+				&& (str[i + 1] && str[i + 1] == '=')))
 			return (0);
 		i++;
 	}

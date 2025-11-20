@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/19 14:38:09 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/20 12:17:45 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,7 @@ int	ft_cd(char	**cmd, char **env)
 
 	path_user = NULL;
 	if (cmd[1] && cmd[2])
-	{
-		write(2, "cd: too many arguments\n", 24);
-		return (1);
-	}
+		return (write(2, "cd: too many arguments\n", 24), 1);
 	if (!cmd[1])
 	{
 		path_user = ft_user(env);
