@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 12:57:07 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:42:40 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void					ft_exit(t_globale *data, t_cmd *cmd,
 							t_exec *exec);
 int						ft_pwd(void);
 int						env(char **env, char **commande);
-int						ft_cd(char **cmd, char **env);
+int						ft_cd(char **cmd, char ***env);
 void					redir_in_out(t_exec *exec);
 void					do_builtin(t_globale *data, t_exec *exec);
 void					redir_out(t_exec *exec);
@@ -116,5 +116,6 @@ int						export_noargs(char **env);
 int						invalide_arg(char *str);
 char					*normalize_export_arg(char *arg);
 void					next(t_exec *exec);
+char					**export_update(int pos, char **env, char *str);
 
 #endif

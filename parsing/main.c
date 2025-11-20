@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/20 13:46:57 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:49:11 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,69 @@ bool	empty_line(char *line)
 	return (false);
 }
 
+// int	main(int ac, char **av, char **envp)
+// {
+// 	char	*line;
+// 	t_cmd	*cmd;
+// 	t_node	*node;
+// 	char	**env;
+// 	int		prv_code;
+
+// 	prv_code = 0;
+// 	env = ft_strdupdup(envp);
+// 	node = NULL;
+// 	cmd = NULL;
+// 	using_history();
+// 	(void)ac;
+// 	(void)av;
+// 	signals();
+// 	g_signal = 0;
+// 	while ((line = readline("minishell > ")))
+// 	{
+// 		if (empty_line(line))
+// 			continue ;
+// 		lexer(line, &node, env);
+// 		handle_expands(&node, env, prv_code);
+// 		cmd = parser(&node);
+// 		// print_cmd_list(cmd);
+// 		// print_list(&node);
+// 		add_history(line);
+// 		free(line);
+// 		prv_code = exec(cmd, &env, node, prv_code);
+// 		clear_nodes(&node);
+// 		free_cmd_list_no_files(cmd);
+// 		g_signal = 0;
+// 	}
+// 	free_all(env);
+// 	clear_history();
+// 	return (prv_code);
+// }
+
+char	*my_gnl_stdin(void)
+{
+	char	buffer[4096];
+	char	*line;
+	size_t	len;
+
+	if (!fgets(buffer, sizeof(buffer), stdin))
+		return (NULL);
+	len = 0;
+	while (buffer[len] && buffer[len] != '\n')
+		len++;
+	line = malloc(len + 2);
+	if (!line)
+		return (NULL);
+	for (size_t i = 0; i < len; i++)
+		line[i] = buffer[i];
+	if (buffer[len] == '\n')
+	{
+		line[len] = '\n';
+		len++;
+	}
+	line[len] = '\0';
+	return (line);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	char	*line;
@@ -76,15 +139,22 @@ int	main(int ac, char **av, char **envp)
 	(void)av;
 	signals();
 	g_signal = 0;
-	while ((line = readline("minishell > ")))
+	while (1)
 	{
+		if (isatty(STDIN_FILENO))
+			line = readline("minishell > ");
+		else
+			line = my_gnl_stdin();
+		if (!line)
+			break ;
 		if (empty_line(line))
+		{
+			free(line);
 			continue ;
+		}
 		lexer(line, &node, env);
 		handle_expands(&node, env, prv_code);
 		cmd = parser(&node);
-		// print_cmd_list(cmd);
-		// print_list(&node);
 		add_history(line);
 		free(line);
 		prv_code = exec(cmd, &env, node, prv_code);

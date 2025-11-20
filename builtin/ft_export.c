@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 13:53:32 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:28:42 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char	**export_update(int pos, char **env, char *str)
 {
 	char	**new_env;
 
+	if (pos == -1)
+		return (env);
 	new_env = ft_strdupdup(env);
 	if (!new_env)
 		return (NULL);
