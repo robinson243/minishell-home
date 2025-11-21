@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/19 11:14:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/21 15:21:15 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,17 @@ char	*find_path(char *str, char **envp)
 	int		i;
 	int		len;
 	char	*s;
+	char	*key;
 
 	i = 0;
 	len = ft_strlen(str);
 	while (envp[i])
 	{
-		if (ft_strncmp(str, envp[i], len) == 0)
+		key = ft_substr(envp[i], 0, ((size_t)ft_strchr(envp[i], '=')
+					- (size_t)envp[i]));
+		if (!key)
+			return (NULL);
+		if (ft_strncmp(str, key, ft_strlen(key)) == 0)
 		{
 			s = ft_strdup(envp[i] + len + 1);
 			return (s);

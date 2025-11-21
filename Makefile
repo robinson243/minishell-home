@@ -1,8 +1,12 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I./libft -I./parsing -I./exec -I./builtin -g3
-LDFLAGS = -lreadline libft.a
+LDFLAGS = -lreadline
 
 NAME = minishell
+
+LIBFT_DIR = libft
+
+LIBFT = $(LIBFT_DIR)/libft.a
 
 SRCS = builtin/ft_cd.c builtin/ft_echo.c builtin/ft_env.c builtin/ft_exit.c \
        builtin/ft_export.c builtin/ft_pwd.c builtin/ft_unset.c builtin/utils_builtin.c \
@@ -14,17 +18,22 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $(NAME)
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+$(NAME): $(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LDFLAGS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
+	$(MAKE) -C $(LIBFT_DIR) clean 
 
 fclean: clean
 	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean 
 
 re: fclean all
 
