@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:11:04 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 17:01:47 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/21 14:37:18 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,15 @@ void	set_token_type(t_node *node)
 {
 	if (!node || !node->content)
 		return ;
-	if (ft_strcmp(node->content, "|") == 0)
+	if (node->quoted == 0 && ft_strcmp(node->content, "|") == 0)
 		node->type = PIPE;
-	else if (ft_strcmp(node->content, "<") == 0)
+	else if (node->quoted == 0 && ft_strcmp(node->content, "<") == 0)
 		node->type = REDIR_IN;
-	else if (ft_strcmp(node->content, ">") == 0)
+	else if (node->quoted == 0 && ft_strcmp(node->content, ">") == 0)
 		node->type = REDIR_OUT;
-	else if (ft_strcmp(node->content, ">>") == 0)
+	else if (node->quoted == 0 && ft_strcmp(node->content, ">>") == 0)
 		node->type = REDIR_APPEND;
-	else if (ft_strcmp(node->content, "<<") == 0)
+	else if (node->quoted == 0 && ft_strcmp(node->content, "<<") == 0)
 		node->type = HEREDOC;
 	else
 		node->type = WORD;
