@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:13:06 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/18 17:02:22 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/21 13:40:04 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,9 @@ void	handle_pipe(t_cmd **cur_cmd, t_node *tmp)
 		(*cur_cmd)->next = new_cmd();
 		*cur_cmd = (*cur_cmd)->next;
 	}
+}
+
+void	c_p_code(int *code)
+{
+	*code = 2;
 }

@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/20 13:01:04 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/21 13:44:28 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,14 +84,14 @@ int	check_pipe_syntax(t_node *tmp)
 	return (1);
 }
 
-t_cmd	*parser(t_node **head)
+t_cmd	*parser(t_node **head, int *prv_code)
 {
 	t_cmd	*head_cmd;
 	t_cmd	*cur_cmd;
 	t_node	*tmp;
 
 	if (!check_pipe_syntax(*head))
-		return (ft_putstr_fd("Operator error\n", 2), NULL);
+		return (c_p_code(prv_code), ft_putstr_fd("Operator error\n", 2), NULL);
 	init_var(&head_cmd, &cur_cmd, &tmp, head);
 	while (tmp)
 	{
