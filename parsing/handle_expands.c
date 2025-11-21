@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 17:33:14 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/21 20:06:12 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,24 @@
 char	*find_path(char *str, char **envp)
 {
 	int		i;
-	int		len;
+	char	*eq_pos;
 	char	*s;
-	char	*key;
 
+	if (!str || !envp)
+		return (NULL);
 	i = 0;
-	len = ft_strlen(str);
 	while (envp[i])
 	{
-		key = ft_substr(envp[i], 0, ((size_t)ft_strchr(envp[i], '=')
-					- (size_t)envp[i]));
-		if (!key)
-			return (NULL);
-		if (ft_strncmp(str, key, ft_strlen(key)) == 0)
+		eq_pos = ft_strchr(envp[i], '=');
+		if (!eq_pos)
 		{
-			s = ft_strdup(envp[i] + len + 1);
+			i++;
+			continue ;
+		}
+		if (ft_strncmp(str, envp[i], eq_pos - envp[i]) == 0 && (size_t)(eq_pos
+				- envp[i]) == ft_strlen(str))
+		{
+			s = ft_strdup(eq_pos + 1);
 			return (s);
 		}
 		i++;
@@ -99,27 +102,15 @@ char	*expand_variables_basic(char *s, char **envp, int prv_code)
 t_node	*handle_expands(t_node **head, char **envp, int prv_code)
 {
 	t_node	*tmp;
-	char	*expanded;
-	char	*status_str;
 
-	tmp = *head;
-	if (!*head || !head)
+	if (!head || !*head)
 		return (NULL);
+	tmp = *head;
 	while (tmp)
 	{
 		set_token_type(tmp);
-		if ((tmp->quoted == 0 || tmp->quoted == 1) && tmp->type == WORD)
-		{
-			expanded = expand_variables_basic(tmp->content, envp, prv_code);
-			free(tmp->content);
-			tmp->content = expanded;
-			if (ft_strcmp(tmp->content, "$?") == 0)
-			{
-				status_str = ft_itoa(prv_code);
-				free(tmp->content);
-				tmp->content = status_str;
-			}
-		}
+		handle_dollar_and_status(tmp, envp, prv_code);
+		handle_tilde(tmp, envp);
 		tmp = tmp->next;
 	}
 	return (*head);
