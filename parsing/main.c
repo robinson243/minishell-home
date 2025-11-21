@@ -6,7 +6,7 @@
 /*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 15:06:48 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/21 15:07:13 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,3 @@ int	main(int ac, char **av, char **envp)
 	clear_history();
 	return (prv_code);
 }
-
