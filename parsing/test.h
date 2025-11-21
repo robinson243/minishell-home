@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 13:44:50 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/21 17:29:20 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,11 @@ void				gain_some_lines(t_cmd **cur_cmd, t_cmd **head_cmd);
 void				handle_pipe(t_cmd **cur_cmd, t_node *tmp);
 void				c_p_code(int *code);
 
+void				handle_tilde(t_node *tmp, char **envp);
+void				handle_dollar_and_status(t_node *tmp, char **envp,
+						int prv_code);
+char				*expand_tilde(char *s, char **envp);
+
 char				*build_word(char *input, int *i, int *quoted, char **envp);
 t_node				*lexer(char *input, t_node **head, char **envp);
 char				*find_path(char *str, char **envp);
@@ -96,6 +101,7 @@ t_node				*handle_expands(t_node **head, char **envp, int prv_code);
 void				set_token_type(t_node *node);
 
 /*Fonctions utilitaires pour le parsing final*/
+char				*expand_tilde(char *s, char **envp);
 void				add_arg(t_cmd *cmd, char *arg);
 void				add_redir(t_cmd *cmd, t_redir *new);
 t_cmd				*new_cmd(void);
