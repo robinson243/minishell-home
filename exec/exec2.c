@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 13:30:48 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/21 14:54:12 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 		*path = get_path(data->env, command->argv[0], exec);
 	if (!(*path) && exec->exit_code == 1)
 		free_exit(data, "Malloc", 1);
-	if (!(*path))
+	if (!(*path) || (command->argv[0] && !command->argv[0][0]))
 	{
 		exec->exit_code = 127;
 		write(2, command->argv[0], ft_strlen(command->argv[0]));
@@ -87,8 +87,10 @@ char	*get_path(char **env, char *cmd, t_exec *exec)
 
 	i = 0;
 	local = remp_local(env, exec);
-	if (!local)
+	if (!local && exec->exit_code == 1)
 		return (NULL);
+	else if (!local && exec->exit_code == 0)
+		return (cmd);
 	while (local[i])
 	{
 		path = ft_strslashjoin(local[i], cmd);

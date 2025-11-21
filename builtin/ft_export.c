@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 17:17:35 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:28:42 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char	**export_update(int pos, char **env, char *str)
 {
 	char	**new_env;
 
+	if (pos == -1)
+		return (env);
 	new_env = ft_strdupdup(env);
 	if (!new_env)
 		return (NULL);
@@ -87,9 +89,9 @@ char	**do_export(char *arg, char **env, t_exec *exec)
 	{
 		exec->exit_code = 1;
 		perror("Malloc");
-		return (env);
+		return (free(normalized), env);
 	}
-	return (new_env);
+	return (free(normalized), new_env);
 }
 
 char	**ft_export(char **cmd, char **env, t_exec *exec)

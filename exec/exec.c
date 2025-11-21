@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 13:32:31 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/21 12:59:50 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	do_cmd(t_exec *exec, t_globale *data)
 	if (is_builtin(cmd->argv[0]))
 		do_builtin(data, exec);
 	else if (cmd->argv && !cmd->argv[0])
-		exec->exit_code = 127;
+		exec->exit_code = 126;
 	else if (exist(&path, cmd, data, exec))
 	{
 		signal(SIGINT, SIG_DFL);
@@ -41,13 +41,13 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 	t_redir	*list;
 
 	(void)list;
-	if (exec->skip_cmd)
+	if (exec->skip_cmd || (!exec->cmd->argv))
 	{
 		next(exec);
 		exec->exit_code = 1;
+		if (!exec->cmd->argv)
+			exec->exit_code = 0;
 	}
-	else if (!exec->cmd->argv || !exec->cmd->argv[0])
-		exec->exit_code = 0;
 	else
 	{
 		g_signal = fork();
