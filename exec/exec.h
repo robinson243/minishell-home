@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 15:42:40 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/23 10:19:17 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int						exist(char **path, t_cmd *command, t_globale *data,
 char					*get_path(char **env, char *cmd,
 							t_exec *exec);
 void					open_file(t_exec *exec);
-int						check_dir(char **path, char *cmd, t_cmd *command,
+int						check_dir(char **path, char *cmd,
 							t_exec *exec);
 int						my_here_doc(char *limiter);
 int						existe(char *str, char **env);
