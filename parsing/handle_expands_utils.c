@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 17:27:39 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 17:28:42 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/23 15:46:30 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,44 @@ void	handle_tilde(t_node *tmp, char **envp)
 			tmp->content = tilde_expanded;
 		}
 	}
+}
+
+char	*handle_locale_string(char *str, int *i)
+{
+	int		j;
+	char	*content;
+
+	(*i)++;
+	(*i)++;
+	j = *i;
+	while (str[*i] && str[*i] != '"')
+		(*i)++;
+	if (str[*i] == '\0')
+	{
+		ft_putstr_fd("minishell: unexpected EOF\n", 2);
+		return (NULL);
+	}
+	content = ft_substr(str, j, (*i - j));
+	(*i)++;
+	return (content);
+}
+
+char	*handle_single_locale_string(char *str, int *i)
+{
+	int		j;
+	char	*content;
+
+	(*i)++;
+	(*i)++;
+	j = *i;
+	while (str[*i] && str[*i] != '\'')
+		(*i)++;
+	if (str[*i] == '\0')
+	{
+		ft_putstr_fd("minishell: unexpected EOF\n", 2);
+		return (NULL);
+	}
+	content = ft_substr(str, j, (*i - j));
+	(*i)++;
+	return (content);
 }

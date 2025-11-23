@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 20:06:12 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/23 15:47:37 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*find_path(char *str, char **envp)
 			continue ;
 		}
 		if (ft_strncmp(str, envp[i], eq_pos - envp[i]) == 0 && (size_t)(eq_pos
-				- envp[i]) == ft_strlen(str))
+			- envp[i]) == ft_strlen(str))
 		{
 			s = ft_strdup(eq_pos + 1);
 			return (s);

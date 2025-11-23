@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 17:29:20 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/23 15:43:21 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ char				*extract_single_quoted(char *str, int *i);
 char				*extract_operator(char *str, int *i);
 char				*extract_dollar(char *str, int *i, char **envp);
 char				*extract_word(char *str, int *i, char **envp);
+char				*handle_locale_string(char *str, int *i);
+char				*handle_locale_string(char *str, int *i);
+char				*handle_single_locale_string(char *str, int *i);
 char				*handle_quote_management(char *tmp, char *str, int *i,
 						char **envp);
 

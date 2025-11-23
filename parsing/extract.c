@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/19 11:01:25 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/23 15:40:50 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,10 @@ char	*extract_word(char *str, int *i, char **envp)
 	if (!str[*i])
 		return (NULL);
 	j = *i;
+	if (str[*i] == '$' && str[*i + 1] == '"')
+		return (handle_locale_string(str, i));
+	if (str[*i] == '$' && str[*i + 1] == '\'')
+		return (handle_single_locale_string(str, i));
 	if (str[*i] == '$')
 		return (extract_dollar(str, i, envp));
 	if (recognize_token(str, i) != WORD)
