@@ -6,54 +6,43 @@
 /*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/23 10:35:09 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/23 19:38:08 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-int	exist(char **path, t_cmd *command, t_globale *data,	t_exec *exec)
+int exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 {
-	*path = NULL;
+    *path = NULL;
 
-	if (ft_strchr(command->argv[0], '/'))
+	if (!command->argv[0][0] || (command->argv[0][0] == '.'
+		&& (!command->argv[0][1] || (command->argv[0][1] == '.' 
+			&& !command->argv[0][2]))))
 	{
-		*path = ft_strdup(command->argv[0]);
-		if (!*path)
-			free_exit(data, "Malloc", 1);
-		if (access(*path, F_OK) != 0)
-		{
-			exec->exit_code = 127;
-			ft_putstr_fd(command->argv[0], 2);
-			ft_putstr_fd(": command not found\n", 2);
-			return (0);
-		}
-		if (access(*path, X_OK) != 0)
-		{
-			exec->exit_code = 126;
-			perror(*path);
-			return (0);
-		}
-		return (1);
-	}
-	*path = get_path(data->env, command->argv[0], data->exec);
-	if (!*path)
-	{
-		ft_putstr_fd(command->argv[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
 		exec->exit_code = 127;
 		return (0);
 	}
-	if (access(*path, X_OK) != 0)
-	{
-		exec->exit_code = 126;
-		perror(*path);
-		free(*path);
-		return (0);
-	}
-	if (!check_dir(path, command->argv[0], data->exec))
-		return (0);
-	return (1);
+    if (ft_strchr(command->argv[0], '/'))
+        *path = ft_strdup(command->argv[0]);
+    else
+        *path = get_path(data->env, command->argv[0], data->exec);
+    if (!*path)
+    {
+        ft_putstr_fd(command->argv[0], 2);
+        ft_putstr_fd(": command not found\n", 2);
+        exec->exit_code = 127;
+        return (0);
+    }
+    if (!check_dir(path, command->argv[0], exec))
+        return (0);
+    if (access(*path, X_OK) != 0)
+    {
+        exec->exit_code = 127;
+        perror(*path);
+        return (free(*path), 0);
+    }
+    return (1);
 }
 
 char	**remp_local(char **env, t_exec *exec)
@@ -105,6 +94,42 @@ char	*get_path(char **env, char *cmd, t_exec *exec)
 	free_all(local);
 	return (NULL);
 }
+
+// char *get_path(char **env, char *cmd, t_exec *exec)
+// {
+//     char **local;
+//     char *path;
+//     int i;
+
+//     if (ft_strchr(cmd, '/')) // chemin absolu ou relatif
+//     {
+//         if (access(cmd, F_OK) != 0)
+//             return NULL;
+//         return ft_strdup(cmd);
+//     }
+
+//     local = remp_local(env, exec);
+//     if (!local)
+//         return NULL;
+
+//     i = 0;
+//     while (local[i])
+//     {
+//         path = ft_strslashjoin(local[i], cmd);
+//         if (!path)
+//         {
+//             exec->exit_code = 1;
+//             free_all(local);
+//             return NULL;
+//         }
+//         if (access(path, F_OK) == 0)
+//             return (free_all(local), path);
+//         free(path);
+//         i++;
+//     }
+//     free_all(local);
+//     return NULL;
+// }
 
 int	check_dir(char **path, char *cmd, t_exec *exec)
 {
