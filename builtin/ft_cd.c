@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 15:45:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/24 16:14:51 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ int	ft_cd(char **cmd, char ***env)
 	path_user = NULL;
 	if (cmd[1] && cmd[2])
 		return (write(2, "cd: too many arguments\n", 24), free(old_pwd), 1);
-	if (!cmd[1])
+	if (!cmd[1] || (cmd[1][0] && cmd[1][0] == '-'
+		&& cmd[1][1] && cmd[1][1] == '-' && !cmd[1][2]))
 	{
 		path_user = ft_user(*env);
 		if (!path_user)
