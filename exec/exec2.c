@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/24 18:48:58 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/26 13:52:12 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,13 @@
 int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 {
 	*path = NULL;
-	if (!command->argv[0][0] || (command->argv[0][0] == '.'
-		&& (!command->argv[0][1] || (command->argv[0][1] == '.'
-					&& !command->argv[0][2]))))
-	{
-		exec->exit_code = 127;
-		return (ft_putstr_fd("Is a directory\n", 2), 0);
-	}
 	if (ft_strchr(command->argv[0], '/'))
 		*path = ft_strdup(command->argv[0]);
 	else
 		*path = get_path(data->env, command->argv[0], data->exec);
-	if (!*path)
+	if (!*path || (!command->argv[0][0] || (command->argv[0][0] == '.'
+		&& (!command->argv[0][1] || (command->argv[0][1] == '.'
+		&& !command->argv[0][2])))))
 	{
 		ft_putstr_fd(command->argv[0], 2);
 		exec->exit_code = 127;

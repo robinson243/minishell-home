@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 12:27:43 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/26 14:02:55 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,40 +98,6 @@ void	free_exec(t_globale *data)
 		exec = tmp;
 	}
 	free(data);
-}
-
-int	is_long_long(char *str)
-{
-	int		neg;
-	int		len;
-	char	*digits;
-
-	neg = 0;
-	len = 0;
-	while (*str == ' ' || *str == '\t')
-		str++;
-	if (*str == '-' || *str == '+')
-	{
-		if (*str == '-')
-			neg = 1;
-		str++;
-	}
-	while (*str == '0')
-		str++;
-	digits = str;
-	while (isdigit(*str))
-	{
-		len++;
-		str++;
-	}
-	if (*str != '\0' || len > 19)
-		return (0);
-	if (len < 19)
-		return (1);
-	if ((!neg && ft_strcmp(digits, "9223372036854775807") > 0)
-		|| (neg && ft_strcmp(digits, "9223372036854775808") > 0))
-		return (0);
-	return (1);
 }
 
 void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)

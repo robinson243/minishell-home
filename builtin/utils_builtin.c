@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 15:45:35 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/18 12:47:36 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/26 14:09:43 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,20 +74,31 @@ int	len_list(char **env)
 	return (i);
 }
 
-int	is_num(char *str)
+int	is_long_long(char *str)
 {
-	int	i;
+	int		neg;
+	int		len;
 
-	i = 0;
-	while (str[i] == ' ')
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (str[i])
+	neg = 0;
+	while (*str == ' ' || *str == '\t')
+		str++;
+	if (*str == '-' || *str == '+')
 	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
+		if (*str == '-')
+			neg = 1;
+		str++;
 	}
+	while (*str == '0')
+		str++;
+	len = ft_strlen(str);
+	if ((!neg && ft_strcmp(str, "9223372036854775807") > 0)
+		|| (neg && ft_strcmp(str, "9223372036854775808") > 0))
+		return (0);
+	while (isdigit(*str))
+		str++;
+	if (*str != '\0' || len > 19)
+		return (0);
+	if (len < 19)
+		return (1);
 	return (1);
 }

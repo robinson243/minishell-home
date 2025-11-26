@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/23 10:19:17 by dems             ###   ########.fr       */
+/*   Updated: 2025/11/26 14:03:36 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void					init_data(t_globale *data, t_node *node,
 void					handle_sigint_child(int sig);
 t_exec					*init_exec(t_cmd *cmd);
 void					setup_signals_parent(void);
-int						is_num(char *str);
+int						is_long_long(char *str);
 void					wait_all(int *exit_code);
 void					lst_clear(t_redir **lst);
 int						export_noargs(char **env);

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/24 16:14:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/26 14:02:12 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,30 @@ void	maj_env(char *old_pwd, char *new_pwd, char ***env)
 	}
 }
 
+static int	special_cd(char **cmd, char ***env, char *old_pwd)
+{
+	char	*path_user;
+
+	path_user = NULL;
+	if (!cmd[1] || (cmd[1][0] && cmd[1][0] == '-'
+		&& cmd[1][1] && cmd[1][1] == '-' && !cmd[1][2]))
+	{
+		path_user = ft_user(*env);
+		if (!path_user)
+			return (1);
+		if (chdir(path_user) != 0)
+			return (perror("cd"), free(path_user), 1);
+		free(path_user);
+		return (maj_env(old_pwd, getcwd(NULL, 0), env), 0);
+	}
+	if (cmd[1][0] == '-' && !cmd[1][1])
+	{
+		ft_pwd();
+		return (0);
+	}
+	return (-1);
+}
+
 int	ft_cd(char **cmd, char ***env)
 {
 	char	*path_user;
@@ -75,18 +99,8 @@ int	ft_cd(char **cmd, char ***env)
 	path_user = NULL;
 	if (cmd[1] && cmd[2])
 		return (write(2, "cd: too many arguments\n", 24), free(old_pwd), 1);
-	if (!cmd[1] || (cmd[1][0] && cmd[1][0] == '-'
-		&& cmd[1][1] && cmd[1][1] == '-' && !cmd[1][2]))
-	{
-		path_user = ft_user(*env);
-		if (!path_user)
-			return (1);
-		if (chdir(path_user) != 0)
-			return (perror("cd"), free(path_user), 1);
-		return (free(path_user), maj_env(old_pwd, getcwd(NULL, 0), env), 0);
-	}
-	if (cmd[1][0] == '-' && !cmd[1][1])
-		ft_pwd();
+	if (special_cd(cmd, env, old_pwd) != -1)
+		return (free(old_pwd), 1);
 	else if (chdir(cmd[1]) != 0)
 	{
 		write(2, "cd: ", 4);
