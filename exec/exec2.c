@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/26 13:52:12 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/26 15:50:42 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 		return (0);
 	if (access(*path, X_OK) != 0)
 	{
-		exec->exit_code = 127;
+		exec->exit_code = 126;
 		return (perror(*path), free(*path), 0);
 	}
 	return (1);
@@ -86,54 +86,23 @@ char	*get_path(char **env, char *cmd, t_exec *exec)
 	return (NULL);
 }
 
-// char *get_path(char **env, char *cmd, t_exec *exec)
-// {
-//     char **local;
-//     char *path;
-//     int i;
-
-//     if (ft_strchr(cmd, '/')) // chemin absolu ou relatif
-//     {
-//         if (access(cmd, F_OK) != 0)
-//             return (NULL);
-//         return (ft_strdup(cmd));
-//     }
-
-//     local = remp_local(env, exec);
-//     if (!local)
-//         return (NULL);
-
-//     i = 0;
-//     while (local[i])
-//     {
-//         path = ft_strslashjoin(local[i], cmd);
-//         if (!path)
-//         {
-//             exec->exit_code = 1;
-//             free_all(local);
-//             return (NULL);
-//         }
-//         if (access(path, F_OK) == 0)
-//             return (free_all(local), path);
-//         free(path);
-//         i++;
-//     }
-//     free_all(local);
-//     return (NULL);
-// }
-
 int	check_dir(char **path, char *cmd, t_exec *exec)
 {
 	struct stat	st;
 
 	if (stat(*path, &st) != 0)
-		return (1);
+	{
+		exec->exit_code = 127;
+		perror(cmd);
+		free(*path);
+		return (0);
+	}
 	if (S_ISDIR(st.st_mode))
 	{
 		write(2, cmd, ft_strlen(cmd));
 		write(2, ": Is a directory\n", 18);
-		free(*path);
 		exec->exit_code = 126;
+		free(*path);
 		return (0);
 	}
 	return (1);

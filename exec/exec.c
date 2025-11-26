@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/24 17:38:55 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/26 16:04:45 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 	{
 		next(exec);
 		exec->exit_code = 1;
-		if (!exec->cmd->argv)
+		if (!exec->cmd->argv && !exec->skip_cmd)
 			exec->exit_code = 0;
 	}
 	else
