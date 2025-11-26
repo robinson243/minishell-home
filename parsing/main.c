@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/26 15:35:16 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/26 15:51:05 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ bool	empty_line(char *line)
 	return (false);
 }
 
-/*int	main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
 	char	*line;
 	t_cmd	*cmd;
@@ -83,8 +83,6 @@ bool	empty_line(char *line)
 		lexer(line, &node, env);
 		handle_expands(&node, env, prv_code);
 		cmd = parser(&node, &prv_code);
-		// print_cmd_list(cmd);
-		// print_list(&node);
 		add_history(line);
 		free(line);
 		if (cmd)
@@ -96,7 +94,7 @@ bool	empty_line(char *line)
 	free_all(env);
 	clear_history();
 	return (prv_code);
-}*/
+}
 
 
 char	*my_gnl_stdin(void)
