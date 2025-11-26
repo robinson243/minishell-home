@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/26 15:51:05 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/26 16:32:11 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,21 +44,6 @@ void	signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-bool	empty_line(char *line)
-{
-	int	i;
-
-	i = 0;
-	while (line[i] && is_space(line[i]))
-		i++;
-	if (i == (int)ft_strlen(line))
-	{
-		free(line);
-		return (true);
-	}
-	return (false);
-}
-
 int	main(int ac, char **av, char **envp)
 {
 	char	*line;
@@ -69,35 +54,23 @@ int	main(int ac, char **av, char **envp)
 
 	prv_code = 0;
 	env = ft_strdupdup(envp);
-	node = NULL;
-	cmd = NULL;
-	using_history();
-	(void)ac;
-	(void)av;
-	signals();
+	mini_null(&cmd, &node);
+	(using_history(), (void)ac, (void)av, signals());
 	g_signal = 0;
-	while ((line = readline("minishell > ")))
+	while (1)
 	{
+		line = readline("minishell > ");
+		if (!line)
+			break ;
 		if (empty_line(line))
 			continue ;
-		lexer(line, &node, env);
-		handle_expands(&node, env, prv_code);
-		cmd = parser(&node, &prv_code);
-		add_history(line);
-		free(line);
-		if (cmd)
-        	prv_code = exec(cmd, &env, node, prv_code);
-		clear_nodes(&node);
-		free_cmd_list_no_files(cmd);
-		g_signal = 0;
+		prv_code = process_command(line, &node, env, prv_code);
 	}
-	free_all(env);
-	clear_history();
+	(free_all(env), clear_history());
 	return (prv_code);
 }
 
-
-char	*my_gnl_stdin(void)
+/*char	*my_gnl_stdin(void)
 {
 	char	buffer[4096];
 	char	*line;
@@ -120,4 +93,4 @@ char	*my_gnl_stdin(void)
 	}
 	line[len] = '\0';
 	return (line);
-}
+}*/
