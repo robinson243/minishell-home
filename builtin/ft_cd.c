@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/26 14:02:12 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/28 20:04:16 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,13 @@ static int	special_cd(char **cmd, char ***env, char *old_pwd)
 
 int	ft_cd(char **cmd, char ***env)
 {
-	char	*path_user;
+	// char	*path_user;
 	char	*old_pwd;
 
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
 		return (1);
-	path_user = NULL;
+	// path_user = NULL;
 	if (cmd[1] && cmd[2])
 		return (write(2, "cd: too many arguments\n", 24), free(old_pwd), 1);
 	if (special_cd(cmd, env, old_pwd) != -1)
