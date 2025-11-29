@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/23 15:43:21 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/26 16:31:51 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,11 @@ t_node				*lexer(char *input, t_node **head, char **envp);
 char				*find_path(char *str, char **envp);
 t_node				*handle_expands(t_node **head, char **envp, int prv_code);
 void				set_token_type(t_node *node);
+
+int					process_command(char *line, t_node **node, char **env,
+						int prv);
+void				mini_null(t_cmd **cmd, t_node **node);
+bool				empty_line(char *line);
 
 /*Fonctions utilitaires pour le parsing final*/
 char				*expand_tilde(char *s, char **envp);

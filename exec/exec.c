@@ -6,13 +6,13 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/26 16:04:45 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:08:12 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-void	do_cmd(t_exec *exec, t_globale *data)
+/* void	do_cmd(t_exec *exec, t_globale *data)
 {
 	char	*path;
 	t_cmd	*cmd;
@@ -34,6 +34,33 @@ void	do_cmd(t_exec *exec, t_globale *data)
 		perror("execve");
 		exec->exit_code = 127;
 		free(path);
+	}
+	free_exit(data, NULL, exec->exit_code);
+} */
+
+void	do_cmd(t_exec *exec, t_globale *data)
+{
+	char	*path;
+	char	**argv;
+
+	path = NULL;
+	redir_in_out(exec);
+	if (exec->skip_cmd)
+		free_exit(data, NULL, 1);
+	if (is_builtin(exec->cmd->argv[0]))
+		do_builtin(data, exec);
+	else if (!exec->cmd->argv || !exec->cmd->argv[0])
+		exec->exit_code = 126;
+	else if (exist(&path, exec->cmd, data, exec))
+	{
+		argv = expand_star_argv(exec->cmd->argv);
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+		execve(path, argv, data->env);
+		perror("execve");
+		exec->exit_code = 127;
+		free(path);
+		free_all(argv);
 	}
 	free_exit(data, NULL, exec->exit_code);
 }

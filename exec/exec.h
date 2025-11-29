@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/26 14:03:36 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/29 01:53:10 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include "signal.h"
 # include "stdbool.h"
 # include "wait.h"
+# include <dirent.h>
+# include <errno.h>
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -27,7 +29,6 @@
 # include <string.h>
 # include <sys/stat.h>
 # include <unistd.h>
-# include <errno.h>
 
 # define WORD 0
 # define PIPE 1
@@ -76,8 +77,7 @@ void					free_all(char **str);
 int						my_open(t_redir *list, t_exec *exec);
 int						is_builtin(char *command);
 char					**ft_unset(char **cmd, char **env, t_exec *exec);
-void					ft_exit(t_globale *data, t_cmd *cmd,
-							t_exec *exec);
+void					ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec);
 int						ft_pwd(void);
 int						env(char **env, char **commande);
 int						ft_cd(char **cmd, char ***env);
@@ -88,11 +88,9 @@ void					free_exit(t_globale *data, char *str, int code);
 int						ft_echo(char **args);
 int						exist(char **path, t_cmd *command, t_globale *data,
 							t_exec *exec);
-char					*get_path(char **env, char *cmd,
-							t_exec *exec);
+char					*get_path(char **env, char *cmd, t_exec *exec);
 void					open_file(t_exec *exec);
-int						check_dir(char **path, char *cmd,
-							t_exec *exec);
+int						check_dir(char **path, char *cmd, t_exec *exec);
 int						my_here_doc(char *limiter);
 int						existe(char *str, char **env);
 void					ft_swap(int i, int j, char **tab);
@@ -100,12 +98,10 @@ char					**ft_strdupdup(char **str);
 int						len_list(char **env);
 int						exec(t_cmd *command, char ***env, t_node *node,
 							int prv_code);
-char					**ft_export(char **cmd, char **env,
-							t_exec *exec);
+char					**ft_export(char **cmd, char **env, t_exec *exec);
 void					handle_sigint(int code);
 void					free_exec(t_globale *data);
-void					init_data(t_globale *data, t_node *node,
-							int prv_code);
+void					init_data(t_globale *data, t_node *node, int prv_code);
 void					handle_sigint_child(int sig);
 t_exec					*init_exec(t_cmd *cmd);
 void					setup_signals_parent(void);
@@ -117,5 +113,5 @@ int						invalide_arg(char *str);
 char					*normalize_export_arg(char *arg);
 void					next(t_exec *exec);
 char					**export_update(int pos, char **env, char *str);
-
+char					**expand_star_argv(char **argv);
 #endif
