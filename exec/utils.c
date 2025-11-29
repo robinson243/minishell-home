@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 15:42:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:25:48 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void	do_builtin(t_globale *data, t_exec *exec)
 		exec->exit_code = 1;
 	if (!ft_strncmp(commande[0], "exit", INT_MAX))
 		ft_exit(data, exec->cmd, exec);
+	commande = expand_star_argv(exec->cmd->argv);
 	std = dup(1);
 	redir_out(exec);
 	if (!ft_strncmp(commande[0], "unset", INT_MAX))
@@ -92,6 +93,7 @@ void	do_builtin(t_globale *data, t_exec *exec)
 		exec->exit_code = ft_cd(commande, &data->env);
 	if (!ft_strncmp(commande[0], "echo", INT_MAX))
 		exec->exit_code = ft_echo(commande + 1);
+	free_all(commande);
 	dup2(std, 1);
 	close(std);
 }

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 16:08:12 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/11/29 16:24:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,14 @@ void	do_cmd(t_exec *exec, t_globale *data)
 		exec->exit_code = 126;
 	else if (exist(&path, exec->cmd, data, exec))
 	{
-		argv = expand_star_argv(exec->cmd->argv);
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
+		argv = expand_star_argv(exec->cmd->argv);
 		execve(path, argv, data->env);
 		perror("execve");
 		exec->exit_code = 127;
 		free(path);
+		printf("hello\n");
 		free_all(argv);
 	}
 	free_exit(data, NULL, exec->exit_code);
