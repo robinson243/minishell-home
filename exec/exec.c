@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 01:52:52 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/29 02:01:58 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 	free_exit(data, NULL, exec->exit_code);
 } */
 
-void do_cmd(t_exec *exec, t_globale *data)
+void	do_cmd(t_exec *exec, t_globale *data)
 {
 	char	*path;
 	char	**argv;
@@ -61,7 +61,6 @@ void do_cmd(t_exec *exec, t_globale *data)
 	}
 	free_exit(data, NULL, exec->exit_code);
 }
-
 
 void	exec_cmd(t_exec *exec, t_globale *data)
 {

@@ -6,14 +6,14 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 01:50:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/29 01:50:16 by romukena         ###   ########.fr       */
+/*   Updated: 2025/11/29 02:03:05 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* expand_star.c */
 #include "exec.h"
 
-// Compte combien de fichiers matchent "*"
+/*Compte combien de fichiers matchent "*" */
 static int	count_files(void)
 {
 	DIR				*dir;
@@ -24,14 +24,18 @@ static int	count_files(void)
 	if (!dir)
 		return (0);
 	count = 0;
-	while ((entry = readdir(dir)))
+	entry = readdir(dir);
+	while (entry)
+	{
 		if (entry->d_name[0] != '.')
 			count++;
+		entry = readdir(dir);
+	}
 	closedir(dir);
 	return (count);
 }
 
-// Remplit le tableau avec les fichiers
+/* Remplit le tableau avec les fichiers */
 static int	fill_expanded(char **expanded, int idx)
 {
 	DIR				*dir;
@@ -40,19 +44,21 @@ static int	fill_expanded(char **expanded, int idx)
 	dir = opendir(".");
 	if (!dir)
 		return (idx);
-	while ((entry = readdir(dir)))
+	entry = readdir(dir);
+	while (entry)
 	{
 		if (entry->d_name[0] != '.')
 		{
 			expanded[idx] = ft_strdup(entry->d_name);
 			idx++;
 		}
+		entry = readdir(dir);
 	}
 	closedir(dir);
 	return (idx);
 }
 
-// Compte total args après expansion
+/* Compte total args après expansion */
 static int	count_total(char **argv)
 {
 	int	count;
@@ -71,7 +77,7 @@ static int	count_total(char **argv)
 	return (count);
 }
 
-// Expande les "*" dans argv
+/* Expande les "*" dans argv */
 char	**expand_star_argv(char **argv)
 {
 	char	**expanded;
@@ -92,10 +98,7 @@ char	**expand_star_argv(char **argv)
 		if (argv[i][0] == '*' && argv[i][1] == '\0')
 			j = fill_expanded(expanded, j);
 		else
-		{
-			expanded[j] = ft_strdup(argv[i]);
-			j++;
-		}
+			expanded[j++] = ft_strdup(argv[i]);
 		i++;
 	}
 	expanded[j] = NULL;
