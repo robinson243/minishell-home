@@ -1,0 +1,868 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/17 11:58:58 by ydembele          #+#    #+#             */
+/*   Updated: 2025/12/01 18:46:07 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+int	invalide_arg(char *str)
+{
+	int	i;
+
+	if (!str || !str[0])
+		return (0);
+	if (!ft_isalpha(str[0]) && str[0] != '_')
+		return (0);
+	i = 1;
+	while (str[i] && str[i] != '=')
+	{
+		if (!ft_isalnum(str[i]) && str[i] != '_' && !(str[i] == '+'
+				&& (str[i + 1] && str[i + 1] == '=')))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	sort_env(char **env, int len)
+{
+	int		i;
+	int		j;
+	char	*tmp;
+
+	i = 0;
+	while (i < len - 1)
+	{
+		j = i + 1;
+		while (j < len)
+		{
+			if (ft_strncmp(env[i], env[j], INT_MAX) > 0)
+			{
+				tmp = env[i];
+				env[i] = env[j];
+				env[j] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+int	export_noargs(char **env)
+{
+	char	**arr;
+	int		i;
+	int		j;
+
+	if (!env)
+		return (1);
+	arr = ft_strdupdup(env);
+	if (!arr)
+		return (1);
+	sort_env(arr, len_list(env));
+	i = 0;
+	while (arr[i])
+	{
+		printf("export ");
+		j = 0;
+		while (arr[i][j] && arr[i][j] != '=')
+			printf("%c", arr[i][j++]);
+		if (arr[i][j] == '=')
+			printf("=\"%s\"\n", &arr[i][j + 1]);
+		else
+			printf("\n");
+		i++;
+	}
+	free_all(arr);
+	return (0);
+}
+
+void	lst_clear(t_redir **lst)
+{
+	t_redir	*current;
+	t_redir	*data_next;
+
+	current = *lst;
+	if (!*lst)
+		return ;
+	while (current)
+	{
+		data_next = current->next;
+		free(current->file);
+		free(current);
+		current = data_next;
+	}
+	*lst = NULL;
+}
+
+char	*normalize_export_arg(char *arg)
+{
+	char	*eq;
+	char	*res;
+
+	eq = ft_strchr(arg, '=');
+	if (eq)
+		return (ft_strdup(arg));
+	res = malloc(ft_strlen(arg) + 4);
+	if (!res)
+		return (NULL);
+	strcpy(res, arg);
+	ft_strlcat(res, "=\"\"", ft_strlen(res) + 2);
+	return (res);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
+/*   Updated: 2025/12/01 18:37:03 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+int		ft_pwd(void);
+
+char	*ft_user(char **env)
+{
+	int		i;
+	char	*path_user;
+
+	path_user = NULL;
+	i = 0;
+	if (!env)
+		return (NULL);
+	while (env[i])
+	{
+		if (ft_strncmp("HOME=", env[i], 5) == 0)
+		{
+			path_user = ft_strdup(env[i] + 5);
+			if (!path_user)
+				return (perror("Malloc"), NULL);
+		}
+		i++;
+	}
+	return (path_user);
+}
+
+char	**maj_env(char *old_pwd, char *new_pwd, char **env)
+{
+	int		pos;
+	char	**tmp;
+	char	*val;
+
+	pos = existe("OLDPWD=", env);
+	if (pos != -1)
+	{
+		printf("%s\n", old_pwd);
+		val = ft_strjoin_free(ft_strdup("OLDPWD="), old_pwd);
+		tmp = export_update(pos, env, val);
+		free(val);
+		if (!tmp)
+			return (env);
+		return (tmp);
+	}
+	pos = existe("PWD=", env);
+	if (pos != -1)
+	{
+		val = ft_strjoin_free(ft_strdup("PWD="), new_pwd);
+		tmp = export_update(pos, env, val);
+		free(val);
+		if (!tmp)
+			return (env);
+		return (tmp);
+	}
+	return (env);
+}
+
+static int	special_cd(char **cmd, char **env, char *old_pwd, t_globale *data)
+{
+	char	*path_user;
+
+	path_user = NULL;
+	if (!cmd[1] || (cmd[1][0] && cmd[1][0] == '-'
+		&& cmd[1][1] && cmd[1][1] == '-' && !cmd[1][2]))
+	{
+		path_user = ft_user(env);
+		if (!path_user)
+			return (1);
+		if (chdir(path_user) != 0)
+			return (perror("cd"), free(path_user), 0);
+		free(path_user);
+		data->env = maj_env(old_pwd, getcwd(NULL, 0), data->env);
+		return (0);
+	}
+	if (cmd[1][0] == '-' && !cmd[1][1])
+	{
+		ft_pwd();
+		return (0);
+	}
+	return (-1);
+}
+
+int	ft_cd(char **cmd, char **env, t_globale *data)
+{
+	char	*old_pwd;
+	char	**new_env;
+
+	old_pwd = getcwd(NULL, 0);
+	if (!old_pwd)
+		return (1);
+	if (cmd[1] && cmd[2])
+		return (write(2, "cd: too many arguments\n", 24), free(old_pwd), 1);
+	if (special_cd(cmd, env, old_pwd, data) != -1)
+		return (0);
+	else if (chdir(cmd[1]) != 0)
+	{
+		write(2, "cd: ", 4);
+		write(2, cmd[1], ft_strlen(cmd[1]));
+		write(2, ": No such file or directory\n", 29);
+		return (free(old_pwd), 1);
+	}
+	new_env = maj_env(old_pwd, getcwd(NULL, 0), data->env);
+	data->env = new_env;
+	return (0);
+}
+
+// int	main(int ac, char **av, char **env)
+// {
+// 	char		*line;
+// 	char		**res;
+
+// 	(void)ac;
+// 	(void)av;
+// 	while (1)
+// 	{
+// 		line = readline("minishell> ");
+// 		if (!line || line[0] == '9')
+// 		{
+// 			printf("exit\n");
+// 			break ;
+// 		}
+// 		res = ft_split(line, ' ');
+// 		if (ft_strncmp("cd", res[0], 2) == 0)
+// 			ft_cd(res, env);
+// 		if (ft_strncmp("pwd", res[0], 3) == 0)
+// 			ft_pwd();
+// 		free(line);
+// 	}
+// 	return (0);
+// }
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/19 14:00:52 by ydembele          #+#    #+#             */
+/*   Updated: 2025/11/20 12:49:25 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+int	is_nl(char *args)
+{
+	int	j;
+
+	j = 1;
+	if (args[0] == '-' && args[1])
+	{
+		while (args[j] && args[j] == 'n')
+			j++;
+		if (args[j] == 0)
+			return (1);
+	}
+	return (0);
+}
+
+int	ft_echo(char **args)
+{
+	int	i;
+	int	nl;
+
+	i = 0;
+	nl = 1;
+	while (args[i] && is_nl(args[i]))
+	{
+		i++;
+		nl = 0;
+	}
+	while (args[i])
+	{
+		write(1, args[i], ft_strlen(args[i]));
+		if (args[i + 1])
+			write(1, " ", 1);
+		i++;
+	}
+	if (nl)
+		write(1, "\n", 1);
+	return (0);
+}
+
+// int	ft_echo(char **args, t_globale *data, int quoted)
+// {
+// 	int	i;
+// 	int	nl;
+// 	int	j;
+
+// 	i = 0;
+// 	nl = 1;
+// 	if (args[0] && is_nl(args[0]))
+// 	{
+// 		i = 1;
+// 		nl = 0;
+// 	}
+// 	while (args[i])
+// 	{
+// 		j = 0;
+// 		if (!is_nl(args[i]))
+// 		{
+// 			while (args[i][j])
+// 			{
+// 				if (ft_strncmp(args[i] + j, "$?", 2) == 0 && quoted != 2)
+// 				{
+// 					write(1, ft_itoa(data->preview_code),
+// 						ft_strlen(ft_itoa(data->preview_code)));
+// 					j = j + 2;
+// 				}
+// 				else
+// 				{
+// 					write(1, &args[i][j], 1);
+// 					j++;
+// 				}
+// 			}
+// 		}
+// 		if (args[i + 1] && !is_nl(args[i]))
+// 			write(1, " ", 1);
+// 		i++;
+// 	}
+// 	if (nl)
+// 		write(1, "\n", 1);
+// 	return (0);
+// }/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/30 15:45:55 by ydembele          #+#    #+#             */
+/*   Updated: 2025/11/20 12:58:41 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+int	env(char **env, char **commande)
+{
+	int	i;
+
+	i = 0;
+	if (commande[1])
+	{
+		write(2, "env: too many arguments\n", 25);
+		return (1);
+	}
+	if (!env)
+		return (1);
+	while (env[i])
+		printf("%s\n", env[i++]);
+	return (0);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
+/*   Updated: 2025/12/01 16:35:27 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+void	free_cmd_list(t_cmd *head)
+{
+	t_cmd	*cur;
+	t_cmd	*tmp;
+
+	cur = head;
+	while (cur)
+	{
+		free_all(cur->argv);
+		tmp = cur;
+		cur = cur->next;
+		free(tmp);
+	}
+}
+
+long long	my_atoi(char *s, int *err)
+{
+	int			i;
+	int			signe;
+	long long	result;
+
+	signe = 1;
+	i = 0;
+	result = 0;
+	*err = 1;
+	while (s[i] == ' ')
+		i++;
+	if (s[i] == '-' || s[i] == '+')
+	{
+		if (s[i] == '-')
+			signe = -1;
+		i++;
+	}
+	while (s[i] >= '0' && s[i] <= '9')
+	{
+		*err = 0;
+		result = result * 10 + s[i] - 48;
+		i++;
+	}
+	result = result * signe;
+	return (result);
+}
+
+void	free_exit(t_globale *data, char *msg, int code)
+{
+	t_exec	*exec;
+	t_exec	*tmp;
+
+	if (msg)
+		perror(msg);
+	if (!data)
+		exit(code);
+	exec = data->exec;
+	clear_nodes(&data->node);
+	if (data->exec && data->exec->cmd)
+		free_cmd_list(data->exec->cmd);
+	while (exec)
+	{
+		tmp = exec->next;
+		my_close(exec->prev_nb, exec->infile, exec->p_nb[0], exec->p_nb[1]);
+		my_close(exec->outfile, -1, -1, -1);
+		free(exec);
+		exec = tmp;
+	}
+	if (data->env)
+		free_all(data->env);
+	free(data);
+	clear_history();
+	exit(code);
+}
+
+void	free_exec(t_globale *data)
+{
+	t_exec	*exec;
+	t_exec	*tmp;
+
+	exec = data->exec;
+	while (exec)
+	{
+		tmp = exec->next;
+		my_close(exec->prev_nb, exec->infile, exec->p_nb[0], exec->p_nb[1]);
+		my_close(exec->outfile, -1, -1, -1);
+		free(exec);
+		exec = tmp;
+	}
+	free(data);
+}
+
+void	ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec)
+{
+	int			err;
+	long long	res;
+
+	err = 0;
+	res = 0;
+	if (cmd->argv[1])
+	{
+		res = my_atoi(cmd->argv[1], &err);
+		if (err || !is_long_long(cmd->argv[1]))
+		{
+			write(2, "exit: ", 7);
+			write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
+			write(2, ": numeric argument required\n", 29);
+			free_exit(data, NULL, 2);
+		}
+	}
+	if (cmd->argv[1] && cmd->argv[2])
+	{
+		write(2, "exit: too many arguments\n", 26);
+		exec->exit_code = 1;
+		return ;
+	}
+	if (!cmd->argv[1])
+		free_exit(data, NULL, 0);
+	free_exit(data, NULL, (int)(res % 256));
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
+/*   Updated: 2025/12/01 18:31:18 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+char	**export_update(int pos, char **env, char *str)
+{
+	char	**new_env;
+
+	if (pos == -1)
+		return (env);
+	new_env = ft_strdupdup(env);
+	if (!new_env)
+		return (env);
+	free(new_env[pos]);
+	new_env[pos] = ft_strdup(str);
+	printf("%s\n", new_env[pos]);
+	if (!new_env[pos])
+	{
+		free_all(new_env);
+		return (env);
+	}
+	return (new_env);
+}
+
+char	**export_add(char **env, char *str)
+{
+	char	**new_env;
+	int		size;
+	int		i;
+
+	size = len_list(env);
+	new_env = malloc(sizeof(char *) * (size + 2));
+	if (!new_env)
+		return (NULL);
+	i = -1;
+	while (++i < size)
+	{
+		new_env[i] = ft_strdup(env[i]);
+		if (!new_env[i])
+			return (free_all(new_env), env);
+	}
+	new_env[i] = ft_strdup(str);
+	if (!new_env[i])
+		return (free_all(new_env), env);
+	i++;
+	new_env[i] = NULL;
+	return (free_all(env), new_env);
+}
+
+char	**export(int pos, char **env, char *str)
+{
+	if (pos != -1)
+		return (export_update(pos, env, str));
+	return (export_add(env, str));
+}
+
+char	**do_export(char *arg, char **env, t_exec *exec)
+{
+	char	**new_env;
+	char	*normalized;
+
+	if (!invalide_arg(arg))
+	{
+		ft_putstr_fd("export: `", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd("': not a valid identifier\n", 2);
+		exec->exit_code = 1;
+		return (env);
+	}
+	normalized = normalize_export_arg(arg);
+	if (!normalized)
+	{
+		exec->exit_code = 1;
+		return (perror("Malloc"), env);
+	}
+	new_env = export(existe(normalized, env), env, normalized);
+	if (!new_env)
+	{
+		exec->exit_code = 1;
+		perror("Malloc");
+		return (free(normalized), env);
+	}
+	return (free(normalized), new_env);
+}
+
+char	**ft_export(char **cmd, char **env, t_exec *exec)
+{
+	int		i;
+
+	i = 1;
+	if (!cmd[1])
+	{
+		exec->exit_code = export_noargs(env);
+		return (env);
+	}
+	while (cmd[i])
+	{
+		env = do_export(cmd[i], env, exec);
+		i++;
+	}
+	return (env);
+}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/30 14:56:28 by ydembele          #+#    #+#             */
+/*   Updated: 2025/11/03 16:12:03 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <limits.h>
+
+int	ft_pwd(void)
+{
+	char	path[1024];
+
+	if (getcwd(path, 1024))
+	{
+		printf("%s\n", path);
+		return (0);
+	}
+	else
+		return (1);
+}
+
+void	free_all(char **str)
+{
+	int	i;
+
+	i = 0;
+	if (str == NULL)
+		return ;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+}
+
+int	s_cmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+	{
+		if (s2[i + 1] && s2[i + 1] == '=')
+			break ;
+		i++;
+	}
+	return (s1[i] - s2[i]);
+}
+
+int	len(char **str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	**unset(int i, char **env)
+{
+	char	**new_env;
+	int		j;
+	int		l;
+
+	l = 0;
+	j = 0;
+	new_env = malloc(sizeof(char *) * (len(env) + 1));
+	if (!new_env)
+		return (NULL);
+	while (env[l])
+	{
+		if (l != i)
+		{
+			new_env[j] = ft_strdup(env[l]);
+			if (!new_env[j])
+				return (free_all(new_env), NULL);
+			l++;
+			j++;
+		}
+		else
+			l++;
+	}
+	new_env[j] = NULL;
+	return (new_env);
+}
+
+char	**ft_unset(char **cmd, char **env, t_exec *exec)
+{
+	int		i;
+	int		idx;
+	char	**new_env;
+	char	**tmp;
+
+	i = 1;
+	new_env = env;
+	while (cmd[i])
+	{
+		idx = existe(cmd[i], new_env);
+		if (idx != -1)
+		{
+			tmp = unset(idx, new_env);
+			if (!tmp)
+			{
+				exec->exit_code = 1;
+				perror("malloc");
+				return (new_env);
+			}
+			free_all(new_env);
+			new_env = tmp;
+		}
+		i++;
+	}
+	return (new_env);
+}
+
+// int	main(int ac, char **av, char **envp)
+// {
+// 	char	**n;
+// 	int		i;
+// 	char	**env = envp;
+// 	n = ft_unset(av + 1, env);
+// 	while (n[i])
+// 	{
+// 		printf("%s\n", n[i]);
+// 		i++;
+// 	}
+// 	// printf("%d", )
+// }
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_builtin.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/03 15:45:35 by ydembele          #+#    #+#             */
+/*   Updated: 2025/12/01 15:32:43 by ydembele         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../exec/exec.h"
+
+int	existe(char *str, char **env)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	len = 0;
+	while (str[len] && str[len] != '=')
+		len++;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], str, len) == 0
+			&& (env[i][len] == '=' || env[i][len] == '\0'))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+char	**ft_strdupdup(char **str)
+{
+	char	**res;
+	int		i;
+
+	i = 0;
+	res = NULL;
+	res = malloc(sizeof(char *) * (len_list(str) + 1));
+	if (!res)
+		return (NULL);
+	while (str[i])
+	{
+		res[i] = ft_strdup(str[i]);
+		if (!res[i])
+		{
+			free_all(res);
+			return (NULL);
+		}
+		i++;
+	}
+	res[i] = NULL;
+	return (res);
+}
+
+void	ft_swap(int i, int j, char **tab)
+{
+	char	*temp;
+
+	temp = tab[i];
+	tab[i] = tab[j];
+	tab[j] = temp;
+}
+
+int	len_list(char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env && env[i])
+		i++;
+	return (i);
+}
+
+int	is_long_long(char *str)
+{
+	int		neg;
+	int		len;
+
+	neg = 0;
+	while (*str == ' ' || *str == '\t')
+		str++;
+	if (*str == '-' || *str == '+')
+	{
+		if (*str == '-')
+			neg = 1;
+		str++;
+	}
+	while (*str == '0')
+		str++;
+	len = ft_strlen(str);
+	if ((!neg && ft_strcmp(str, "9223372036854775807") > 0)
+		|| (neg && ft_strcmp(str, "9223372036854775808") > 0))
+		return (0);
+	while (isdigit(*str))
+		str++;
+	if (*str != '\0' || len > 19)
+		return (0);
+	if (len < 19)
+		return (1);
+	return (1);
+}

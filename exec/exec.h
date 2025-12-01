@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 01:53:10 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/01 18:47:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ char					**ft_unset(char **cmd, char **env, t_exec *exec);
 void					ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec);
 int						ft_pwd(void);
 int						env(char **env, char **commande);
-int						ft_cd(char **cmd, char ***env);
+int						ft_cd(char **cmd, char **env, t_globale *data);
 void					redir_in_out(t_exec *exec);
 void					do_builtin(t_globale *data, t_exec *exec);
 void					redir_out(t_exec *exec);

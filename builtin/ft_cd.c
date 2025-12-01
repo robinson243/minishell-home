@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 16:09:08 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/01 19:13:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,35 +36,38 @@ char	*ft_user(char **env)
 	return (path_user);
 }
 
-void	maj_env(char *old_pwd, char *new_pwd, char ***env)
+char	**maj_env(char *old_pwd, char *new_pwd, char **env)
 {
 	int		pos;
 	char	**tmp;
 	char	*val;
 
-	pos = existe("OLDPWD=", *env);
+	tmp = NULL;
+	pos = existe("OLDPWD=", env);
 	if (pos != -1)
 	{
 		val = ft_strjoin_free(ft_strdup("OLDPWD="), old_pwd);
-		tmp = export_update(pos, *env, val);
+		tmp = export_update(pos, env, val);
 		free(val);
 		if (!tmp)
-			return ;
-		*env = tmp;
+			return (free(new_pwd), env);
 	}
-	pos = existe("PWD=", *env);
+	else
+		tmp = ft_strdupdup(env);
+	pos = existe("PWD=", tmp);
 	if (pos != -1)
 	{
 		val = ft_strjoin_free(ft_strdup("PWD="), new_pwd);
-		tmp = export_update(pos, *env, val);
+		tmp = export_update(pos, tmp, val);
 		free(val);
 		if (!tmp)
-			return ;
-		*env = tmp;
+			return (env);
+		return (tmp);
 	}
+	return (tmp);
 }
 
-static int	special_cd(char **cmd, char ***env, char *old_pwd)
+static int	special_cd(char **cmd, char **env, char *old_pwd, t_globale *data)
 {
 	char	*path_user;
 
@@ -72,13 +75,14 @@ static int	special_cd(char **cmd, char ***env, char *old_pwd)
 	if (!cmd[1] || (cmd[1][0] && cmd[1][0] == '-'
 		&& cmd[1][1] && cmd[1][1] == '-' && !cmd[1][2]))
 	{
-		path_user = ft_user(*env);
+		path_user = ft_user(env);
 		if (!path_user)
 			return (1);
 		if (chdir(path_user) != 0)
 			return (perror("cd"), free(path_user), 0);
 		free(path_user);
-		return (maj_env(old_pwd, getcwd(NULL, 0), env), 0);
+		data->env = maj_env(old_pwd, getcwd(NULL, 0), data->env);
+		return (0);
 	}
 	if (cmd[1][0] == '-' && !cmd[1][1])
 	{
@@ -88,16 +92,17 @@ static int	special_cd(char **cmd, char ***env, char *old_pwd)
 	return (-1);
 }
 
-int	ft_cd(char **cmd, char ***env)
+int	ft_cd(char **cmd, char **env, t_globale *data)
 {
 	char	*old_pwd;
+	char	**new_env;
 
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
 		return (1);
 	if (cmd[1] && cmd[2])
 		return (write(2, "cd: too many arguments\n", 24), free(old_pwd), 1);
-	if (special_cd(cmd, env, old_pwd) != -1)
+	if (special_cd(cmd, env, old_pwd, data) != -1)
 		return (0);
 	else if (chdir(cmd[1]) != 0)
 	{
@@ -106,7 +111,9 @@ int	ft_cd(char **cmd, char ***env)
 		write(2, ": No such file or directory\n", 29);
 		return (free(old_pwd), 1);
 	}
-	return (maj_env(old_pwd, getcwd(NULL, 0), env), 0);
+	new_env = maj_env(old_pwd, getcwd(NULL, 0), data->env);
+	data->env = new_env;
+	return (0);
 }
 
 // int	main(int ac, char **av, char **env)

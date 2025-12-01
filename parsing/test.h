@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/26 16:31:51 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/01 18:57:15 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ char				*find_path(char *str, char **envp);
 t_node				*handle_expands(t_node **head, char **envp, int prv_code);
 void				set_token_type(t_node *node);
 
-int					process_command(char *line, t_node **node, char **env,
+int					process_command(char *line, t_node **node, char ***env,
 						int prv);
 void				mini_null(t_cmd **cmd, t_node **node);
 bool				empty_line(char *line);

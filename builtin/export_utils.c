@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:58:58 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 13:17:11 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/01 17:23:51 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ int	export_noargs(char **env)
 	int		i;
 	int		j;
 
+	if (!env)
+		return (1);
 	arr = ft_strdupdup(env);
 	if (!arr)
 		return (1);

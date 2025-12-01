@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 16:24:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/01 17:38:11 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 	}
 }
 
-int	exec_builtin(t_globale *data, char ***env)
+int	exec_builtin(t_globale *data)
 {
 	t_exec	*exec;
 	int		exit_code;
@@ -105,9 +105,8 @@ int	exec_builtin(t_globale *data, char ***env)
 		do_builtin(data, exec);
 	else
 		exec->exit_code = 1;
-	*env = data->env;
 	exit_code = exec->exit_code;
-	return (free_exec(data), exit_code);
+	return (exit_code);
 }
 
 int	exec_line(t_globale *data)
@@ -149,7 +148,11 @@ int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 	if ((data->exec && data->exec->next == NULL)
 		&& data->exec->cmd->argv && data->exec->cmd->argv[0]
 		&& is_builtin(data->exec->cmd->argv[0]))
-		return (exec_builtin(data, env));
+	{
+		err = exec_builtin(data);
+		*env = data->env;
+		return (free_exec(data), err);
+	}
 	err = exec_line(data);
 	wait_all(&exit_code);
 	*env = data->env;
