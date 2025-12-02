@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 17:28:26 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/02 11:13:49 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,15 @@ char	*handle_quote_management(char *tmp, char *str, int *i, char **envp)
 		if (str[*i] == '\'')
 		{
 			quoted_word = extract_single_quoted(str, i);
+			if (!quoted_word)
+				return (free(res), free(tmp), NULL);
 			res = ft_strjoin_free(res, quoted_word);
 		}
 		else if (str[*i] == '"')
 		{
 			quoted_word = extract_quoted(str, i);
+			if (!quoted_word)
+				return (free(res), free(tmp), NULL);
 			res = ft_strjoin_free(res, quoted_word);
 		}
 		else
@@ -52,14 +56,12 @@ char	*build_word(char *input, int *i, int *quoted, char **envp)
 			tmp = mini_double_quoted(input, i, quoted);
 		else if (input[*i] == '\'')
 			tmp = mini_single_quoted(input, i, quoted);
-		else
-		{
-			if (recognize_token(input, i) != WORD)
-				break ;
-			tmp = extract_word(input, i, envp);
-		}
-		if (!tmp)
+		else if (recognize_token(input, i) != WORD)
 			break ;
+		else
+			tmp = extract_word(input, i, envp);
+		if (!tmp)
+			return (free(word), NULL);
 		word = ft_strjoin_free(word, tmp);
 	}
 	return (word);
@@ -79,6 +81,11 @@ t_node	*lexer(char *input, t_node **head, char **envp)
 		if (!input[i])
 			break ;
 		word = build_word(input, &i, &quoted, envp);
+		if (!word)
+		{
+			clear_nodes(head);
+			return (NULL);
+		}
 		if (word)
 			add_node(head, create_node(word, quoted));
 		else
