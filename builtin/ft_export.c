@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 17:45:27 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 14:28:42 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/01 19:02:57 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,15 @@ char	**export_update(int pos, char **env, char *str)
 		return (env);
 	new_env = ft_strdupdup(env);
 	if (!new_env)
-		return (NULL);
+		return (env);
 	free(new_env[pos]);
 	new_env[pos] = ft_strdup(str);
 	if (!new_env[pos])
 	{
 		free_all(new_env);
-		return (NULL);
+		return (env);
 	}
-	free_all(env);
-	return (new_env);
+	return (free_all(env), new_env);
 }
 
 char	**export_add(char **env, char *str)
@@ -47,15 +46,14 @@ char	**export_add(char **env, char *str)
 	{
 		new_env[i] = ft_strdup(env[i]);
 		if (!new_env[i])
-			return (free_all(new_env), NULL);
+			return (free_all(new_env), env);
 	}
 	new_env[i] = ft_strdup(str);
 	if (!new_env[i])
-		return (free_all(new_env), NULL);
+		return (free_all(new_env), env);
 	i++;
 	new_env[i] = NULL;
-	free_all(env);
-	return (new_env);
+	return (free_all(env), new_env);
 }
 
 char	**export(int pos, char **env, char *str)

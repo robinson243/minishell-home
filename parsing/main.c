@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/26 16:32:11 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/01 18:58:46 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (empty_line(line))
 			continue ;
-		prv_code = process_command(line, &node, env, prv_code);
+		prv_code = process_command(line, &node, &env, prv_code);
 	}
 	(free_all(env), clear_history());
 	return (prv_code);

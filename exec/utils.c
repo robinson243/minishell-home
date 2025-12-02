@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 20:26:31 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 16:25:48 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/01 18:46:59 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	do_builtin(t_globale *data, t_exec *exec)
 	if (!ft_strncmp(commande[0], "export", INT_MAX))
 		data->env = ft_export(commande, data->env, exec);
 	if (!ft_strncmp(commande[0], "cd", INT_MAX))
-		exec->exit_code = ft_cd(commande, &data->env);
+		exec->exit_code = ft_cd(commande, data->env, data);
 	if (!ft_strncmp(commande[0], "echo", INT_MAX))
 		exec->exit_code = ft_echo(commande + 1);
 	free_all(commande);
