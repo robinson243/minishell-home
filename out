@@ -1,9 +1,0 @@
-builtin
-exec
-leaks.txt
-libft
-Makefile
-minishell
-out
-parsing
-readline.supp
