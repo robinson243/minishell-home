@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 19:13:33 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/03 15:18:20 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,23 @@ char	*ft_user(char **env)
 
 char	**maj_env(char *old_pwd, char *new_pwd, char **env)
 {
-	int		pos;
 	char	**tmp;
 	char	*val;
 
-	tmp = NULL;
-	pos = existe("OLDPWD=", env);
-	if (pos != -1)
+	if (existe("OLDPWD=", env) != -1)
 	{
 		val = ft_strjoin_free(ft_strdup("OLDPWD="), old_pwd);
-		tmp = export_update(pos, env, val);
+		tmp = export_update(existe("OLDPWD=", env), env, val);
 		free(val);
 		if (!tmp)
 			return (free(new_pwd), env);
 	}
 	else
 		tmp = ft_strdupdup(env);
-	pos = existe("PWD=", tmp);
-	if (pos != -1)
+	if (existe("PWD=", tmp) != -1)
 	{
 		val = ft_strjoin_free(ft_strdup("PWD="), new_pwd);
-		tmp = export_update(pos, tmp, val);
+		tmp = export_update(existe("PWD=", tmp), tmp, val);
 		free(val);
 		if (!tmp)
 			return (env);

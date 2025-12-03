@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/21 14:38:08 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/03 15:24:37 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	check_pipe_syntax(t_node *tmp)
 		}
 		if (tmp->quoted == 0 && (tmp->type == REDIR_IN || tmp->type == REDIR_OUT
 				|| tmp->type == REDIR_APPEND || tmp->type == HEREDOC)
-			&& (!tmp->next || tmp->next->type == PIPE))
+			&& (!tmp->next || tmp->next->type != WORD))
 			return (0);
 		tmp = tmp->next;
 	}
