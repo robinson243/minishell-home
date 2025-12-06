@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 17:38:11 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:25:27 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,12 @@ void	do_cmd(t_exec *exec, t_globale *data)
 		perror("execve");
 		exec->exit_code = 127;
 		free(path);
-		printf("hello\n");
 		free_all(argv);
 	}
 	free_exit(data, NULL, exec->exit_code);
 }
 
-void	exec_cmd(t_exec *exec, t_globale *data)
+int	exec_cmd(t_exec *exec, t_globale *data)
 {
 	t_redir	*list;
 
@@ -82,7 +81,7 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 	{
 		g_signal = fork();
 		if (g_signal == -1)
-			free_exit(data, "Fork", 1);
+			return (ft_putstr_fd("Fork\n", 2), 0);
 		if (g_signal == 0)
 			do_cmd(exec, data);
 		else
@@ -92,9 +91,10 @@ void	exec_cmd(t_exec *exec, t_globale *data)
 			next(exec);
 		}
 	}
+	return (1);
 }
 
-int	exec_builtin(t_globale *data)
+int	exec_builtin(t_globale *data, char ***env)
 {
 	t_exec	*exec;
 	int		exit_code;
@@ -106,10 +106,12 @@ int	exec_builtin(t_globale *data)
 	else
 		exec->exit_code = 1;
 	exit_code = exec->exit_code;
+	*env = data->env;
+	free_exec(data);
 	return (exit_code);
 }
 
-int	exec_line(t_globale *data)
+int	exec_line(t_globale *data, int *i)
 {
 	t_exec	*exec;
 	int		ex_code;
@@ -119,6 +121,7 @@ int	exec_line(t_globale *data)
 	open_file(exec);
 	while (exec)
 	{
+		i++;
 		ex_code = 0;
 		if (pipe(exec->p_nb) == -1)
 		{
@@ -126,7 +129,8 @@ int	exec_line(t_globale *data)
 			exec->exit_code = 1;
 			return (1);
 		}
-		exec_cmd(exec, data);
+		if (!exec_cmd(exec, data))
+			return (ft_putstr_fd("Fork error\n", 2), 1);
 		ex_code = exec->exit_code;
 		exec = exec->next;
 	}
@@ -136,28 +140,27 @@ int	exec_line(t_globale *data)
 int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 {
 	t_globale	*data;
-	int			exit_code;
 	int			err;
+	int			i;
 
+	i = 0;
 	err = 0;
 	data = malloc(sizeof(t_globale));
+	if (!data)
+		return (ft_putstr_fd("Error malloc !", 2), 1);
 	data->env = *env;
-	data->exec = init_exec(command);
+	data->exec = init_exec(command, data);
+	if (!data->exec)
+		return (1);
 	init_data(data, node, prv_code);
-	exit_code = 0;
+	err = 0;
 	if ((data->exec && data->exec->next == NULL)
 		&& data->exec->cmd->argv && data->exec->cmd->argv[0]
 		&& is_builtin(data->exec->cmd->argv[0]))
-	{
-		err = exec_builtin(data);
-		*env = data->env;
-		return (free_exec(data), err);
-	}
-	err = exec_line(data);
-	wait_all(&exit_code);
+		return (exec_builtin(data, env));
+	err = exec_line(data, &i);
+	wait_all(&err);
 	*env = data->env;
 	free_exec(data);
-	if (err)
-		return (err);
-	return (exit_code);
+	return (err);
 }

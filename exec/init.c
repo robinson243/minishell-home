@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 12:01:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/11 12:34:21 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:26:39 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	init(t_exec *new)
 {
+	new->skip_cmd = false;
+	new->exit_code = 0;
 	new->prev_nb = -1;
 	new->infile = -1;
 	new->outfile = -1;
@@ -21,22 +23,23 @@ void	init(t_exec *new)
 	new->p_nb[1] = -1;
 }
 
-t_exec	*init_exec(t_cmd *cmd)
+t_exec	*init_exec(t_cmd *cmd, t_globale *data)
 {
 	t_exec		*head;
 	t_exec		*curr;
 	t_exec		*new;
 	t_cmd		*tmp;
 
+	data->exec = NULL;
 	head = NULL;
 	curr = NULL;
 	tmp = cmd;
 	while (tmp)
 	{
 		new = malloc(sizeof(t_exec));
+		if (!new)
+			return (free_exec(data), NULL);
 		new->cmd = tmp;
-		new->skip_cmd = false;
-		new->exit_code = 0;
 		new->first = (tmp == cmd);
 		init(new);
 		new->next = NULL;

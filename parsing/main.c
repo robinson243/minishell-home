@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/01 18:58:46 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/03 16:25:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,10 @@ static void	handle_sigsegv(int code)
 	exit(11);
 }
 
-static void	handle_sigabrt(int code)
-{
-	(void)code;
-	write(1, "abort\n", 6);
-}
-
 void	signals(void)
 {
 	signal(SIGINT, &handle_sigint);
 	signal(SIGSEGV, &handle_sigsegv);
-	signal(SIGABRT, &handle_sigabrt);
 	signal(SIGQUIT, SIG_IGN);
 }
 
