@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 15:45:35 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 15:32:43 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:04:14 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	existe(char *str, char **env)
 
 	i = 0;
 	len = 0;
+	if (!env)
+		return (-1);
 	while (str[len] && str[len] != '=')
 		len++;
 	while (env[i])
@@ -37,6 +39,8 @@ char	**ft_strdupdup(char **str)
 	int		i;
 
 	i = 0;
+	if (!str)
+		return (NULL);
 	res = NULL;
 	res = malloc(sizeof(char *) * (len_list(str) + 1));
 	if (!res)

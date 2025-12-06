@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/26 15:50:42 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:02:28 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,12 @@ int	exist(char **path, t_cmd *command, t_globale *data, t_exec *exec)
 	{
 		ft_putstr_fd(command->argv[0], 2);
 		exec->exit_code = 127;
+		if (*path)
+			free(*path);
 		return (ft_putstr_fd(": command not found\n", 2), 0);
 	}
 	if (!check_dir(path, command->argv[0], exec))
-		return (0);
+		return (free(*path), 0);
 	if (access(*path, X_OK) != 0)
 	{
 		exec->exit_code = 126;
@@ -44,6 +46,8 @@ char	**remp_local(char **env, t_exec *exec)
 
 	i = 0;
 	local = NULL;
+	if (!env)
+		return (NULL);
 	while (env[i])
 	{
 		if (ft_strncmp("PATH=", env[i], 5) == 0)
@@ -68,7 +72,7 @@ char	*get_path(char **env, char *cmd, t_exec *exec)
 	if (!local && exec->exit_code == 1)
 		return (NULL);
 	else if (!local && exec->exit_code == 0)
-		return (cmd);
+		return (ft_strdup(cmd));
 	while (local[i])
 	{
 		path = ft_strslashjoin(local[i], cmd);
@@ -94,7 +98,6 @@ int	check_dir(char **path, char *cmd, t_exec *exec)
 	{
 		exec->exit_code = 127;
 		perror(cmd);
-		free(*path);
 		return (0);
 	}
 	if (S_ISDIR(st.st_mode))
@@ -102,7 +105,6 @@ int	check_dir(char **path, char *cmd, t_exec *exec)
 		write(2, cmd, ft_strlen(cmd));
 		write(2, ": Is a directory\n", 18);
 		exec->exit_code = 126;
-		free(*path);
 		return (0);
 	}
 	return (1);

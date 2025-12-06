@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 12:01:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 17:26:39 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:11:03 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	init(t_exec *new)
 	new->outfile = -1;
 	new->p_nb[0] = -1;
 	new->p_nb[1] = -1;
+	new->next = NULL;
 }
 
 t_exec	*init_exec(t_cmd *cmd, t_globale *data)
@@ -42,7 +43,6 @@ t_exec	*init_exec(t_cmd *cmd, t_globale *data)
 		new->cmd = tmp;
 		new->first = (tmp == cmd);
 		init(new);
-		new->next = NULL;
 		if (!head)
 			head = new;
 		else
