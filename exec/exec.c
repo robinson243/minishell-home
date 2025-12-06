@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 17:25:27 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:58:05 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	exec_builtin(t_globale *data, char ***env)
 	int		exit_code;
 
 	exec = data->exec;
-	open_file(exec);
+	open_file(exec, data->env);
 	if (exec->skip_cmd == false)
 		do_builtin(data, exec);
 	else
@@ -118,7 +118,7 @@ int	exec_line(t_globale *data, int *i)
 
 	ex_code = 0;
 	exec = data->exec;
-	open_file(exec);
+	open_file(exec, data->env);
 	while (exec)
 	{
 		i++;

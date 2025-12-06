@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 16:50:16 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:58:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int						ft_pwd(void);
 void					my_close(int fd1, int fd2, int fd3, int fd4);
 char					*ft_strslashjoin(char const *s1, char const *s2);
 void					free_all(char **str);
-int						my_open(t_redir *list, t_exec *exec);
+int						my_open(t_redir *list, t_exec *exec, char **env);
 int						is_builtin(char *command);
 char					**ft_unset(char **cmd, char **env, t_exec *exec);
 void					ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec);
@@ -89,9 +89,9 @@ int						ft_echo(char **args);
 int						exist(char **path, t_cmd *command, t_globale *data,
 							t_exec *exec);
 char					*get_path(char **env, char *cmd, t_exec *exec);
-void					open_file(t_exec *exec);
+void					open_file(t_exec *exec, char **env);
 int						check_dir(char **path, char *cmd, t_exec *exec);
-int						my_here_doc(char *limiter);
+int						my_here_doc(char *limiter, char **env);
 int						existe(char *str, char **env);
 void					ft_swap(int i, int j, char **tab);
 char					**ft_strdupdup(char **str);

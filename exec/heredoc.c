@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/11 12:22:44 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 19:24:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,34 @@ void	sigint_heredoc(int sig)
 	exit(130);
 }
 
-static void	heredoc_loop(char *limiter)
+void	write_line(char *line, char **env, int fd)
+{
+	int		i;
+	int		j;
+	char	*word;
+
+	i = 0;
+	j = 0;
+	while (line[i])
+	{
+		if (line[i] == '$')
+		{
+			j = 0;
+			word = expand_dollar_basic(line, &i, env);
+			while (word && word[j])
+				write(fd, &word[j++], 1);
+			while (line[i] && line[i] != ' ')
+				i++;
+			free(word);
+		}
+		else
+			write(fd, &line[i++], 1);
+	}
+	write(fd, "\n", 1);
+	free(line);
+}
+
+static void heredoc_loop(char *limiter, char **env)
 {
 	int		fd;
 	char	*line;
@@ -38,15 +65,13 @@ static void	heredoc_loop(char *limiter)
 			free(line);
 			break ;
 		}
-		write(fd, line, strlen(line));
-		write(fd, "\n", 1);
-		free(line);
+		write_line(line, env, fd);
 	}
 	close(fd);
 	exit(0);
 }
 
-int	my_here_doc(char *limiter)
+int	my_here_doc(char *limiter, char **env)
 {
 	pid_t	pid;
 	int		status;
@@ -59,7 +84,7 @@ int	my_here_doc(char *limiter)
 	{
 		signal(SIGINT, sigint_heredoc);
 		signal(SIGQUIT, SIG_IGN);
-		heredoc_loop(limiter);
+		heredoc_loop(limiter, env);
 	}
 	signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);

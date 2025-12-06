@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/03 16:25:33 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:18:47 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-int	main(int ac, char **av, char **envp)
+/*int	main(int ac, char **av, char **envp)
 {
 	char	*line;
 	t_cmd	*cmd;
@@ -61,9 +61,9 @@ int	main(int ac, char **av, char **envp)
 	}
 	(free_all(env), clear_history());
 	return (prv_code);
-}
+}*/
 
-/*char	*my_gnl_stdin(void)
+char	*my_gnl_stdin(void)
 {
 	char	buffer[4096];
 	char	*line;
@@ -86,4 +86,54 @@ int	main(int ac, char **av, char **envp)
 	}
 	line[len] = '\0';
 	return (line);
-}*/
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	char	*line;
+	t_node	*node;
+	char	**env;
+	int		prv_code;
+
+	(void)ac;
+	(void)av;
+
+	prv_code = 0;
+	node = NULL;
+	env = ft_strdupdup(envp);
+	signals();
+	using_history();
+	g_signal = 0;
+
+	while (1)
+	{
+		if (isatty(fileno(stdin)))
+		{
+			line = readline("minishell > ");
+			if (!line)
+				break ;
+		}
+		else
+		{
+			char *tmp = my_gnl_stdin();
+			if (!tmp)
+				break ;
+			line = ft_strtrim(tmp, "\n");
+			free(tmp);
+		}
+		if (empty_line(line))
+		{
+			free(line);
+			continue ;
+		}
+		add_history(line);
+		prv_code = process_command(line, &node, &env, prv_code);
+	}
+
+	free_all(env);
+	clear_history();
+	return (prv_code);
+}
+
+
+
