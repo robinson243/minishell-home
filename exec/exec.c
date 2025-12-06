@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 17:38:11 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 16:45:48 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void	do_cmd(t_exec *exec, t_globale *data)
 		perror("execve");
 		exec->exit_code = 127;
 		free(path);
-		printf("hello\n");
 		free_all(argv);
 	}
 	free_exit(data, NULL, exec->exit_code);

@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:19:09 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/02 11:13:49 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/06 12:02:18 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,7 @@ t_node	*lexer(char *input, t_node **head, char **envp)
 			break ;
 		word = build_word(input, &i, &quoted, envp);
 		if (!word)
-		{
-			clear_nodes(head);
-			return (NULL);
-		}
+			return (clear_nodes(head), NULL);
 		if (word)
 			add_node(head, create_node(word, quoted));
 		else
