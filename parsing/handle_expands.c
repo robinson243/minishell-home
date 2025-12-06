@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/23 15:47:37 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/06 19:42:47 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*expand_dollar_basic(char *s, int *i, char **envp)
 	val = find_path(name, envp);
 	free(name);
 	if (val)
-		return (ft_strdup(val));
+		return (val);
 	else
 		return (ft_strdup(""));
 }
