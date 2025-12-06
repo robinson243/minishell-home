@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/06 19:31:27 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/06 19:49:29 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*expand_dollar_basic(char *s, int *i, char **envp)
 	val = find_path(name, envp);
 	free(name);
 	if (val)
-		return ((char *)val);
+		return (val);
 	else
 		return (ft_strdup(""));
 }

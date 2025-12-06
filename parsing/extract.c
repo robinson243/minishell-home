@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   extract.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:17:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/02 11:07:39 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/06 19:46:47 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,6 @@ char	*extract_dollar(char *str, int *i, char **envp)
 	res = find_path(key, envp);
 	if (!res)
 		res = ft_strdup("");
-	else
-		res = ft_strdup(res);
 	free(key);
 	return (res);
 }
