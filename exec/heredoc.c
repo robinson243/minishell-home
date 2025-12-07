@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 19:24:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:42:12 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ int	my_here_doc(char *limiter, char **env)
 	signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, handle_sigint);
-	g_signal = 0;
 	if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
 		return (-1);
 	fd = open(".tmp", O_RDONLY);
