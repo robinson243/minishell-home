@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_expands.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/06 19:49:29 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:37:27 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*expand_dollar_basic(char *s, int *i, char **envp)
 	val = find_path(name, envp);
 	free(name);
 	if (val)
-		return (val);
+		return ((char *)val);
 	else
 		return (ft_strdup(""));
 }
