@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/03 15:18:20 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/08 12:31:52 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,9 @@ int	ft_cd(char **cmd, char **env, t_globale *data)
 		return (0);
 	else if (chdir(cmd[1]) != 0)
 	{
-		write(2, "cd: ", 4);
 		write(2, cmd[1], ft_strlen(cmd[1]));
-		write(2, ": No such file or directory\n", 29);
+		write(2, ": ", 2);
+		perror("cd");
 		return (free(old_pwd), 1);
 	}
 	new_env = maj_env(old_pwd, getcwd(NULL, 0), data->env);

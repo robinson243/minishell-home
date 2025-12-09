@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 15:53:29 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 18:02:28 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/08 11:53:19 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ char	**remp_local(char **env, t_exec *exec)
 		{
 			local = ft_split(env[i] + 5, ':');
 			if (!local)
+			{
 				exec->exit_code = 1;
+				return (NULL);
+			}
 		}
 		i++;
 	}

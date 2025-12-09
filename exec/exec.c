@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 19:52:02 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/08 11:46:33 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,6 @@ void	do_cmd(t_exec *exec, t_globale *data)
 
 int	exec_cmd(t_exec *exec, t_globale *data)
 {
-	t_redir	*list;
-
-	(void)list;
 	if (exec->skip_cmd || (!exec->cmd->argv))
 	{
 		next(exec);

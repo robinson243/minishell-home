@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/07 16:42:12 by dems             ###   ########.fr       */
+/*   Updated: 2025/12/08 11:54:55 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	write_line(char *line, char **env, int fd)
 	free(line);
 }
 
-static void heredoc_loop(char *limiter, char **env)
+void	heredoc_loop(char *limiter, char **env)
 {
 	int		fd;
 	char	*line;

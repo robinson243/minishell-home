@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:45:55 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/20 12:58:41 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/08 11:40:50 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	env(char **env, char **commande)
 		write(2, "env: too many arguments\n", 25);
 		return (1);
 	}
-	if (!env)
+	if (!env || !env[0])
 		return (1);
 	while (env[i])
 		printf("%s\n", env[i++]);

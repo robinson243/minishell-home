@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:58:58 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 17:23:51 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/08 11:38:45 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,14 +106,17 @@ char	*normalize_export_arg(char *arg)
 {
 	char	*eq;
 	char	*res;
+	char	*ress;
 
 	eq = ft_strchr(arg, '=');
 	if (eq)
 		return (ft_strdup(arg));
-	res = malloc(ft_strlen(arg) + 4);
+	res = ft_strdup(arg);
 	if (!res)
 		return (NULL);
-	strcpy(res, arg);
-	ft_strlcat(res, "=\"\"", ft_strlen(res) + 2);
-	return (res);
+	ress = ft_strjoin(res, "=");
+	if (!ress)
+		return (free(res), NULL);
+	free(res);
+	return (ress);
 }
