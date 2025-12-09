@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/09 11:19:19 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/09 18:01:47 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@
 # define LIM 6
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
-
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_redir	t_redir;
