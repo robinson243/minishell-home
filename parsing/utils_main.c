@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 16:30:35 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/03 15:21:01 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/09 11:19:39 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,5 @@ int	process_command(char *line, t_node **node, char ***env, int prv)
 	if (cmd)
 		prv = exec(cmd, env, *node, prv);
 	(clear_nodes(node), free_cmd_list_no_files(cmd));
-	g_signal = 0;
 	return (prv);
 }

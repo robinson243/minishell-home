@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 18:58:33 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/09 11:19:19 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@
 
 # define ERROR_SYNTAX "minishell: syntaxe error near unexpected token:"
 
-extern pid_t			g_signal;
 
 typedef struct s_cmd	t_cmd;
 typedef struct s_redir	t_redir;
@@ -64,6 +63,7 @@ typedef struct s_globale
 {
 	char				**env;
 	t_exec				*exec;
+	pid_t				g_signal;
 	int					exit_code;
 	t_node				*node;
 	char				*line;
@@ -106,7 +106,7 @@ void					handle_sigint_child(int sig);
 t_exec					*init_exec(t_cmd *cmd, t_globale *data);
 void					setup_signals_parent(void);
 int						is_long_long(char *str);
-void					wait_all(int *exit_code);
+void					wait_all(int *exit_code, pid_t g_signal);
 void					lst_clear(t_redir **lst);
 int						export_noargs(char **env);
 int						invalide_arg(char *str);

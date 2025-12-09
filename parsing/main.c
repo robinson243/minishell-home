@@ -6,13 +6,12 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/08 12:15:16 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/09 11:21:07 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
-pid_t		g_signal;
 
 void	handle_sigint(int sig)
 {
@@ -49,7 +48,6 @@ void	signals(void)
 // 	env = ft_strdupdup(envp);
 // 	mini_null(&cmd, &node);
 // 	(using_history(), (void)ac, (void)av, signals());
-// 	g_signal = 0;
 // 	while (1)
 // 	{
 // 		line = readline("minishell > ");
@@ -103,7 +101,6 @@ int	main(int ac, char **av, char **envp)
 	env = ft_strdupdup(envp);
 	signals();
 	using_history();
-	g_signal = 0;
 
 	while (1)
 	{

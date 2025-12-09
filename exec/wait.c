@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 11:35:05 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/17 11:35:47 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/09 11:18:21 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	handle_status(int status, int *exit_code)
 	}
 }
 
-void	wait_all(int *exit_code)
+void	wait_all(int *exit_code, pid_t	g_signal)
 {
 	pid_t	pid;
 	int		status;

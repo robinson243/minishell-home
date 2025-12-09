@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/08 11:46:33 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/09 11:19:06 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ int	exec_cmd(t_exec *exec, t_globale *data)
 	}
 	else
 	{
-		g_signal = fork();
-		if (g_signal == -1)
+		data->g_signal = fork();
+		if (data->g_signal == -1)
 			return (ft_putstr_fd("Fork\n", 2), 0);
-		if (g_signal == 0)
+		if (data->g_signal == 0)
 			do_cmd(exec, data);
 		else
 		{
@@ -156,7 +156,7 @@ int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 		&& is_builtin(data->exec->cmd->argv[0]))
 		return (exec_builtin(data, env));
 	err = exec_line(data, &i);
-	wait_all(&err);
+	wait_all(&err, data->g_signal);
 	*env = data->env;
 	free_exec(data);
 	return (err);
