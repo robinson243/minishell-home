@@ -6,15 +6,18 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/09 18:02:23 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 11:23:10 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
+int	g_exitcode;
+
 void	handle_sigint(int sig)
 {
 	(void)sig;
+	g_exitcode = 130;
 	write(1, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
@@ -41,9 +44,8 @@ int	main(int ac, char **av, char **envp)
 	t_cmd	*cmd;
 	t_node	*node;
 	char	**env;
-	int		prv_code;
 
-	prv_code = 0;
+	g_exitcode = 0;
 	env = ft_strdupdup(envp);
 	mini_null(&cmd, &node);
 	(using_history(), (void)ac, (void)av, signals());
@@ -54,8 +56,8 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		if (empty_line(line))
 			continue ;
-		prv_code = process_command(line, &node, &env, prv_code);
+		g_exitcode = process_command(line, &node, &env, g_exitcode);
 	}
 	(free_all(env), clear_history());
-	return (prv_code);
+	return (g_exitcode);
 }
