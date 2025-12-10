@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 11:22:56 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:25:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,13 @@ void	write_line(char *line, char **env, int fd)
 	free(line);
 }
 
-void	heredoc_loop(char *limiter, char **env)
+void	heredoc_loop(char *limiter, char **env, t_globale *data)
 {
 	int		fd;
 	char	*line;
 
+	(void)data;
+	// free_exit(data, NULL, -1);
 	fd = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		exit(1);
@@ -60,7 +62,7 @@ void	heredoc_loop(char *limiter, char **env)
 		line = readline("> ");
 		if (!line)
 			break ;
-		if (strcmp(line, limiter) == 0)
+		if (ft_strcmp(line, limiter) == 0)
 		{
 			free(line);
 			break ;
@@ -68,15 +70,15 @@ void	heredoc_loop(char *limiter, char **env)
 		write_line(line, env, fd);
 	}
 	close(fd);
-	exit(0);
 }
 
-int	my_here_doc(char *limiter, char **env)
+int	my_here_doc(char *limiter, char **env, t_globale *data)
 {
 	pid_t	pid;
 	int		status;
 	int		fd;
 
+	status = 0;
 	pid = fork();
 	if (pid == -1)
 		return (perror("fork"), -1);
@@ -84,7 +86,7 @@ int	my_here_doc(char *limiter, char **env)
 	{
 		signal(SIGINT, sigint_heredoc);
 		signal(SIGQUIT, SIG_IGN);
-		heredoc_loop(limiter, env);
+		heredoc_loop(limiter, env, data);
 	}
 	signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);

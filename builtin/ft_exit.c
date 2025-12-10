@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 16:35:27 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:22:28 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,8 @@ void	free_exit(t_globale *data, char *msg, int code)
 		free_all(data->env);
 	free(data);
 	clear_history();
-	exit(code);
+	if (code >= 0)
+		exit(code);
 }
 
 void	free_exec(t_globale *data)

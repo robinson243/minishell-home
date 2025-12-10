@@ -6,37 +6,11 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 11:21:48 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:04:04 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
-
-/* void	do_cmd(t_exec *exec, t_globale *data)
-{
-	char	*path;
-	t_cmd	*cmd;
-
-	cmd = exec->cmd;
-	path = NULL;
-	redir_in_out(exec);
-	if (exec->skip_cmd)
-		free_exit(data, NULL, 1);
-	if (is_builtin(cmd->argv[0]))
-		do_builtin(data, exec);
-	else if (cmd->argv && !cmd->argv[0])
-		exec->exit_code = 126;
-	else if (exist(&path, cmd, data, exec))
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		execve(path, cmd->argv, data->env);
-		perror("execve");
-		exec->exit_code = 127;
-		free(path);
-	}
-	free_exit(data, NULL, exec->exit_code);
-} */
 
 void	do_cmd(t_exec *exec, t_globale *data)
 {
@@ -97,7 +71,7 @@ int	exec_builtin(t_globale *data, char ***env)
 	int		exit_code;
 
 	exec = data->exec;
-	open_file(exec, data->env);
+	open_file(exec, data->env, data);
 	if (exec->skip_cmd == false)
 		do_builtin(data, exec);
 	else
@@ -115,7 +89,7 @@ int	exec_line(t_globale *data, int *i)
 
 	ex_code = 0;
 	exec = data->exec;
-	open_file(exec, data->env);
+	open_file(exec, data->env, data);
 	while (exec)
 	{
 		i++;
