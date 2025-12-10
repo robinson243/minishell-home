@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 15:25:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:47:06 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	heredoc_loop(char *limiter, char **env, t_globale *data)
 	char	*line;
 
 	(void)data;
-	// free_exit(data, NULL, -1);
 	fd = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		exit(1);
@@ -69,7 +68,7 @@ void	heredoc_loop(char *limiter, char **env, t_globale *data)
 		}
 		write_line(line, env, fd);
 	}
-	close(fd);
+	free_exit(data, NULL, 0);
 }
 
 int	my_here_doc(char *limiter, char **env, t_globale *data)

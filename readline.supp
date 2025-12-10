@@ -1,0 +1,24 @@
+{
+   ignore_readline_leaks
+   Memcheck:Leak
+   ...
+   obj:*/libreadline.so.*
+}
+{
+   ignore_all_system_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/lib*.so*
+}
+{
+   ignore_bash_commands
+   Memcheck:Leak
+   ...
+   obj:/bin/*
+}
+{
+   ignore_usr_bin
+   Memcheck:Leak
+   ...
+   obj:/usr/bin/*
+}
