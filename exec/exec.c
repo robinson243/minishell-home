@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 11:55:44 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:04:04 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	exec_builtin(t_globale *data, char ***env)
 	int		exit_code;
 
 	exec = data->exec;
-	open_file(exec, data->env);
+	open_file(exec, data->env, data);
 	if (exec->skip_cmd == false)
 		do_builtin(data, exec);
 	else
@@ -89,7 +89,7 @@ int	exec_line(t_globale *data, int *i)
 
 	ex_code = 0;
 	exec = data->exec;
-	open_file(exec, data->env);
+	open_file(exec, data->env, data);
 	while (exec)
 	{
 		i++;

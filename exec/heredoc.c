@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 11:22:56 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:01:09 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	write_line(char *line, char **env, int fd)
 	free(line);
 }
 
-void	heredoc_loop(char *limiter, char **env)
+void	heredoc_loop(char *limiter, char **env, t_globale *data)
 {
 	int		fd;
 	char	*line;
@@ -68,10 +68,10 @@ void	heredoc_loop(char *limiter, char **env)
 		write_line(line, env, fd);
 	}
 	close(fd);
-	exit(0);
+	free_exit(data, NULL, 0);
 }
 
-int	my_here_doc(char *limiter, char **env)
+int	my_here_doc(char *limiter, char **env, t_globale *data)
 {
 	pid_t	pid;
 	int		status;
@@ -84,7 +84,7 @@ int	my_here_doc(char *limiter, char **env)
 	{
 		signal(SIGINT, sigint_heredoc);
 		signal(SIGQUIT, SIG_IGN);
-		heredoc_loop(limiter, env);
+		heredoc_loop(limiter, env, data);
 	}
 	signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);
