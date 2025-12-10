@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:06:22 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 15:04:17 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 17:00:52 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ int						ft_pwd(void);
 void					my_close(int fd1, int fd2, int fd3, int fd4);
 char					*ft_strslashjoin(char const *s1, char const *s2);
 void					free_all(char **str);
-int						my_open(t_redir *list, t_exec *exec, char **env, t_globale *data);
+int						my_open(t_redir *list, t_exec *exec, char **env,
+							t_globale *data);
 int						is_builtin(char *command);
 char					**ft_unset(char **cmd, char **env, t_exec *exec);
 void					ft_exit(t_globale *data, t_cmd *cmd, t_exec *exec);

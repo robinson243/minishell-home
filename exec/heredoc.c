@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 15:49:11 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 16:54:11 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,13 @@ void	heredoc_loop(char *limiter, char **env, t_globale *data)
 	int		fd;
 	char	*line;
 
-	(void)data;
+	free_exit(data, NULL, -1);
 	fd = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		exit(1);
 	while (1)
 	{
+		close(fd);
 		line = readline("> ");
 		if (!line)
 			break ;
@@ -66,10 +67,12 @@ void	heredoc_loop(char *limiter, char **env, t_globale *data)
 			free(line);
 			break ;
 		}
+		fd = open(".tmp", O_WRONLY | O_CREAT | O_APPEND, 0644);
 		write_line(line, env, fd);
 	}
-	close(fd);
-	free_exit(data, NULL, 0);
+	if (fd >= 0)
+		close(fd);
+	exit(0);
 }
 
 int	my_here_doc(char *limiter, char **env, t_globale *data)
@@ -94,8 +97,8 @@ int	my_here_doc(char *limiter, char **env, t_globale *data)
 	if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
 		return (-1);
 	fd = open(".tmp", O_RDONLY);
-	unlink(".tmp");
 	if (fd == -1)
 		return (-1);
+	unlink(".tmp");
 	return (fd);
 }

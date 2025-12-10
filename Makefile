@@ -25,10 +25,26 @@ $(NAME): $(LIBFT) $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LDFLAGS) -o $(NAME)
 
 $(SUPP_FILE):
-	@echo "{\n   ignore_readline_leaks\n   Memcheck:Leak\n   ...\n   obj:*/libreadline.so.*\n}" > $(SUPP_FILE)
-	@echo "{\n   ignore_all_system_libs\n   Memcheck:Leak\n   ...\n   obj:*/lib*/lib*.so*\n}" >> $(SUPP_FILE)
-	@echo "{\n   ignore_bash_commands\n   Memcheck:Leak\n   ...\n   obj:/bin/*\n}" >> $(SUPP_FILE)
-	@echo "{\n   ignore_usr_bin\n   Memcheck:Leak\n   ...\n   obj:/usr/bin/*\n}" >> $(SUPP_FILE)
+	@echo "{" > $(SUPP_FILE)
+	@echo "   ignore_readline_leaks" >> $(SUPP_FILE)
+	@echo "   Memcheck:Leak" >> $(SUPP_FILE)
+	@echo "   ..." >> $(SUPP_FILE)
+	@echo "   obj:*/libreadline.so.*" >> $(SUPP_FILE)
+	@echo "}" >> $(SUPP_FILE)
+	@echo "" >> $(SUPP_FILE)
+	@echo "{" >> $(SUPP_FILE)
+	@echo "   ignore_readline_add_history" >> $(SUPP_FILE)
+	@echo "   Memcheck:Leak" >> $(SUPP_FILE)
+	@echo "   ..." >> $(SUPP_FILE)
+	@echo "   fun:add_history" >> $(SUPP_FILE)
+	@echo "}" >> $(SUPP_FILE)
+	@echo "" >> $(SUPP_FILE)
+	@echo "{" >> $(SUPP_FILE)
+	@echo "   ignore_readline_using_history" >> $(SUPP_FILE)
+	@echo "   Memcheck:Leak" >> $(SUPP_FILE)
+	@echo "   ..." >> $(SUPP_FILE)
+	@echo "   fun:using_history" >> $(SUPP_FILE)
+	@echo "}" >> $(SUPP_FILE)
 	@echo "Suppression file created: $(SUPP_FILE)"
 
 %.o: %.c
@@ -45,6 +61,6 @@ fclean: clean
 re: fclean all
 
 supp: all
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes --suppressions=$(SUPP_FILE) -s ./$(NAME)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --trace-children=yes --trace-children-skip=/bin/*,/usr/bin/*,/usr/local/bin/* --suppressions=$(SUPP_FILE) -s ./$(NAME)
 
 .PHONY: all clean fclean re supp
