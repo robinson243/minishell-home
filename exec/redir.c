@@ -6,13 +6,13 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:13:08 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/06 18:57:32 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:03:12 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 
-void	open_file(t_exec *exec, char **env)
+void	open_file(t_exec *exec, char **env, t_globale *data)
 {
 	t_redir	*tmp;
 
@@ -30,7 +30,7 @@ void	open_file(t_exec *exec, char **env)
 				my_close(exec->infile, -1, -1, -1);
 			else
 				my_close(exec->outfile, -1, -1, -1);
-			if (!my_open(tmp, exec, env))
+			if (!my_open(tmp, exec, env, data))
 			{
 				exec->skip_cmd = true;
 				break ;
@@ -82,7 +82,7 @@ void	redir_in_out(t_exec *exec)
 	redir_out(exec);
 }
 
-int	my_open(t_redir *list, t_exec *exec, char **env)
+int	my_open(t_redir *list, t_exec *exec, char **env, t_globale *data)
 {
 	t_cmd	*cmd;
 
@@ -97,7 +97,7 @@ int	my_open(t_redir *list, t_exec *exec, char **env)
 	else if (list->type == REDIR_APPEND)
 		exec->outfile = open(list->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (list->type == HEREDOC)
-		exec->infile = my_here_doc(list->file, env);
+		exec->infile = my_here_doc(list->file, env, data);
 	if ((list->type == REDIR_IN) && exec->infile == -1)
 		return (perror(list->file), 0);
 	else if ((list->type == REDIR_OUT || list->type == REDIR_APPEND)
