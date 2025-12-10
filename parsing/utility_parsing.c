@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:41:37 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/20 12:13:56 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:13:45 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,17 @@ t_redir	*new_redir(int type, char *file)
 {
 	t_redir	*node;
 
+	if (!file)
+		return (NULL);
 	node = malloc(sizeof(t_redir));
 	if (!node)
 		return (NULL);
-	node->file = file;
+	node->file = ft_strdup(file);
+	if (!node->file)
+	{
+		free(node);
+		return (NULL);
+	}
 	node->type = type;
 	node->next = NULL;
 	return (node);
@@ -43,7 +50,16 @@ void	add_redir(t_cmd *cmd, t_redir *new)
 {
 	t_redir	*tmp;
 
-	new->file = ft_strdup(new->file);
+	if (!cmd || !new)
+	{
+		if (new)
+		{
+			if (new->file)
+				free(new->file);
+			free(new);
+		}
+		return ;
+	}
 	tmp = cmd->redir;
 	if (!cmd->redir)
 	{

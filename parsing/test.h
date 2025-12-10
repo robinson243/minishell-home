@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/15 19:25:49 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/26 16:31:51 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:15:39 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ int					process_command(char *line, t_node **node, char **env,
 						int prv);
 void				mini_null(t_cmd **cmd, t_node **node);
 bool				empty_line(char *line);
+void				init_var(t_cmd **head_cmd, t_cmd **cur_cmd, t_node **tmp,
+						t_node **head);
 
 /*Fonctions utilitaires pour le parsing final*/
 char				*expand_tilde(char *s, char **envp);

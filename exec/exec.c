@@ -3,40 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/11/29 16:24:38 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:14:04 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
-
-/* void	do_cmd(t_exec *exec, t_globale *data)
-{
-	char	*path;
-	t_cmd	*cmd;
-
-	cmd = exec->cmd;
-	path = NULL;
-	redir_in_out(exec);
-	if (exec->skip_cmd)
-		free_exit(data, NULL, 1);
-	if (is_builtin(cmd->argv[0]))
-		do_builtin(data, exec);
-	else if (cmd->argv && !cmd->argv[0])
-		exec->exit_code = 126;
-	else if (exist(&path, cmd, data, exec))
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		execve(path, cmd->argv, data->env);
-		perror("execve");
-		exec->exit_code = 127;
-		free(path);
-	}
-	free_exit(data, NULL, exec->exit_code);
-} */
 
 void	do_cmd(t_exec *exec, t_globale *data)
 {
