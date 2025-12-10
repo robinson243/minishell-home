@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/10 15:24:15 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:31:37 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*expand_dollar_basic(char *s, int *i, char **envp)
 {
 	int			start;
 	char		*name;
-	char	*val;
+	char		*val;
 
 	(*i)++;
 	if (!ft_isalpha(s[*i]) && s[*i] != '_')
