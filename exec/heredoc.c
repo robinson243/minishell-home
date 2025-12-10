@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 15:47:06 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:49:11 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	heredoc_loop(char *limiter, char **env, t_globale *data)
 		}
 		write_line(line, env, fd);
 	}
+	close(fd);
 	free_exit(data, NULL, 0);
 }
 
