@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   utils_main.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/26 16:30:35 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/10 10:32:57 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:24:56 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
+
+void	init_var(t_cmd **head_cmd, t_cmd **cur_cmd, t_node **tmp, t_node **head)
+{
+	*head_cmd = NULL;
+	*cur_cmd = NULL;
+	*tmp = *head;
+}
 
 bool	empty_line(char *line)
 {

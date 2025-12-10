@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_expands.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 16:14:30 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/07 16:37:27 by dems             ###   ########.fr       */
+/*   Updated: 2025/12/10 15:24:15 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*expand_dollar_basic(char *s, int *i, char **envp)
 {
 	int			start;
 	char		*name;
-	const char	*val;
+	char	*val;
 
 	(*i)++;
 	if (!ft_isalpha(s[*i]) && s[*i] != '_')
