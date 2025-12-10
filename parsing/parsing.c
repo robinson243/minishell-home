@@ -6,7 +6,7 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 12:42:01 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/10 15:24:45 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/10 15:31:44 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,48 +76,50 @@ int	check_pipe_syntax(t_node *tmp)
 	}
 	return (1);
 }
-static void process_token(t_cmd **cur_cmd, t_cmd **head_cmd, t_node **tmp, int *prv_code)
-{
-    t_redir *redir;
 
-    if ((*tmp)->type != PIPE)
-    {
-        gain_some_lines(cur_cmd, head_cmd);
-        if ((*tmp)->type == WORD)
-            add_arg(*cur_cmd, (*tmp)->content);
-        else if ((*tmp)->next && (*tmp)->next->type == WORD)
-        {
-            redir = new_redir((*tmp)->type, (*tmp)->next->content);
-            if (!redir)
-            {
-                free_cmd_list_no_files(*head_cmd);
-                c_p_code(prv_code);
-                *head_cmd = NULL;
-                return ;
-            }
-            add_redir(*cur_cmd, redir);
-            *tmp = (*tmp)->next;
-        }
-    }
-    if ((*tmp)->type == PIPE)
-        handle_pipe(cur_cmd, *tmp);
+static void	process_token(t_cmd **cur_cmd, t_cmd **head_cmd, t_node **tmp,
+		int *prv_code)
+{
+	t_redir	*redir;
+
+	if ((*tmp)->type != PIPE)
+	{
+		gain_some_lines(cur_cmd, head_cmd);
+		if ((*tmp)->type == WORD)
+			add_arg(*cur_cmd, (*tmp)->content);
+		else if ((*tmp)->next && (*tmp)->next->type == WORD)
+		{
+			redir = new_redir((*tmp)->type, (*tmp)->next->content);
+			if (!redir)
+			{
+				free_cmd_list_no_files(*head_cmd);
+				c_p_code(prv_code);
+				*head_cmd = NULL;
+				return ;
+			}
+			add_redir(*cur_cmd, redir);
+			*tmp = (*tmp)->next;
+		}
+	}
+	if ((*tmp)->type == PIPE)
+		handle_pipe(cur_cmd, *tmp);
 }
 
-t_cmd   *parser(t_node **head, int *prv_code)
+t_cmd	*parser(t_node **head, int *prv_code)
 {
-    t_cmd   *head_cmd;
-    t_cmd   *cur_cmd;
-    t_node  *tmp;
+	t_cmd	*head_cmd;
+	t_cmd	*cur_cmd;
+	t_node	*tmp;
 
-    if (!check_pipe_syntax(*head))
-        return (c_p_code(prv_code), ft_putstr_fd("Operator error\n", 2), NULL);
-    init_var(&head_cmd, &cur_cmd, &tmp, head);
-    while (tmp)
-    {
-        process_token(&cur_cmd, &head_cmd, &tmp, prv_code);
-        if (!head_cmd)
-            return (NULL);
-        tmp = tmp->next;
-    }
-    return (head_cmd);
+	if (!check_pipe_syntax(*head))
+		return (c_p_code(prv_code), ft_putstr_fd("Operator error\n", 2), NULL);
+	init_var(&head_cmd, &cur_cmd, &tmp, head);
+	while (tmp)
+	{
+		process_token(&cur_cmd, &head_cmd, &tmp, prv_code);
+		if (!head_cmd)
+			return (NULL);
+		tmp = tmp->next;
+	}
+	return (head_cmd);
 }
