@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 16:10:43 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/08 12:31:52 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 11:54:28 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,28 +111,3 @@ int	ft_cd(char **cmd, char **env, t_globale *data)
 	data->env = new_env;
 	return (0);
 }
-
-// int	main(int ac, char **av, char **env)
-// {
-// 	char		*line;
-// 	char		**res;
-
-// 	(void)ac;
-// 	(void)av;
-// 	while (1)
-// 	{
-// 		line = readline("minishell> ");
-// 		if (!line || line[0] == '9')
-// 		{
-// 			printf("exit\n");
-// 			break ;
-// 		}
-// 		res = ft_split(line, ' ');
-// 		if (ft_strncmp("cd", res[0], 2) == 0)
-// 			ft_cd(res, env);
-// 		if (ft_strncmp("pwd", res[0], 3) == 0)
-// 			ft_pwd();
-// 		free(line);
-// 	}
-// 	return (0);
-// }

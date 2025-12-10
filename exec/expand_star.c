@@ -6,14 +6,12 @@
 /*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 01:50:07 by romukena          #+#    #+#             */
-/*   Updated: 2025/11/29 02:03:05 by romukena         ###   ########.fr       */
+/*   Updated: 2025/12/10 11:56:08 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* expand_star.c */
 #include "exec.h"
 
-/*Compte combien de fichiers matchent "*" */
 static int	count_files(void)
 {
 	DIR				*dir;
@@ -35,7 +33,6 @@ static int	count_files(void)
 	return (count);
 }
 
-/* Remplit le tableau avec les fichiers */
 static int	fill_expanded(char **expanded, int idx)
 {
 	DIR				*dir;
@@ -58,7 +55,6 @@ static int	fill_expanded(char **expanded, int idx)
 	return (idx);
 }
 
-/* Compte total args après expansion */
 static int	count_total(char **argv)
 {
 	int	count;
@@ -77,7 +73,6 @@ static int	count_total(char **argv)
 	return (count);
 }
 
-/* Expande les "*" dans argv */
 char	**expand_star_argv(char **argv)
 {
 	char	**expanded;

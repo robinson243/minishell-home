@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romukena <romukena@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/14 16:47:28 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/01 18:47:12 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/10 11:55:21 by romukena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,17 +107,3 @@ char	**ft_unset(char **cmd, char **env, t_exec *exec)
 	}
 	return (new_env);
 }
-
-// int	main(int ac, char **av, char **envp)
-// {
-// 	char	**n;
-// 	int		i;
-// 	char	**env = envp;
-// 	n = ft_unset(av + 1, env);
-// 	while (n[i])
-// 	{
-// 		printf("%s\n", n[i]);
-// 		i++;
-// 	}
-// 	// printf("%d", )
-// }
