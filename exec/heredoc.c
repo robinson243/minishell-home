@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 16:38:13 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 16:54:11 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/11 12:39:05 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,13 @@ void	write_line(char *line, char **env, int fd)
 	free(line);
 }
 
-void	heredoc_loop(char *limiter, char **env, t_globale *data)
+void	heredoc_loop(char *lim, char **env, t_globale *data)
 {
 	int		fd;
 	char	*line;
+	char	limiter[5000];
 
-	free_exit(data, NULL, -1);
+	(ft_strlcpy(limiter, lim, ft_strlen(lim) + 1), free_exit(data, NULL, -1));
 	fd = open(".tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		exit(1);

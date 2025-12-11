@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 18:35:01 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/10 15:22:28 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/11 07:53:42 by dems             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	free_exit(t_globale *data, char *msg, int code)
 	exec = data->exec;
 	clear_nodes(&data->node);
 	if (data->exec && data->exec->cmd)
-		free_cmd_list(data->exec->cmd);
+		free_cmd_list_no_files(data->exec->cmd);
 	while (exec)
 	{
 		tmp = exec->next;
