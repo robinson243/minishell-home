@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/13 14:54:36 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:59:30 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,6 @@ int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 
 	i = 0;
 	err = 0;
-	if (!isatty(STDIN_FILENO))
-		return (0);
 	data = malloc(sizeof(t_globale));
 	if (!data)
 		return (ft_putstr_fd("Error malloc !", 2), 1);

@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 18:01:15 by romukena          #+#    #+#             */
-/*   Updated: 2025/12/10 11:23:10 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:59:38 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int	main(int ac, char **av, char **envp)
 	t_node	*node;
 	char	**env;
 
+	if (!isatty(STDIN_FILENO))
+		return (0);
 	g_exitcode = 0;
 	env = ft_strdupdup(envp);
 	mini_null(&cmd, &node);
