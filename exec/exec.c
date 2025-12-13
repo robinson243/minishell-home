@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dems <dems@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/11 12:39:37 by dems             ###   ########.fr       */
+/*   Updated: 2025/12/11 14:11:44 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ int	exec_line(t_globale *data, int *i)
 	t_exec	*exec;
 	int		ex_code;
 
+	if (!isatty(STDIN_FILENO))
+		return (0);
 	ex_code = 0;
 	exec = data->exec;
 	open_file(exec, data->env, data);
