@@ -6,7 +6,7 @@
 /*   By: ydembele <ydembele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/18 18:45:06 by ydembele          #+#    #+#             */
-/*   Updated: 2025/12/11 14:11:44 by ydembele         ###   ########.fr       */
+/*   Updated: 2025/12/13 14:51:36 by ydembele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ int	exec_line(t_globale *data, int *i)
 	t_exec	*exec;
 	int		ex_code;
 
-	if (!isatty(STDIN_FILENO))
-		return (0);
 	ex_code = 0;
 	exec = data->exec;
 	open_file(exec, data->env, data);
@@ -118,6 +116,8 @@ int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 
 	i = 0;
 	err = 0;
+	if (!isatty(STDIN_FILENO))
+		return (0);
 	data = malloc(sizeof(t_globale));
 	if (!data)
 		return (ft_putstr_fd("Error malloc !", 2), 1);
@@ -134,6 +134,5 @@ int	exec(t_cmd *command, char ***env, t_node *node, int prv_code)
 	err = exec_line(data, &i);
 	wait_all(&err, data->g_signal);
 	*env = data->env;
-	free_exec(data);
-	return (err);
+	return (free_exec(data), err);
 }
